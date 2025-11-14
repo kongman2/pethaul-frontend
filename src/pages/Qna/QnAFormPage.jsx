@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import { createQnaThunk, editQnaThunk, getQnaDetailThunk } from '../../features/qnaSlice'
 
-import QnABase from '../../components/Qna/QnABase'
+import QnABase from '../../components/Qna/QnABase.jsx'
 import { AlertModal } from '../../components/common'
 import { useModalHelpers } from '../../hooks/useModalHelpers'
 import useAppBackground from '../../hooks/useAppBackground'

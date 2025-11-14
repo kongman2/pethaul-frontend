@@ -1,9 +1,0 @@
-services:
-  # 프론트엔드 (Static Site)
-  # 주의: Static Site의 환경 변수는 Render 대시보드에서 수동으로 설정해야 합니다
-  # 빌드 시점에 VITE_APP_API_URL과 VITE_APP_AUTH_KEY가 필요합니다
-  - type: static
-    name: pethaul-frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-
