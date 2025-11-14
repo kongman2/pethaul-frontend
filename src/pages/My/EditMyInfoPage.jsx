@@ -327,6 +327,7 @@ function EditMyInfoPage() {
   if (!user) return null
 
   return (
+    <>
       <section className="container py-5">
         <PageHeader title="회원정보변경" onBack={() => navigate(-1)} className="mb-4" />
 
@@ -559,6 +560,7 @@ function EditMyInfoPage() {
         buttonText={alertModal.config.buttonText}
         variant={alertModal.config.variant}
       />
+    </>
   )
 }
 export default EditMyInfoPage
