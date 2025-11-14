@@ -7,7 +7,7 @@ import { deleteQnaThunk, enterCommentThunk, getQnaThunk } from '../../../feature
 import AdminPanelLayout from '../AdminPanelLayout/AdminPanelLayout'
 import { SectionCard, ConfirmModal, AlertModal } from '../../common'
 import FilterForm from '../../common/FilterForm/FilterForm'
-import QnATable from '../../qna/QnATable'
+import QnATable from '../../Qna/QnATable'
 import { useConfirmModal } from '../../../hooks/useConfirmModal'
 import { useAlertModal } from '../../../hooks/useAlertModal'
 
