@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-import { Input, Textarea, Button, SectionCard, AlertModal } from '../common'
-import { useModalHelpers } from '../../hooks/useModalHelpers'
+import { Input, Textarea, Button, SectionCard, AlertModal } from '../../common'
+import { useModalHelpers } from '../../../hooks/useModalHelpers'
 
 function QnABase({ mode = 'create', initialData, onSubmit }) {
    const { alert, alertModal } = useModalHelpers()
