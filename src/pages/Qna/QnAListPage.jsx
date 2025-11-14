@@ -7,7 +7,7 @@ import { deleteQnaThunk, getQnaThunk } from '../../features/qnaSlice'
 
 import { Button, Spinner, PageHeader, AlertModal, ConfirmModal } from '../../components/common'
 import { useModalHelpers } from '../../hooks/useModalHelpers'
-import QnATable from '../../components/qna/QnATable'
+import QnATable from '../../components/Qna/QnATable'
 import useAppBackground from '../../hooks/useAppBackground'
 import './QnAListPage.scss'
 
