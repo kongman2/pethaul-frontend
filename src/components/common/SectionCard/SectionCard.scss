@@ -1,0 +1,139 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.section-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $white;
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: $transition-base;
+
+  &:hover {
+    transform: scale(1.01);
+  }
+  &__link {
+    all: unset;
+    color: $white;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+
+  &__header {
+    background: linear-gradient(135deg, $primary-color, darken($primary-color, 6%));
+    border-radius: $border-radius $border-radius 0 0;
+    color: $white;
+    padding: $spacing-1 $spacing-2;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    border-bottom: none;
+    overflow: hidden;
+    flex-wrap: wrap;
+
+    &-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__window-btn {
+    display: flex;
+    gap: $spacing-1;
+
+    span {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      border: 1px solid $border-color;
+
+      &.red { background-color: #ff0000; }
+      &.green { background-color: #1eff00; }
+      &.blue { background-color: #0077ff; }
+    }
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: 700;
+  }
+
+  &__body {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: visible;
+    border-radius: 0 0 $border-radius $border-radius;
+    padding: $spacing-2;
+
+    > * {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    > .row {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  &--overflow-visible {
+    // 카드 자체는 visible로 설정하여 드롭다운이 보이도록
+    overflow: visible;
+    position: relative;
+    
+    .section-card__header {
+      overflow: hidden;
+      border-radius: $border-radius $border-radius 0 0;
+      position: relative;
+      z-index: 2;
+    }
+    
+    // body만 visible로 설정하여 드롭다운이 보이도록
+    .section-card__body {
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // body가 없을 때 헤더에 전체 border-radius 적용
+  &--no-body {
+    .section-card__header {
+      border-radius: $border-radius;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .section-card {
+    &__header {
+      gap: $spacing-1;
+      padding: $spacing-1 $spacing-2;
+    }
+
+    &__window-btn {
+      gap: 4px;
+
+      span {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    &__title {
+      font-size: $font-size-small;
+    }
+  }
+}
+

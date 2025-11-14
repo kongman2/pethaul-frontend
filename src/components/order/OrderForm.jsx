@@ -1,15 +1,20 @@
-// src/components/order/OrderForm.jsx (auto-fill user info)
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import '../css/order/OrderForm.css'
+
+import { useModalHelpers } from '../../hooks/useModalHelpers'
+
+import { AlertModal } from '../common'
+
+import './OrderForm.scss'
 
 const API_BASE = import.meta.env.VITE_APP_API_URL || ''
 
 function OrderForm({ item, cartItems, order }) {
    const navigate = useNavigate()
    const location = useLocation()
+   const { alert, alertModal } = useModalHelpers()
 
    // ===== 공통 유틸 =====
    const toNumber = (n, d = 0) => {
@@ -129,7 +134,6 @@ function OrderForm({ item, cartItems, order }) {
                hydrateFromUser(res.data.user)
             }
          } catch (err) {
-            console.warn('[OrderForm] /auth/check 실패 또는 비로그인 상태:', err?.response?.status || err?.message)
          }
       })()
 
@@ -166,14 +170,14 @@ function OrderForm({ item, cartItems, order }) {
    const handleSubmitOrder = async () => {
       // 1) 기본 검증
       if (rawItems.length === 0) {
-         alert('주문할 상품이 없습니다.')
+         alert('주문할 상품이 없습니다.', '입력 필요', 'warning')
          return
       }
-      if (!formData.name?.trim()) return alert('이름/배송지명을 입력하세요.')
-      if (!formData.address?.trim()) return alert('주소를 입력하세요.')
+      if (!formData.name?.trim()) return alert('이름/배송지명을 입력하세요.', '입력 필요', 'warning')
+      if (!formData.address?.trim()) return alert('주소를 입력하세요.', '입력 필요', 'warning')
       const phone = `${formData.phone1}-${formData.phone2}-${formData.phone3}`
       if (!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)) {
-         return alert('전화번호를 정확히 입력하세요.')
+         return alert('전화번호를 정확히 입력하세요.', '입력 필요', 'warning')
       }
 
       // 2) 서버 페이로드 구성 (백엔드 요구: { items: [{ itemId, price, quantity }] })
@@ -186,7 +190,7 @@ function OrderForm({ item, cartItems, order }) {
          .filter((r) => Number.isFinite(r.price) && r.price >= 0 && Number.isFinite(r.quantity) && r.quantity > 0 && r.itemId)
 
       if (payloadItems.length === 0) {
-         alert('상품 데이터가 올바르지 않습니다.')
+         alert('상품 데이터가 올바르지 않습니다.', '오류', 'danger')
          return
       }
 
@@ -216,15 +220,13 @@ function OrderForm({ item, cartItems, order }) {
          const orderId = res?.data?.id ?? res?.data?.orderId
          if (orderId) {
             // 주문상세 라우트가 있을 때:
-            alert(`주문이 완료되었습니다. 주문번호: ${orderId}`)
+            alert(`주문이 완료되었습니다. 주문번호: ${orderId}`, '완료', 'success')
          } else {
-            alert('주문이 완료되었습니다.')
+            alert('주문이 완료되었습니다.', '완료', 'success')
          }
-         console.log('[OrderForm] order created:', res?.data)
       } catch (err) {
-         console.error('[OrderForm] order create error:', err)
          const msg = err?.response?.data?.message || err?.message || '주문 처리 중 오류가 발생했습니다.'
-         alert(msg)
+         alert(msg, '오류', 'danger')
          if (err?.response?.status === 401) {
             // 로그인 만료시 로그인 페이지로 유도 (필요시 라우팅 수정)
             navigate('/login', { state: { from: location.pathname } })
@@ -512,6 +514,14 @@ function OrderForm({ item, cartItems, order }) {
             }}
             coupons={COUPONS}
             selected={selectedCoupon}
+         />
+         <AlertModal
+            open={alertModal.isOpen}
+            onClose={alertModal.close}
+            title={alertModal.config.title}
+            message={alertModal.config.message}
+            buttonText={alertModal.config.buttonText}
+            variant={alertModal.config.variant}
          />
       </section>
    )

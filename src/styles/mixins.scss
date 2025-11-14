@@ -1,0 +1,55 @@
+@import './variables';
+
+@mixin button-reset {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin chip-base {
+  @include button-reset;
+  background-color: $white;
+  border: 1px solid $border-color;
+  padding: $spacing-1 $spacing-2;
+  border-radius: $border-radius-lg;
+  transition: $transition-base;
+  font-size: 13px;
+
+  &.active,
+  &:hover {
+    background-color: $primary-color;
+    color: $white;
+  }
+}
+
+@mixin input-base {
+  padding: $spacing-1 $spacing-2;
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  font-size: $font-size-small;
+  width: 100%;
+}
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin truncate($lines: 1) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+

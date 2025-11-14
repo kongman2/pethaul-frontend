@@ -1,0 +1,93 @@
+// OrderPanel Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.order-panel-card {
+  border: 1px solid $border-color-light;
+  border-radius: $border-radius;
+  background: $white;
+  font-size: $font-size-small;
+  overflow: visible; // 드롭다운이 보이도록
+  position: relative;
+}
+
+.order-panel-summary {
+  background-color: $white;
+  overflow: hidden; // summary는 hidden 유지
+  border-radius: $border-radius;
+  position: relative;
+  z-index: 2;
+}
+
+.order-panel-details {
+  background-color: $white;
+  overflow: visible; // 드롭다운이 보이도록
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border-radius: 0 0 $border-radius $border-radius;
+  border: 1px solid $border-color-light;
+  border-top: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10; // 다른 카드 위에 표시되도록 높은 z-index
+  margin-top: -1px; // border 겹침 방지
+}
+
+.order-panel-info {
+  background-color: $accent-yellow;
+}
+
+.order-panel-items {
+  background-color: $accent-blue;
+}
+
+.order-panel-actions {
+  padding: $spacing-2 0;
+}
+
+.order-cancelled {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+select {
+  @include input-base;
+  background-color: $accent-yellow;
+}
+
+.btn.primary {
+  justify-content: center;
+  background: $white;
+  border-color: $border-color;
+
+  &:hover {
+    background: $primary-color;
+    color: $white;
+  }
+}
+
+.btn.danger {
+  justify-content: center;
+  background: $white;
+  color: #FF0000;
+  border-color: #FF0000;
+
+  &:hover {
+    background-color: #FF0000;
+    color: $white;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+

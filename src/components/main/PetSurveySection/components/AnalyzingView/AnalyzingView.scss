@@ -1,0 +1,51 @@
+@import '../../../../../styles/variables';
+@import '../../../../../styles/mixins';
+
+.analyzing-view {
+  padding: $spacing-6 $spacing-4;
+}
+
+.analyzing-view__icon {
+  font-size: 80px;
+  animation: rotate 2s linear infinite;
+  margin-bottom: $spacing-4;
+}
+
+.analyzing-view__title {
+  font-size: $font-size-xlarge;
+  color: $primary-color;
+  margin-bottom: $spacing-4;
+}
+
+.analyzing-view__spinner {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-2;
+}
+
+.analyzing-view__dot {
+  width: 12px;
+  height: 12px;
+  background-color: $primary-color;
+  border-radius: 50%;
+  animation: bounce-dot 1.4s infinite ease-in-out both;
+
+  &:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+
+  &:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+}
+
+@media (max-width: 768px) {
+  .analyzing-view__icon {
+    font-size: 60px;
+  }
+
+  .analyzing-view__title {
+    font-size: $font-size-large;
+  }
+}
+

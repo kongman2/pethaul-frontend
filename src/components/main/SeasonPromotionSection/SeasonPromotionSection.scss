@@ -1,0 +1,15 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.season-promotion {
+
+  .item-section-grid {
+    margin: 0;
+  }
+
+  &__empty {
+    margin: $spacing-4 0;
+    text-align: center;
+    color: $text-color-secondary;
+  }
+}

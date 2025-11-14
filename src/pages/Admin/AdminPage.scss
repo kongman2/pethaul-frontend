@@ -1,0 +1,12 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.tab-content {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-content > * {
+  flex: 1 1 auto;
+}

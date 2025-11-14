@@ -1,0 +1,180 @@
+// Pethaul Selector Component Styles
+// ================================================
+
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+// 셀렉터 래퍼
+.pethaul-selector-wrapper {
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+
+  .pethaul-selector-trigger {
+    font-size: $font-size-small;
+    color: $primary-color;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: $transition-base;
+    outline: none;
+    background-color: $accent-yellow;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: $spacing-1 $spacing-2;
+
+    .pethaul-selector-trigger__content {
+      display: flex;
+      flex: 1;
+      flex-wrap: wrap;
+      gap: $spacing-1;
+      align-items: center;
+      min-height: 1.5rem;
+    }
+
+    .placeholder {
+      all: unset;
+      color: rgba($black, 0.5);
+    }
+
+    .selected {
+      color: $primary-color;
+    }
+
+    .selected-multiple {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-1;
+    }
+
+    .selected-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: 0.85rem;
+      line-height: 1.2;
+      border-radius: $border-radius-sm;
+      background-color: rgba($primary-color, 0.12);
+      color: $primary-color;
+      white-space: nowrap;
+    }
+
+    &.has-value {
+      background-color: $accent-yellow;
+      color: $primary-color;
+      border-color: $border-color;
+
+      .selected {
+        color: $primary-color;
+
+      }
+
+      svg {
+        color: rgba($primary-color, 0.9);
+      }
+    }
+
+    &.disabled {
+      background-color: $light-color;
+      color: rgba($black, 0.5);
+      cursor: not-allowed;
+      border-color: $border-color;
+
+      .placeholder,
+      .selected,
+      svg {
+        color: rgba($black, 0.5);
+      }
+    }
+
+    svg {
+      color: rgba($black, 0.5);
+      transition: transform 0.2s ease;
+      font-size: 20px;
+
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .pethaul-selector-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: $white;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 3000;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 4px;
+
+    .pethaul-selector-option {
+      padding: $spacing-2;
+      color: $black;
+      cursor: pointer;
+      transition: $transition-base;
+      border-bottom: 1px solid rgba($black, 0.1);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover:not(.disabled) {
+        background-color: $accent-yellow;
+        color: $primary-color;
+      }
+
+      &.selected {
+        background-color: $accent-yellow;
+        color: $primary-color;
+        font-weight: 700;
+      }
+
+      &.disabled {
+        color: rgba($black, 0.3);
+        cursor: not-allowed;
+        background-color: $light-color;
+      }
+    }
+  }
+
+  // 상태 변형
+  &--success {
+    .pethaul-selector-trigger {
+      border-color: $success-color;
+    }
+  }
+
+  &--warning {
+    .pethaul-selector-trigger {
+      border-color: $warning-color;
+    }
+  }
+
+  &--error {
+    .pethaul-selector-trigger {
+      border-color: $danger-color;
+    }
+  }
+
+  &--auth {
+    .pethaul-selector-trigger {
+      padding: $spacing-1 $spacing-2;
+      font-size: $font-size-small;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      background-color: $accent-yellow;
+    }
+  }
+}
+
+// Hidden select for form submission
+.d-none {
+  display: none;
+}
+

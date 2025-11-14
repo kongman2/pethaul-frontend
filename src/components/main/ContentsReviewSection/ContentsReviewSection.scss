@@ -1,0 +1,81 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.new-contents-card-body {
+  height: 100%;
+  padding: 0;
+}
+
+.keyword-card {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  > div {
+    display: flex;
+    align-items: center;
+    flex: 0;
+    width: 100%;
+    padding: 8px;
+    font-size: 13px;
+    border-bottom: 1px solid $border-color;
+    transition: background-color $transition-fast, color $transition-fast;
+    gap: 8px;
+
+    &:last-child {
+      border: none;
+    }
+
+    .topic__number {
+      font-weight: 600;
+      color: $primary-color;
+      min-width: 20px;
+    }
+
+    .topic__text {
+      flex: 1;
+    }
+
+    &.topic--clickable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $light-color;
+        
+        .topic__text {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}
+
+.review-card {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  max-height: 300px;
+  min-height: 0; // flex 아이템이 축소될 수 있도록
+  
+  @media (min-width: 992px) {
+    aspect-ratio: auto;
+    max-height: none;
+    height: 100%;
+  }
+
+  // 리뷰 슬라이더가 SectionCard body에 꽉 차도록 위쪽 border-radius 제거
+  .review-slide-compact {
+    border-radius: 0 0 $border-radius $border-radius;
+  }
+}
+
+// lg 이상에서만 h-100 적용
+@media (min-width: 992px) {
+  .flex-lg-h-100 {
+    height: 100%;
+  }
+}
+
+
+

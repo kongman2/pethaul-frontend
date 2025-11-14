@@ -1,0 +1,63 @@
+// MobileTabBar Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.m-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: $white;
+  border-top: 1px solid $border-color;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  z-index: 2000;
+
+  .m-tab {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: #444;
+    font-size: 11px;
+
+    &[aria-current="page"] {
+      color: #111;
+      font-weight: 600;
+    }
+  }
+}
+
+.m-tab__btn {
+  @include button-reset;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.m-tab__icon {
+  line-height: 0;
+}
+
+.m-tab__label {
+  line-height: 1;
+}
+
+@media (min-width: 769px) {
+  .m-tabbar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 72px;
+  }
+}
+

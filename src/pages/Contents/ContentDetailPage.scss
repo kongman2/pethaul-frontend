@@ -1,0 +1,65 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+.content-body {
+  .lead {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+}
+
+.content-text {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: $dark-color;
+
+  // HTML 컨텐츠 스타일링
+  p {
+    margin-bottom: $spacing-3;
+  }
+
+  h2, h3, h4 {
+    margin-top: $spacing-4;
+    margin-bottom: $spacing-2;
+    font-weight: 700;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: $border-radius-sm;
+    margin: $spacing-3 0;
+  }
+
+  ul, ol {
+    margin-bottom: $spacing-3;
+    padding-left: $spacing-4;
+  }
+
+  blockquote {
+    border-left: 4px solid $primary-color;
+    padding-left: $spacing-2;
+    margin: $spacing-3 0;
+    color: $text-color-muted;
+    font-style: italic;
+  }
+
+  code {
+    background: $light-color;
+    padding: 0.2rem 0.4rem;
+    border-radius: $border-radius-sm;
+    font-size: 0.9em;
+  }
+
+  pre {
+    background: $light-color;
+    padding: $spacing-2;
+    border-radius: $border-radius-sm;
+    overflow-x: auto;
+    margin: $spacing-3 0;
+
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+}

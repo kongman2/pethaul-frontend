@@ -1,0 +1,102 @@
+// Pethaul Textarea Component Styles
+// ================================================
+
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+// Textarea 컨테이너 (라벨용)
+.pethaul-textarea-container {
+  width: 100%;
+
+  .form-label {
+    &.fw-semibold {
+      font-weight: 600;
+      color: $dark-color;
+      margin-bottom: $spacing-2;
+    }
+  }
+
+  .invalid-feedback {
+    color: $danger-color;
+    font-size: $font-size-small;
+  }
+}
+
+// 텍스트 영역 래퍼
+.pethaul-textarea-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+  .textarea-counter {
+    display: block;
+    text-align: right;
+    font-size: 13px;
+    color: rgba($black, 0.5);
+    margin-top: $spacing-1;
+
+    .warning {
+      color: $warning-color;
+    }
+  }
+}
+
+// 기본 텍스트 영역
+.pethaul-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  line-height: 1.5;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  background-color: $accent-yellow;
+  color: $black;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &:focus {
+   background-color: rgba($accent-yellow, 0.5);
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  }
+
+  &:disabled {
+    background-color: $light-color;
+    color: rgba($black, 0.5);
+    cursor: not-allowed;
+    resize: none;
+  }
+
+  &::placeholder {
+    color: rgba($black, 0.5);
+  }
+
+  // 텍스트 영역 상태
+  &--success {
+    border-color: $success-color;
+
+    &:focus {
+      box-shadow: 0 0 4px rgba($success-color, 0.3);
+    }
+  }
+
+  &--warning {
+    border-color: $warning-color;
+
+    &:focus {
+      box-shadow: 0 0 4px rgba($warning-color, 0.3);
+    }
+  }
+
+  &--error {
+    border-color: $danger-color;
+
+    &:focus {
+      box-shadow: 0 0 4px rgba($danger-color, 0.3);
+    }
+  }
+}
+

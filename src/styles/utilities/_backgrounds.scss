@@ -1,0 +1,98 @@
+@import '../variables';
+
+$ribbon-image: url('../../assets/ribbon.jpeg');
+$dots-image: url('../../assets/dots.jpeg');
+
+// --------------------------------------------------
+// Global background tokens (CSS custom properties)
+// --------------------------------------------------
+:root {
+  --app-bg-color: #{$accent-yellow};
+  --app-bg-image: none;
+  --app-bg-repeat: repeat;
+  --app-bg-size: auto;
+  --app-bg-position: center top;
+}
+
+@mixin assign-app-background($color: $accent-yellow, $image: null, $repeat: repeat, $size: auto, $position: center top, $gradient: null) {
+  $resolved-color: if($color != null, $color, transparent);
+  $resolved-image: null;
+
+  @if $gradient {
+    $resolved-image: $gradient;
+  } @else if $image {
+    $resolved-image: $image;
+  }
+
+  --app-bg-color: #{$resolved-color};
+  @if $resolved-image {
+    --app-bg-image: #{$resolved-image};
+  } @else {
+    --app-bg-image: none;
+  }
+  --app-bg-repeat: #{$repeat};
+  --app-bg-size: #{$size};
+  --app-bg-position: #{$position};
+
+  background-color: $resolved-color;
+  @if $resolved-image {
+    background-image: $resolved-image;
+  } @else {
+    background-image: none;
+  }
+  background-repeat: $repeat;
+  background-size: $size;
+  background-position: $position;
+}
+
+@mixin section-background($color, $image: null, $repeat: repeat, $size: auto, $position: center top) {
+  background-color: $color;
+  @if $image {
+    background-image: $image;
+  } @else {
+    background-image: none;
+  }
+  background-repeat: $repeat;
+  background-size: $size;
+  background-position: $position;
+  padding-top: $spacing-8;
+}
+
+// --------------------------------------------------
+// Application background modes (attach to main element)
+// --------------------------------------------------
+.app-bg {
+  &--default {
+    @include assign-app-background($accent-yellow, null, repeat, auto);
+  }
+
+  &--blue {
+    @include assign-app-background($accent-blue, null, no-repeat, cover, center top);
+  }
+
+  &--ribbon {
+    @include assign-app-background($white, $ribbon-image, repeat, 22%, center top);
+  }
+
+  &--dots {
+    @include assign-app-background($white, $dots-image, repeat, 22%, center top);
+  }
+  &--gradient {
+    @include assign-app-background($accent-yellow, null, no-repeat, cover, center top, linear-gradient(135deg, rgba(242, 250, 255, 0.9), rgba(255, 253, 233, 0.9)));
+  }
+}
+
+// --------------------------------------------------
+// Legacy section helpers (still useful for wrapping sections)
+// --------------------------------------------------
+.blue-background {
+  @include section-background($accent-blue, null, no-repeat, cover, center top);
+}
+
+.ribbon-background {
+  @include section-background($white, $ribbon-image, repeat, 20%, center top);
+}
+
+.dot-background {
+  @include section-background($white, $dots-image, repeat, 20%, center top);
+}

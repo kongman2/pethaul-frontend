@@ -1,9 +1,7 @@
-import axios from 'axios'
 import petHaulApi from './axiosApi'
 
 // 문의 조회
 export const getQna = async (data) => {
-   console.log('api==========data', data)
    const { id, role, page, limit } = data
    const response = await petHaulApi.get('/qna', {
       params: { id, role, page, limit },
@@ -14,7 +12,6 @@ export const getQna = async (data) => {
 // 문의 작성
 export const createQna = async (data) => {
    const response = await petHaulApi.post('/qna', data)
-
    return response
 }
 

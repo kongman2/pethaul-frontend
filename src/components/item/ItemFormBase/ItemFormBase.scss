@@ -1,0 +1,62 @@
+// ItemFormBase Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: $dark-color;
+  margin-bottom: $spacing-4;
+}
+
+.category-actions {
+  .pethaul-input {
+    flex: 1;
+  }
+}
+
+.category-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-1;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: rgba($primary-color, 0.12);
+  color: $primary-color;
+  padding: 4px 8px;
+  border-radius: $border-radius-sm;
+  font-size: 0.85rem;
+  line-height: 1.2;
+
+  &__remove {
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0;
+  }
+}
+
+// Form styling
+form {
+  .form-label {
+    &.fw-semibold {
+      font-weight: 600;
+      color: $dark-color;
+      margin-bottom: $spacing-2;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
+}

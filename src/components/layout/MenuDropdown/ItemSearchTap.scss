@@ -1,0 +1,27 @@
+// ItemSearchTap Styles
+@import '../../../styles/_variables';
+@import '../../../styles/mixins';
+
+.item-search-tap {
+  width: 100%;
+}
+
+.btn-link-reset {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+
+  &:focus,
+  &:active {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.filter-group {
+  > h3 {
+    margin-bottom: $spacing-2;
+    font-size: $font-size-base;
+  }
+}
+

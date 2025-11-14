@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Galindo&display=swap');
+@import './variables';
+@import './mixins';
+@import './base/reset';
+@import './utilities/backgrounds';
+@import '../components/common/Pagination/Pagination';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.container-narrow {
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 0 $spacing-2;
+}
+
+.section-title {
+  margin-bottom: $spacing-4;
+  font-size: $font-size-large;
+
+  p {
+    font-size: $font-size-medium;
+  }
+}

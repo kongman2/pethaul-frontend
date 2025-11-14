@@ -1,4 +1,3 @@
-// src/api/authApi.js
 import petHaulApi from './axiosApi'
 
 // .env에 등록된 백엔드 주소 사용
@@ -6,68 +5,38 @@ const BASE_API_URL = import.meta.env.VITE_APP_API_URL
 
 // 회원가입
 export const registerUser = async (userData) => {
-   try {
       const response = await petHaulApi.post('/auth/join', userData)
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 로그인
 export const loginUser = async (credentials) => {
-   try {
       const response = await petHaulApi.post('/auth/login', credentials)
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 로그아웃
 export const logoutUser = async () => {
-   try {
       const response = await petHaulApi.post('/auth/logout', {}, { withCredentials: true })
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 로그인 상태 확인
 export const checkAuthStatus = async () => {
-   try {
       const response = await petHaulApi.get('/auth/check')
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 아이디 중복 확인
 export const checkUsername = async (userId) => {
-   try {
       const response = await petHaulApi.post('/auth/check-username', { userId })
       return response
-   } catch (error) {
-      console.error(`아이디 중복 확인 오류: ${error}`)
-      throw error
-   }
 }
 
 // 이메일 중복 확인
 export const checkEmail = async (email) => {
-   try {
       const response = await petHaulApi.post('/auth/check-email', { email })
       return response
-   } catch (error) {
-      console.error(`이메일 중복 확인 오류: ${error}`)
-      throw error
-   }
 }
 
 // 구글 로그인 리다이렉트
@@ -77,66 +46,36 @@ export const redirectToGoogleLogin = () => {
 
 // 구글 로그인(DB 저장용 요청 함수)
 export const googleLoginUser = async (googleData) => {
-   try {
       const response = await petHaulApi.post('/auth/google/callback', googleData)
       return response
-   } catch (error) {
-      console.error(`구글 로그인 API 오류: ${error}`)
-      throw error
-   }
 }
 
 // 구글 로그인 상태 확인
 export const googleCheckStatus = async () => {
-   try {
       const response = await petHaulApi.get('/auth/googlecheck')
       return response.data
-   } catch (error) {
-      console.error(`구글 로그인 상태 확인 오류: ${error}`)
-      throw error
-   }
 }
 
 // 핸드폰 번호로 id 찾기 (로컬 회원)
 export const findId = async (phoneNumber) => {
-   try {
       const response = await petHaulApi.post('/auth/findid', { phoneNumber })
       return response
-   } catch (error) {
-      console.error(`ID 조회 중 오류: ${error}`)
-      throw error
-   }
 }
 
 // 임시 비밀번호 발급 (로컬 회원)
 export const updatePassword = async ({ userId, phoneNumber }) => {
-   try {
       const response = await petHaulApi.post('/auth/updatepw', { userId, phoneNumber })
       return response
-   } catch (error) {
-      console.error(`임시 비밀번호 발급 중 오류: ${error}`)
-      throw error
-   }
 }
 
 // 회원 정보 수정
 export const updateMyInfo = async (data) => {
-   try {
       const response = await petHaulApi.put('/auth', data)
       return response
-   } catch (error) {
-      console.error(`회원 정보 수정 중 오류: ${error}`)
-      throw error
-   }
 }
 
 // 비밀번호 확인
 export const verifyPassword = async (password) => {
-   try {
       const response = await petHaulApi.post('/auth/verify', { password })
       return response
-   } catch (error) {
-      console.error(`비밀번호 확인 중 오류: ${error}`)
-      throw error
-   }
 }

@@ -1,0 +1,52 @@
+@import '../variables';
+
+.filter-chip {
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: $spacing-1 $spacing-2;
+  border-radius: $border-radius-lg;
+  transition: $transition-base;
+  cursor: pointer;
+  font-size: 13px;
+
+  &.active,
+  &:hover {
+    background-color: $primary-color;
+    color: #fff;
+  }
+}
+
+.price-input {
+  background-color: $accent-yellow;
+  border: 1px solid #000;
+  border-radius: $border-radius;
+  padding: $spacing-1 $spacing-2;
+}
+
+.search-input {
+  background-color: $accent-blue;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: $spacing-2 $spacing-3;
+}
+
+.navbar {
+  .btn-link {
+    color: $primary-color;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: $primary-color;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+
+  }
+}
+

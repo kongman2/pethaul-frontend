@@ -1,0 +1,22 @@
+// ContentGrid Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.content-grid {
+  display: grid;
+  gap: $spacing-3;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,11 +1,11 @@
-// src/api/contentApi.js
 import petHaulApi from './axiosApi'
 
 // 목록 조회 (페이지네이션)
-export const fetchContentsApi = async ({ page = 1, size = 10, tag, q } = {}) => {
+export const fetchContentsApi = async ({ page = 1, size = 10, tag, q, status } = {}) => {
    const params = { page, size }
    if (tag) params.tag = tag
    if (q) params.q = q
+   if (status) params.status = status
    const { data } = await petHaulApi.get('/contents', { params })
    return data // { list, page, size, total, hasMore }
 }

@@ -1,0 +1,21 @@
+@import '../../../../../styles/variables';
+@import '../../../../../styles/mixins';
+
+.survey-progress__container {
+  position: relative;
+  width: 100%;
+}
+
+.survey-progress__bar {
+  height: 16px;
+  border-radius: $border-radius;
+  background-color: $secondary-color;
+  overflow: visible;
+}
+
+.survey-progress__bar-fill {
+  background: $primary-color ;
+  border-radius: $border-radius;
+  position: relative;
+}
+

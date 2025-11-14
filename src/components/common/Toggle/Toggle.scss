@@ -1,0 +1,86 @@
+// Pethaul Toggle Component Styles
+// ================================================
+
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.pethaul-toggle-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+
+  .toggle-label {
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    color: $dark-color;
+  }
+}
+
+.pethaul-toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .pethaul-toggle__input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .pethaul-toggle__slider {
+      background-color: $primary-color;
+
+      &:before {
+        transform: translateX(20px);
+      }
+    }
+
+    &:focus + .pethaul-toggle__slider {
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &:disabled + .pethaul-toggle__slider {
+      background-color: rgba($dark-color, 0.2);
+      cursor: not-allowed;
+    }
+
+    &:disabled:checked + .pethaul-toggle__slider {
+      background-color: rgba($primary-color, 0.5);
+    }
+  }
+
+  .pethaul-toggle__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba($dark-color, 0.3);
+    transition: $transition-base;
+    border-radius: 24px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: $white;
+      transition: $transition-base;
+      border-radius: 50%;
+    }
+  }
+
+  &:hover:not(.pethaul-toggle--disabled) .pethaul-toggle__input:not(:checked) + .pethaul-toggle__slider {
+    background-color: rgba($dark-color, 0.4);
+  }
+}
+

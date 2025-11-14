@@ -1,0 +1,87 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-1;
+
+  &__button {
+    @include button-reset;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    color: $primary-color;
+    font-size: $font-size-base;
+    font-weight: 600;
+    transition: $transition-base;
+
+    &:hover:not(:disabled) {
+      border-radius: 50%;
+      background-color: rgba($primary-color, 0.08);
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba($primary-color, 0.15);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+    }
+  }
+
+  &__value {
+    min-width: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: $primary-color;
+  }
+
+  &__input {
+    width: 56px;
+    padding: $spacing-1 0;
+    text-align: center;
+    border: none;
+    background-color: $white;
+    border-radius: $border-radius;
+    font-weight: 600;
+    color: $primary-color;
+
+    &:focus {
+      outline: none;
+      border: 1px solid $border-color-light;
+    }
+  }
+
+  &--editable {
+    gap: $spacing-2;
+  }
+
+  &--compact {
+    gap: $spacing-1;
+
+    .quantity-control__button {
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+    }
+
+    .quantity-control__input {
+      width: 64px;
+    }
+  }
+
+}
+

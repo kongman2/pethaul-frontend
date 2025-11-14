@@ -1,47 +1,30 @@
-// src/api/itemApi.js
 import petHaulApi from './axiosApi'
 import qs from 'qs'
 
 // 상품 등록 (FormData 사용)
 export const createItem = async (formData) => {
-   try {
       const response = await petHaulApi.post('/item', formData, {
          headers: { 'Content-Type': 'multipart/form-data' },
       })
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 상품 수정 (FormData 사용)
 export const updateItem = async (id, formData) => {
-   try {
       const response = await petHaulApi.put(`/item/${id}`, formData, {
          headers: { 'Content-Type': 'multipart/form-data' },
       })
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 상품 삭제
 export const deleteItem = async (id) => {
-   try {
       const response = await petHaulApi.delete(`/item/${id}`)
       return response
-   } catch (error) {
-      console.error(`API Request 오류:${error}`)
-      throw error
-   }
 }
 
 // 전체 상품 리스트 가져오기
 export const getItems = async (data) => {
-   try {
       const { page, limit, searchTerm = '', sellCategory = [] } = data
       const activeCategories = Array.isArray(sellCategory)
          ? sellCategory.filter(Boolean) // ["강아지", "고양이"]
@@ -49,7 +32,7 @@ export const getItems = async (data) => {
          ? [sellCategory] // ["강아지"]
          : []
 
-      const response = await shopmaxApi.get('item', {
+      const response = await petHaulApi.get('item', {
          params: {
             page,
             limit,
@@ -60,21 +43,12 @@ export const getItems = async (data) => {
       })
 
       return response
-   } catch (error) {
-      console.error(`API Request 오류:${error}`)
-      throw error
-   }
 }
 
 // 특정 상품 가져오기
 export const getItemById = async (id) => {
-   try {
       const response = await petHaulApi.get(`/item/${id}`)
       return response
-   } catch (error) {
-      console.error(`API Request 오류:${error}`)
-      throw error
-   }
 }
 
 // // 조건별 데이터 조회 (회원용)
@@ -83,7 +57,6 @@ export const getItemById = async (id) => {
 //       const response = await shopmaxApi.get(`/item/all/main?limit=${limit}`)
 //       return response
 //    } catch (error) {
-//       console.error(`API Request 오류: ${error}`)
 //       throw error
 //    }
 // }
@@ -91,14 +64,25 @@ export const getItemById = async (id) => {
 // 조건별 데이터 조회 (회원용)
 export const fetchSortData = async (limit) => {
    try {
-      // ⬇️ 기존: GET /item/main?size=5 -> 404
-      // ⬇️ 수정: 서버 라우트에 맞춰 경로/파라미터 교정
       const response = await petHaulApi.get('/item/all/main', {
-         params: { limit }, // 서버가 limit로 받음
+         params: { limit },
       })
       return response
    } catch (error) {
-      console.error(`API Request 오류: ${error}`)
+      if (error.response?.status === 500) {
+      }
       throw error
+   }
+}
+
+// 인기 검색어 가져오기
+export const getPopularKeywords = async (limit = 4) => {
+   try {
+      const response = await petHaulApi.get('/item/popular-keywords', {
+         params: { limit },
+      })
+      return response.data?.keywords || []
+   } catch (error) {
+      return []
    }
 }

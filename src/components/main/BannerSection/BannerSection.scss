@@ -1,0 +1,441 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+#banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 650px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.banner-title {
+  font-size: $font-size-xxxxlarge;
+  font-family: $font-family-secondary;
+  animation: banner-title 3s forwards;
+}
+
+@keyframes banner-title {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.bannerbtn {
+  width: 320px;
+  background-color: #0077ff;
+  border-radius: 50px;
+  border: 1px solid $border-color;
+  color: $white;
+  padding: $spacing-2 30px;
+  transition: all 0.5s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    background-color: $white;
+    color: #0077ff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.img1,
+.img2,
+.img3,
+.img4,
+.img5,
+.img6,
+.img7,
+.img8,
+.img9,
+.img10 {
+  background: none;
+  position: absolute;
+}
+
+.img1 {
+  width: 11.67%;
+  top: 10.77%;
+  left: 25%;
+  animation: img1 2s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.img2 {
+  width: 27.5%;
+  top: 6.15%;
+  left: 37.5%;
+  animation: img2 2s ease-in-out infinite;
+}
+
+.img3 {
+  width: 25.25%;
+  top: 26.15%;
+  left: 58.33%;
+  animation: img3 2s ease-out infinite;
+  animation-delay: 0.5s;
+}
+
+.img4 {
+  width: 15%;
+  top: 10.77%;
+  left: 83.33%;
+  animation: img1 2s ease-out infinite;
+}
+
+.img5 {
+  width: 15%;
+  top: 64.62%;
+  left: 37.5%;
+  animation: img2 2s ease-out infinite;
+  animation-delay: 0.5s;
+}
+
+.img6 {
+  width: 5%;
+  top: 9.23%;
+  left: 41.67%;
+  animation: img4 2s ease-out infinite;
+}
+
+.img7 {
+  width: 5%;
+  top: 46.15%;
+  left: 83.33%;
+  animation: img3 2s ease-out infinite;
+  animation-delay: 0.5s;
+}
+
+.img8 {
+  width: 11.08%;
+  top: 73.85%;
+  left: 58.33%;
+  animation: img4 2s ease-out infinite;
+}
+
+.img9 {
+  width: 14.67%;
+  top: 66.15%;
+  left: 79.17%;
+  animation: img1 2s ease-out infinite;
+  animation-delay: 0.5s;
+}
+
+.img10 {
+  width: 10.08%;
+  top: 4.62%;
+  left: 70.83%;
+  animation: img3 2s ease-out infinite;
+}
+
+.click {
+  background: none;
+  position: absolute;
+  top: 66.15%;
+  left: 29.17%;
+  transform: rotate(-20deg);
+  animation: click 3s ease-out infinite;
+}
+
+.click-img {
+  background: none;
+  width: 60px;
+}
+
+.click-text {
+  text-align: center;
+  animation: click-text 3s infinite;
+}
+
+@keyframes img1 {
+  0% {
+    transform: rotate(-20deg);
+  }
+
+  25% {
+    transform: rotate(-25deg);
+  }
+
+  50% {
+    transform: rotate(-15deg);
+  }
+
+  75% {
+    transform: rotate(-23deg);
+  }
+
+  100% {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes img2 {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-5deg);
+  }
+
+  50% {
+    transform: rotate(5deg);
+  }
+
+  75% {
+    transform: rotate(-3deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes img3 {
+  0% {
+    transform: rotate(50deg);
+  }
+
+  25% {
+    transform: rotate(45deg);
+  }
+
+  50% {
+    transform: rotate(55deg);
+  }
+
+  75% {
+    transform: rotate(43deg);
+  }
+
+  100% {
+    transform: rotate(50deg);
+  }
+}
+
+@keyframes img4 {
+  0% {
+    transform: rotate(-140deg);
+  }
+
+  25% {
+    transform: rotate(-145deg);
+  }
+
+  50% {
+    transform: rotate(-135deg);
+  }
+
+  75% {
+    transform: rotate(-143deg);
+  }
+
+  100% {
+    transform: rotate(-140deg);
+  }
+}
+
+@keyframes click {
+  0% {
+    transform: translateX(0);
+  }
+
+  75% {
+    transform: rotate(-20deg) translateX(-100px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes click-text {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  75% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  #banner {
+    height: 500px;
+  }
+
+  .banner-title {
+    font-size: 48px;
+    text-align: center;
+  }
+
+  .bannerbtn {
+    width: 260px;
+    padding: 8px 24px;
+    font-size: $font-size-base;
+    margin: 0 auto;
+  }
+
+  .img1 {
+    width: 14%;
+    top: 9%;
+    left: 26%;
+  }
+
+  .img2 {
+    width: 25%;
+    top: 67%;
+    left: 6%;
+  }
+
+  .img3 {
+    width: 22%;
+    top: 28%;
+    left: 79%;
+  }
+
+  .img4 {
+    width: 12%;
+    top: 9%;
+    left: 76%;
+  }
+
+  .img5 {
+    width: 12%;
+    top: 74%;
+    left: 40%;
+  }
+
+  .img6 {
+    width: 4%;
+    top: 10%;
+    left: 12%;
+  }
+
+  .img7 {
+    width: 4%;
+    top: 70%;
+    left: 84%;
+  }
+
+  .img8 {
+    width: 10%;
+    top: 33%;
+    left: 9%;
+  }
+
+  .img9 {
+    width: 12%;
+    top: 83%;
+    left: 70%;
+  }
+
+  .img10 {
+    width: 9%;
+    top: 5%;
+    left: 60%;
+  }
+
+  .click {
+    top: 60%;
+    left: 70%;
+  }
+}
+
+@media (max-width: 767px) {
+  #banner {
+    height: 500px;
+  }
+
+  .banner-title {
+    font-size: 32px;
+  }
+
+  .bannerbtn {
+    width: 200px;
+    padding: 8px $spacing-3;
+    font-size: 14px;
+    margin: $spacing-3 auto 0;
+  }
+
+  .click-img {
+    width: 40px;
+  }
+
+  .click-text {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 640px) {
+  .img1 {
+    width: 15%;
+    top: 10%;
+    left: 28%;
+  }
+
+  .img2 {
+    width: 33%;
+    top: 75%;
+    left: 6%;
+  }
+
+  .img3 {
+    width: 28%;
+    top: 25%;
+    left: 73%;
+  }
+
+  .img4 {
+    width: 14%;
+    top: 11%;
+    left: 80%;
+  }
+
+  .img5 {
+    width: 14%;
+    top: 74%;
+    left: 48%;
+  }
+
+  .img6 {
+    width: 7%;
+    top: 10%;
+    left: 12%;
+  }
+
+  .img7 {
+    width: 7%;
+    top: 70%;
+    left: 84%;
+  }
+
+  .img8 {
+    width: 12%;
+    top: 33%;
+    left: 9%;
+  }
+
+  .img9 {
+    width: 20%;
+    top: 85%;
+    left: 66%;
+  }
+
+  .img10 {
+    width: 13%;
+    top: 5%;
+    left: 60%;
+  }
+
+  .click {
+    top: 60%;
+    left: 78%;
+  }
+}
+

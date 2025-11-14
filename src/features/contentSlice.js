@@ -1,4 +1,3 @@
-// src/features/contentSlice.js — merged & cleaned (no ContentImage table)
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import {
   fetchContentsApi,

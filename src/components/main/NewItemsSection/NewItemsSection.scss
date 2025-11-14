@@ -1,0 +1,11 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+#ss-new {
+  z-index: 4;
+}
+
+#ss-new .item-card {
+  min-height: 100%;
+}
+

@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { useState } from 'react'
-import '../css/qna/QnAForm.css'
+
+import { Input, Textarea, Button, SectionCard, AlertModal } from '../common'
+import { useModalHelpers } from '../../hooks/useModalHelpers'
 
 function QnABase({ mode = 'create', initialData, onSubmit }) {
+   const { alert, alertModal } = useModalHelpers()
    const [title, setTitle] = useState(initialData?.title ?? '문의 드립니다.')
    const [content, setContent] = useState(initialData?.content ?? '')
    const [submitting, setSubmitting] = useState(false)
@@ -26,8 +28,8 @@ function QnABase({ mode = 'create', initialData, onSubmit }) {
    const handleSubmit = async (e) => {
       e.preventDefault()
 
-      if (!title) return alert('제목을 입력하세요.')
-      if (!content) return alert('문의 내용을 입력하세요.')
+      if (!title) return alert('제목을 입력하세요.', '입력 필요', 'warning')
+      if (!content) return alert('문의 내용을 입력하세요.', '입력 필요', 'warning')
 
       const data = { title, content }
 
@@ -38,42 +40,53 @@ function QnABase({ mode = 'create', initialData, onSubmit }) {
       <section id="qna-section">
          <h1 className="section-title">1:1 문의</h1>
 
-         <div className="contents-card">
-            <div className="card-header">
-               <div className="window-btn">
-                  <span className="red"></span>
-                  <span className="green"></span>
-                  <span className="blue"></span>
-               </div>
-               <span className="card-title">문의사항을 입력해주세요.</span>
-            </div>
-            <div className="create-qna">
+         <SectionCard title="문의사항을 입력해주세요.">
                <form onSubmit={handleSubmit}>
                   {/* 문의 제목 */}
-                  <div className="qna-input-section">
-                     <p>제목</p>
-                     <input className="qna-title" placeholder="제목을 작성하세요." value={title} onChange={(e) => setTitle(e.target.value)} required />
-                     {/* 문의 내용 */}
+                  <div className="mb-3">
+                     <p className="form-label">제목</p>
+                     <Input
+                        type="text"
+                        value={title}
+                        onChange={setTitle}
+                        placeholder="제목을 작성하세요."
+                        required
+                        className="qna-title"
+                     />
                   </div>
                   <div className="qna-input-section">
-                     <p>내용</p>
-                     <textarea className="qna-textarea" placeholder="여기에 문의 내용을 작성하세요. (최소 1자)" value={content} onChange={(e) => setContent(e.target.value)} rows={5} required />
+                     <p className="form-label">내용</p>
+                     <Textarea
+                        value={content}
+                        onChange={setContent}
+                        placeholder="여기에 문의 내용을 작성하세요. (최소 1자)"
+                        rows={5}
+                        required
+                        className="qna-textarea"
+                     />
                   </div>
 
                   {/* 제출 */}
-                  <button
+                  <div className="d-flex justify-content-end mt-3">
+                  <Button
                      type="submit"
-                     className="submit-btn"
+                     variant="primary"
+                     size="lg"
                      disabled={submitting}
-                     onClick={() => {
-                        console.log('✅ submit button clicked')
-                     }}
                   >
                      {submitting ? (formMode == 'edit' ? '수정 중...' : '등록 중...') : finalSubmitLabel}
-                  </button>
+                  </Button>
+                  </div>
                </form>
-            </div>
-         </div>
+         </SectionCard>
+         <AlertModal
+            open={alertModal.isOpen}
+            onClose={alertModal.close}
+            title={alertModal.config.title}
+            message={alertModal.config.message}
+            buttonText={alertModal.config.buttonText}
+            variant={alertModal.config.variant}
+         />
       </section>
    )
 }

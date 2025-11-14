@@ -1,44 +1,27 @@
-// src/api/reviewApi.js
 import petHaulApi from './axiosApi'
 
 // 리뷰 등록
 export const createReview = async (formData) => {
-   try {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const response = await petHaulApi.post('/review', formData, config)
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 리뷰 수정
 export const updateReview = async (formData, id) => {
-   try {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const response = await petHaulApi.put(`/review/edit/${id}`, formData, config)
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 리뷰 삭제
 export const deleteReview = async (id) => {
-   try {
       const response = await petHaulApi.delete(`review/${id}`)
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 회원이 작성한 리뷰 목록 조회
 export const getUserReview = async (opts = {}) => {
-   try {
       const { page, limit } = opts
       const params = {}
       if (page != null) params.page = page
@@ -47,10 +30,6 @@ export const getUserReview = async (opts = {}) => {
          params,
       })
       return response
-   } catch (error) {
-      console.error(`API Request 오류: ${error}`)
-      throw error
-   }
 }
 
 // 최신 리뷰 목록 — /review/latest 만 사용
@@ -95,7 +74,6 @@ export const getLatestReviews = async (params = {}) => {
             },
          }
       }
-      console.error('API Request 오류:', error)
       throw error
    }
 }

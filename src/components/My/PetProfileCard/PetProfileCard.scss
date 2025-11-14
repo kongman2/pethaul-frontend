@@ -1,0 +1,77 @@
+// PetProfile Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.my-pet-card {
+  border-radius: $border-radius-lg;
+  background: linear-gradient(to bottom right, rgba($accent-yellow, 0.9), rgba($accent-blue, 0.9));
+  overflow: hidden;
+}
+
+.petprofile-change {
+  img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 6px 20px rgba($primary-color, 0.15);
+  }
+
+  &__edit {
+    font-size: $font-size-small;
+    font-weight: 600;
+    color: $primary-color;
+    text-decoration: underline;
+
+    &:hover {
+      color: darken($primary-color, 8%);
+    }
+  }
+}
+
+.petprofile-info {
+  &__name {
+    font-size: $font-size-large;
+    font-weight: 700;
+    color: $primary-color;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: $text-color-secondary;
+
+    li {
+      font-size: $font-size-medium;
+    }
+  }
+}
+
+.petprofile-survey-action {
+  .petprofile-survey-btn {
+    transition: all 0.3s ease;
+    font-weight: 600;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.2);
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .petprofile-change {
+    img {
+      width: 140px;
+      height: 140px;
+    }
+  }
+
+  .petprofile-info {
+    &__meta li {
+      font-size: 0.9rem;
+    }
+  }
+}
+

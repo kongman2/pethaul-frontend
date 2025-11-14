@@ -1,10 +1,6 @@
-// src/features/reviewSlice.js
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
-import { createReview, updateReview, getUserReview, deleteReview, getLatestReviews } from '../api/reviewApi'
 
-/* =========================
-   최신 리뷰 목록
-   ========================= */
+import { createReview, updateReview, getUserReview, deleteReview, getLatestReviews } from '../api/reviewApi'
 export const fetchNewReviewsThunk = createAsyncThunk('review/fetchNewList', async (params = {}, { rejectWithValue }) => {
    try {
       const res = await getLatestReviews(params) // axios response
@@ -14,9 +10,6 @@ export const fetchNewReviewsThunk = createAsyncThunk('review/fetchNewList', asyn
    }
 })
 
-/* =========================
-   기존 CRUD & 내 리뷰
-   ========================= */
 // 리뷰 등록하기
 export const createReviewThunk = createAsyncThunk('review/createReview', async (formData, { rejectWithValue }) => {
    try {
@@ -60,7 +53,6 @@ export const getUserReviewThunk = createAsyncThunk('review/getUserReview', async
 export const reviewSlice = createSlice({
    name: 'review',
    initialState: {
-      // ✅ 최신 리뷰 리스트용 (NewContents 패턴)
       list: [],
       page: 1,
       size: 10,
@@ -69,7 +61,6 @@ export const reviewSlice = createSlice({
       listLoading: false,
       listError: null,
 
-      // ✅ 기존 상태 유지
       review: null, // 단일 리뷰
       reviews: [], // 회원의 리뷰 모음 등 기존 리스트
       loading: false, // CRUD/내 리뷰 로딩

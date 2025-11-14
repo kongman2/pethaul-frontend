@@ -1,0 +1,26 @@
+// AdminContentForm Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.admin-content-form {
+  // Selector 드롭다운이 SectionCard의 overflow:hidden에 잘리지 않도록
+  overflow: visible !important;
+
+  .row {
+    overflow: visible !important;
+  }
+
+  .col-12,
+  .col-md-6 {
+    overflow: visible !important;
+  }
+
+  // Form label 스타일
+  .form-label {
+    &.fw-semibold {
+      font-weight: 600;
+      color: $dark-color;
+      margin-bottom: $spacing-2;
+    }
+  }
+}

@@ -1,12 +1,6 @@
-// =============================
-// File: src/features/authSlice.js
-// =============================
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { registerUser, loginUser, logoutUser, checkAuthStatus, googleLoginUser, googleCheckStatus, findId, updatePassword, updateMyInfo, verifyPassword } from '../api/authApi'
 
-// -----------------------------
-// helpers
-// -----------------------------
+import { registerUser, loginUser, logoutUser, checkAuthStatus, googleLoginUser, googleCheckStatus, findId, updatePassword, updateMyInfo, verifyPassword } from '../api/authApi'
 const normalizeAuthPayload = (raw) => {
    // 허용 형태: axios res, res.data, 혹은 이미 얕은 객체
    const p = raw?.data ?? raw ?? {}
@@ -137,9 +131,6 @@ export const verifyPasswordThunk = createAsyncThunk('auth/verifyPassword', async
    }
 })
 
-// -----------------------------
-// ✅ 통합 상태 점검(레이스 방지)
-// -----------------------------
 export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async (_, { dispatch }) => {
    const [localRes, googleRes] = await Promise.allSettled([dispatch(checkAuthStatusThunk()).unwrap(), dispatch(googleCheckStatusThunk()).unwrap()])
 
@@ -243,7 +234,6 @@ const authSlice = createSlice({
             state.error = action.payload
          })
 
-         // ⚠️ 개별 체크(rejected)에서 즉시 false로 돌리지 않음 — 통합 썽크가 최종판단
          .addCase(googleCheckStatusThunk.pending, (state) => {
             state.loading = true
             state.error = null
@@ -277,7 +267,6 @@ const authSlice = createSlice({
             // 여기서도 강제 false 처리 금지
          })
 
-         // ✅ 통합 체크 — 최종 판단자
          .addCase(checkUnifiedAuthThunk.pending, (state) => {
             state.loading = true
          })
@@ -291,6 +280,10 @@ const authSlice = createSlice({
             state.isAuthenticated = isAuthenticated
             state.user = user
             state.googleAuthenticated = !!googleAuthenticated
+         })
+         .addCase(checkUnifiedAuthThunk.rejected, (state) => {
+            state.loading = false
+            // rejected 시에도 기존 인증 상태 유지 (네트워크 오류 등)
          })
          // 아이디 찾기
          .addCase(findIdThunk.pending, (state) => {

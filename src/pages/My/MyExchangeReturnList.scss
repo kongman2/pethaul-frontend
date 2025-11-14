@@ -1,0 +1,34 @@
+.exchange-return-info {
+  .small {
+    font-size: 0.875rem;
+  }
+}
+
+.exchange-return-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+
+  .exchange-return-summary {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .exchange-return-details {
+    background: #f8f9fa;
+    animation: slideDown 0.3s ease;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

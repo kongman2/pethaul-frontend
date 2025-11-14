@@ -1,0 +1,58 @@
+// Profile Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.profile-card {
+  width: 100%;
+}
+
+.profile-card__avatar {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid $border-color-light;
+}
+
+.profile-card__edit-link {
+  @include button-reset;
+  padding: $spacing-1 $spacing-3;
+  width: 100%;
+  max-width: 200px;
+  border-radius: 999px;
+  background: $primary-color;
+  color: $white;
+  font-size: $font-size-small;
+  font-weight: 600;
+  transition: $transition-fast;
+
+  &:hover,
+  &:focus {
+    background: darken($primary-color, 6%);
+    color: $white;
+  }
+}
+
+.profile-card__info {
+  font-size: $font-size-small;
+}
+
+.profile-card__label {
+  display: inline-block;
+  min-width: 64px;
+  margin-right: $spacing-1;
+  color: $text-color-secondary;
+  font-weight: 600;
+}
+
+.profile-card--loading {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  .profile-card__visual,
+  .profile-card__info {
+    width: 100%;
+  }
+}
+

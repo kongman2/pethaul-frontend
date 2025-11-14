@@ -1,0 +1,72 @@
+@import '../../../styles/_variables';
+
+.sort-dropdown {
+  position: relative;
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-1;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    background: none;
+    color: $dark-color;
+    font-size: $font-size-small;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    
+
+    &:hover,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    min-width: 160px;
+    padding: 0.5rem;
+    border-radius: $border-radius;
+    background: $white;
+    box-shadow: $box-shadow-sm;
+    border: 1px solid $border-color;
+    z-index: 3000;
+    display: grid;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+  }
+
+  &__item {
+    width: 100%;
+    text-align: left;
+    padding: 0.25rem 0.5rem;
+    border-radius: $border-radius;
+    background: transparent;
+    border: none;
+    font-size: $font-size-small;
+    color: $text-color-secondary;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease $transition-fast;
+
+    &:hover,
+    &:focus {
+      background: $accent-yellow;
+      color: $black;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    &.is-active {
+      background: $accent-yellow;
+      color: $black;
+      transform: translateY(0);
+      font-weight: 600;
+    }
+  }
+}
+

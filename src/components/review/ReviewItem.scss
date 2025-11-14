@@ -1,0 +1,39 @@
+// ReviewItem Styles
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.review-slide-compact {
+  border-radius: $border-radius;
+  transition: all 0.3s ease;
+
+  &__image {
+    z-index: 1;
+  }
+
+  &__default {
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+    transition: opacity 0.3s ease;
+  }
+
+  &__overlay {
+    z-index: 3;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &:hover {
+    .review-slide-compact__default {
+      opacity: 0;
+    }
+
+    .review-slide-compact__overlay {
+      background: rgba(0, 0, 0, 0.75);
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+

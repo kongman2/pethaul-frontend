@@ -1,0 +1,51 @@
+@import '../../../../../styles/variables';
+@import '../../../../../styles/mixins';
+
+.survey-option-btn {
+  text-align: center;
+}
+
+.survey-option-btn--male {
+  &.pethaul-btn--outline {
+    border-color: #4a90e2;
+    color: #4a90e2;
+
+    &:hover {
+      background-color: #4a90e2;
+      color: $white;
+    }
+  }
+
+  &.pethaul-btn--primary {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+    color: $white;
+
+    &:hover {
+      background-color: #3a7bc8;
+    }
+  }
+}
+
+.survey-option-btn--female {
+  &.pethaul-btn--outline {
+    border-color: #ff69b4;
+    color: #ff69b4;
+
+    &:hover {
+      background-color: #ff69b4;
+      color: $white;
+    }
+  }
+
+  &.pethaul-btn--primary {
+    background-color: #ff69b4;
+    border-color: #ff69b4;
+    color: $white;
+
+    &:hover {
+      background-color: #e55a9f;
+    }
+  }
+}
+

@@ -1,0 +1,40 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.order-page {
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+
+  .order-card {
+    &--delivery,
+    &--payment,
+    &--summary {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-2;
+    }
+
+  }
+
+  .order-summary__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .order-summary__payable {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $primary-color;
+  }
+
+  .pay-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+}
+
+

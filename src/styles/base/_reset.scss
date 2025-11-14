@@ -1,0 +1,23 @@
+@import '../variables';
+
+// Base resets & typography
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: $font-family-base;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+

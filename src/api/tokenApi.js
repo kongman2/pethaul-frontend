@@ -7,7 +7,6 @@ export const getToken = async () => {
 
       return response
    } catch (error) {
-      console.error(`API Request 오류: ${error}`)
       throw error
    }
 }
@@ -18,7 +17,6 @@ export const readToken = async () => {
       const response = await petHaulApi.get('/token/read')
       return response
    } catch (error) {
-      console.error(`API Request 오류: ${error}`)
       throw error
    }
 }
@@ -29,7 +27,6 @@ export const refreshToken = async () => {
       const response = await petHaulApi.get('/token/refresh')
       return response
    } catch (error) {
-      console.error(`API Request 오류: ${error}`)
       throw error
    }
 }
@@ -40,7 +37,6 @@ export const checkTokenStatus = async () => {
       const response = await petHaulApi.get('/token/checkTokenStatus')
       return response
    } catch (error) {
-      console.error(`API Request 오류: ${error}`)
       throw error
    }
 }

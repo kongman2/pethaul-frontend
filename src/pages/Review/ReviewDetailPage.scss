@@ -1,0 +1,27 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.review-detail-page {
+  .review-detail__main-image {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $white;
+    border: 1px solid $border-color-light;
+    border-radius: $border-radius;
+  }
+
+  .review-detail__thumb {
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &.active {
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+    }
+  }
+}
+

@@ -1,6 +1,5 @@
-// src/features/orderSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { createOrder, getOrders, getOrderById, cancelOrder, updateOrderStatus, fetchAllOrders } from '../api/orderApi'
+import { createOrder, getOrders, getOrderById, cancelOrder, updateOrderStatus, fetchAllOrders, confirmPurchase } from '../api/orderApi'
 
 // 주문 생성 Thunk
 export const createOrderThunk = createAsyncThunk('order/createOrder', async (orderData, { rejectWithValue }) => {
@@ -52,12 +51,25 @@ export const updateOrderStatusThunk = createAsyncThunk('order/updateOrderStatus'
    }
 })
 
+// 구매 확정 Thunk
+export const confirmPurchaseThunk = createAsyncThunk('order/confirmPurchase', async (orderId, { rejectWithValue }) => {
+   try {
+      const response = await confirmPurchase(orderId)
+      return response.data
+   } catch (error) {
+      return rejectWithValue(error.response?.data?.message || '구매 확정 실패')
+   }
+})
+
 //관리자용 전체 주문 조회 Thunk
 export const fetchAllOrdersThunk = createAsyncThunk('order/fetchAllOrders', async (sort, { rejectWithValue }) => {
    try {
       const response = await fetchAllOrders(sort)
       return response.data
    } catch (error) {
+      if (error.response?.status === 404) {
+         return { orders: [], pagination: null }
+      }
       return rejectWithValue(error.response?.data?.message || '주문 조회 실패')
    }
 })
@@ -162,6 +174,23 @@ const orderSlice = createSlice({
             state.orders = action.payload.orders
          })
          .addCase(fetchAllOrdersThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+         })
+         // 구매 확정
+         .addCase(confirmPurchaseThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(confirmPurchaseThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.successMessage = action.payload.message
+            // 구매 확정된 주문 상태 업데이트
+            state.orders = state.orders.map((order) =>
+               order.id === action.payload.order.id ? { ...order, isPurchaseConfirmed: true } : order
+            )
+         })
+         .addCase(confirmPurchaseThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
          })

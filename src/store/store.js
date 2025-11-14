@@ -10,6 +10,7 @@ import petReducer from '../features/petSlice'
 import filterReducer from '../features/filterSlice'
 import contentReducer from '../features/contentSlice'
 import qnaReducer from '../features/qnaSlice'
+import exchangeReturnReducer from '../features/exchangeReturnSlice'
 const store = configureStore({
    reducer: {
       auth: authReducer,
@@ -23,6 +24,7 @@ const store = configureStore({
       filter: filterReducer,
       content: contentReducer,
       qna: qnaReducer,
+      exchangeReturn: exchangeReturnReducer,
    },
 })
 

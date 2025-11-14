@@ -1,0 +1,245 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.rich-text-editor {
+  width: 100%;
+
+  .form-label {
+    font-weight: 600;
+    color: $dark-color;
+    margin-bottom: $spacing-2;
+  }
+
+  .invalid-feedback {
+    color: $danger-color;
+    font-size: $font-size-small;
+  }
+}
+
+.editor-wrapper {
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background-color: $accent-yellow;
+  overflow: hidden;
+  transition: $transition-base;
+
+  &:focus-within {
+    border-color: $primary-color;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  }
+
+  &.has-error {
+    border-color: $danger-color;
+
+    &:focus-within {
+      box-shadow: 0 0 4px rgba($danger-color, 0.3);
+    }
+  }
+}
+
+// 툴바
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-1;
+  padding: $spacing-2;
+  background-color: rgba($white, 0.5);
+  border-bottom: 1px solid $border-color;
+
+  .toolbar-group {
+    display: flex;
+    gap: 2px;
+  }
+
+  .toolbar-divider {
+    width: 1px;
+    background-color: $border-color;
+    margin: 0 $spacing-1;
+  }
+
+  button {
+    padding: $spacing-1 $spacing-2;
+    border: none;
+    border-radius: $border-radius-sm;
+    background-color: transparent;
+    color: $primary-color;
+    font-size: $font-size-small;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition-fast;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
+    }
+
+    &.is-active {
+      background-color: $primary-color;
+      color: $white;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// 에디터 컨텐츠
+.pethaul-editor-content {
+  padding: $spacing-3;
+  min-height: 200px;
+  max-height: 500px;
+  overflow-y: auto;
+  font-size: $font-size-small;
+  color: $primary-color;
+  line-height: 1.6;
+
+  &:focus {
+    outline: none;
+  }
+
+  // placeholder 스타일
+  .tiptap.ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: rgba($black, 0.5);
+    pointer-events: none;
+    height: 0;
+  }
+
+  // 기본 텍스트 스타일
+  p {
+    margin-bottom: $spacing-2;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // 제목
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: $spacing-3;
+    margin-bottom: $spacing-2;
+    color: $primary-color;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: $spacing-3;
+    margin-bottom: $spacing-2;
+    color: $primary-color;
+  }
+
+  // 리스트
+  ul,
+  ol {
+    padding-left: $spacing-4;
+    margin-bottom: $spacing-2;
+
+    li {
+      margin-bottom: $spacing-1;
+    }
+  }
+
+  // 링크
+  a.editor-link {
+    color: $primary-color;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      color: darken($primary-color, 10%);
+    }
+  }
+
+  // 이미지
+  img.editor-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: $border-radius-sm;
+    margin: $spacing-2 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  // 굵게
+  strong {
+    font-weight: 700;
+  }
+
+  // 기울임
+  em {
+    font-style: italic;
+  }
+
+  // 취소선
+  s {
+    text-decoration: line-through;
+  }
+
+  // 코드 블록
+  pre {
+    background-color: rgba($black, 0.05);
+    border-radius: $border-radius-sm;
+    padding: $spacing-2;
+    margin: $spacing-2 0;
+    overflow-x: auto;
+
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+  }
+
+  // 인라인 코드
+  code {
+    background-color: rgba($black, 0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+
+  // 인용구
+  blockquote {
+    border-left: 3px solid $primary-color;
+    padding-left: $spacing-3;
+    margin-left: 0;
+    margin-bottom: $spacing-2;
+    font-style: italic;
+    color: rgba($primary-color, 0.8);
+  }
+
+  // 수평선
+  hr {
+    border: none;
+    border-top: 2px solid $border-color;
+    margin: $spacing-4 0;
+  }
+}
+
+// 반응형
+@media (max-width: 576px) {
+  .editor-toolbar {
+    padding: $spacing-1;
+    gap: 4px;
+
+    button {
+      padding: 6px $spacing-1;
+      font-size: 0.75rem;
+    }
+
+    .toolbar-divider {
+      display: none;
+    }
+  }
+
+  .pethaul-editor-content {
+    padding: $spacing-2;
+    min-height: 150px;
+  }
+}
+

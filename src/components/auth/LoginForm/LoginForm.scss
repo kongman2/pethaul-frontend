@@ -1,0 +1,31 @@
+// LoginForm Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.find-section {
+  font-size:  $font-size-small;
+
+  .find-link {
+    color: $text-color-secondary;
+    text-decoration: none;
+    position: relative;
+    padding: 0 $spacing-2;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 14px;
+      background-color: $border-color;
+    }
+  }
+}
+

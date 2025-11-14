@@ -1,0 +1,9 @@
+@import '../../styles/variables';
+
+// QnAListPage 전용 스타일 (qna-footer만)
+.qna-footer {
+  margin-top: $spacing-4;
+  display: flex;
+  justify-content: flex-end;
+}
+

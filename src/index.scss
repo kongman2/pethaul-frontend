@@ -1,0 +1,20 @@
+@import './styles/globals';
+
+.app-main {
+  position: relative;
+  z-index: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+  background-color: var(--app-bg-color, $accent-yellow);
+  background-image: var(--app-bg-image, none);
+  background-repeat: var(--app-bg-repeat, repeat);
+  background-size: var(--app-bg-size, auto);
+  background-position: var(--app-bg-position, center top);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main__content {
+  flex: 1 1 auto;
+  margin-top: 74px;
+}

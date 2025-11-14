@@ -1,0 +1,296 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.filter-form {
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-2;
+  }
+
+  &__actions--inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-2;
+
+    .filter-form__stock-toggle {
+      display: flex;
+      align-items: center;
+      gap: $spacing-1;
+    }
+
+    .filter-form__actions-buttons {
+      display: flex;
+      gap: $spacing-1;
+    }
+  }
+
+  &--item {
+    .card {
+      background-color: rgba($accent-yellow, 0.1);
+    }
+  }
+}
+// FilterForm Styles
+
+.filter-form {
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__toggle {
+    @include button-reset;
+    padding: 4px;
+  }
+  &--item &__panel {
+    margin-top: 0;
+  }
+.section-card {
+  .filter-form {
+    margin-bottom: $spacing-3;
+  }
+
+  .filter-form__header {
+    margin-bottom: $spacing-2;
+  }
+}
+
+  &__row {
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &--grow {
+      flex: 1 1 240px;
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $text-color-muted;
+    margin-bottom: 5px;
+  }
+
+  // 카테고리 칩
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__chip {
+    @include chip-base;
+  }
+
+  // 가격 필터
+  &__price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-1;
+  }
+
+  &__price-input {
+    width: 140px;
+    max-width: 160px;
+  }
+
+  &__dash {
+    color: $text-color-secondary;
+  }
+
+  // 세그먼트 버튼
+  &__segmented {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__seg-btn {
+    @include chip-base;
+  }
+
+  // Select
+  &__select {
+    @include input-base;
+    background-color: $accent-yellow;
+    cursor: pointer;
+  }
+
+  // Input
+  &__input {
+    @include input-base;
+    background-color: $accent-blue;
+  }
+
+  // 재고 토글
+  &__stock-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    input:checked + .filter-form__slider {
+      background-color: $primary-color;
+
+      &:before {
+        transform: translateX(20px);
+      }
+    }
+  }
+
+  &__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 20px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: $white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+  }
+
+  &__switch-label {
+    font-size: 13px;
+    color: #444;
+  }
+
+  // 액션 버튼
+  &__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  &__btn-primary {
+    @include button-reset;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $border-radius;
+    background-color: $primary-color;
+    color: $white;
+    font-size: 13px;
+    transition: $transition-base;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &__btn-ghost {
+    @include button-reset;
+    font-size: 13px;
+    color: $text-color-secondary;
+
+    &:hover {
+      color: $black;
+    }
+  }
+
+  &__btn-subtle {
+    @include chip-base;
+    margin: 5px 0;
+
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
+  // 활성 필터 칩
+  &__active-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__chip-removable {
+    @include button-reset;
+    font-size: 13px;
+    background-color: rgba($white, 0.6);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    padding: $spacing-1 $spacing-2;
+    border-radius: $border-radius-lg;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    &:hover {
+      background-color: rgba($white, 0.9);
+    }
+  }
+
+  &__chip-x {
+    margin-left: 5px;
+    font-weight: bold;
+    color: $text-color-secondary;
+  }
+
+  &__row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-1;
+    margin-bottom: 6px;
+  }
+
+  &__row--inline {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+// 반응형
+@media (max-width: 767px) {
+  .filter-form {
+    &__active-chips {
+      margin-bottom: 0;
+    }
+  }
+}
+

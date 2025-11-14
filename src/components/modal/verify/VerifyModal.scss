@@ -1,0 +1,65 @@
+// VerifyModal Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.verify-modal__body {
+  display: grid;
+  gap: 12px;
+}
+
+.verify-modal__form {
+  display: grid;
+  gap: 12px;
+}
+
+.verify-modal__label {
+    font-size: 14px;
+    color: $text-color-muted;
+  }
+
+.verify-modal__input {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+  width: 100%;
+
+    &:focus {
+      border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.12);
+  }
+}
+
+.verify-modal__msg {
+  margin: 0;
+  padding: $spacing-2;
+  border-radius: $border-radius;
+  font-size: $font-size-small;
+
+  &--error {
+  color: #d32f2f;
+    background: rgba(#d32f2f, 0.1);
+}
+
+  &--success {
+  color: #059669;
+    background: rgba(#059669, 0.1);
+  }
+}
+
+.verify-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-2;
+  margin-top: 8px;
+}
+
+.verify-modal__social {
+  display: grid;
+  gap: $spacing-2;
+  text-align: center;
+  font-size: $font-size-small;
+  color: $text-color-secondary;
+}
+

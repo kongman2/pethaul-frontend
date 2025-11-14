@@ -1,0 +1,283 @@
+// CommonSlider Styles
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+// ============================================
+// 공통 슬라이더 스타일
+// ============================================
+
+// 슬라이드 그림자/모서리 안 잘리게
+.common-viewport {
+  .swiper,
+  .swiper-wrapper,
+  .swiper-slide {
+    overflow: visible;
+  }
+
+  // 페이지네이션 항상 위로
+  .swiper-pagination {
+    z-index: 5;
+    pointer-events: auto;
+
+    // 세로 슬라이더일 때 오른쪽 중앙에 점들
+    &.swiper-pagination-vertical {
+      right: 8px;
+      left: auto;
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+
+    // 가로 슬라이더 대비
+    &:not(.swiper-pagination-vertical) {
+      bottom: 8px;
+    }
+  }
+
+  // 불릿 스타일
+  .swiper-pagination-bullet {
+    background-color: $secondary-color;
+    opacity: 1;
+    transition: $transition-base;
+
+    &-active {
+      background-color: $primary-color;
+      opacity: 1;
+    }
+  }
+}
+
+// ============================================
+// 가로 슬라이더 공통 스타일
+// ============================================
+.commmon-horizontal {
+  .swiper-pagination {
+    bottom: $spacing-2;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: $spacing-1;
+    justify-content: center;
+    padding: $spacing-1 $spacing-2;
+    background: rgba($black, 0.3);
+    border-radius: $border-radius;
+    backdrop-filter: blur(4px);
+    width: auto;
+  }
+  
+  .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    margin: 0;
+    background-color: rgba($white, 0.5);
+    transition: $transition-base;
+    
+    &-active {
+      width: 24px;
+      border-radius: 4px;
+      background-color: $white;
+    }
+  }
+}
+
+// ============================================
+// NewContentsSlider 전용 스타일
+// ============================================
+.new-contents-slider {
+  .commmon-slide {
+    display: flex;
+    align-items: stretch;
+    
+    > * {
+      width: 100%;
+    }
+  }
+  
+  .promotion-slide {
+    position: relative;
+    border-radius: 0 0 $border-radius $border-radius;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: $black;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+    isolation: isolate;
+
+    &__image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1);
+        transition: transform 0.6s ease;
+      }
+    }
+
+    &__overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      padding: clamp($spacing-4, 5vw, $spacing-6);
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-3;
+      justify-content: flex-end;
+      color: $white;
+      background: linear-gradient(180deg, rgba($black, 0) 0%, rgba($black, 0.75) 100%);
+      transform: translateY(0);
+      opacity: 1;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    &__eyebrow {
+      margin: 0;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      font-weight: 700;
+      color: rgba($white, 0.7);
+    }
+
+    &__title {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    &__description {
+      margin: 0;
+      font-size: 0.95rem;
+      color: rgba($white, 0.85);
+      line-height: 1.6;
+    }
+
+    &:hover {
+      .promotion-slide__image img {
+        transform: scale(1.05);
+      }
+
+      .promotion-slide__overlay {
+        background: linear-gradient(180deg, rgba($black, 0) 0%, rgba($black, 0.85) 100%);
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .promotion-slide {
+      &__overlay {
+        gap: $spacing-2;
+        padding: clamp($spacing-3, 6vw, $spacing-4);
+      }
+      
+      &__title {
+        font-size: clamp(1.5rem, 5vw, 1.8rem);
+      }
+      
+      &__description {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+// ============================================
+// ReviewSlider 전용 스타일
+// ============================================
+.review-card__text {
+  margin: 0;
+  color: $dark-color;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+// ============================================
+// PetProfileSlider 전용 스타일
+// ============================================
+.petprofile-slider {
+  // 페이지네이션 숨기기
+  .swiper-pagination {
+    display: none !important;
+  }
+
+  .petprofile-nav-prev,
+  .petprofile-nav-next {
+    @include button-reset;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($white, 0.9);
+    border-radius: 50%;
+    box-shadow: $box-shadow-sm;
+    transition: $transition-base;
+    color: $primary-color;
+
+    &:hover {
+      background: $white;
+      box-shadow: $box-shadow-md;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  .petprofile-nav-prev {
+    left: $spacing-2;
+  }
+
+  .petprofile-nav-next {
+    right: $spacing-2;
+  }
+
+  @media (max-width: 767px) {
+    .petprofile-nav-prev,
+    .petprofile-nav-next {
+      width: 32px;
+      height: 32px;
+    }
+
+    .petprofile-nav-prev {
+      left: $spacing-1;
+    }
+
+    .petprofile-nav-next {
+      right: $spacing-1;
+    }
+  }
+}
+
+// ============================================
+// 기타 유틸리티
+// ============================================
+.petprofile-empty {
+  p {
+    color: $text-color-secondary;
+  }
+}
+
+.pet-actions {
+  width: 100%;
+}

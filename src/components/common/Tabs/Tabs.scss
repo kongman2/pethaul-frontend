@@ -1,0 +1,90 @@
+@import '../../../styles/variables';
+
+.pethaul-tabs {
+  margin-bottom: 1.5rem;
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background-color: $white;
+    color: $text-color-secondary;
+    font-size: $font-size-small;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus {
+      outline: none;
+      background-color: rgba($primary-color, 0.05);
+      border-color: rgba($primary-color, 0.3);
+      color: $primary-color;
+    }
+
+    &.is-active {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: $white;
+      font-weight: 600;
+
+      &:hover,
+      &:focus {
+        background-color: darken($primary-color, 5%);
+        border-color: darken($primary-color, 5%);
+      }
+    }
+  }
+
+  &__label {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+// 반응형
+@media (max-width: 576px) {
+  .pethaul-tabs {
+    &__list {
+      gap: 0.375rem;
+    }
+
+    &__button {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+  }
+}
+

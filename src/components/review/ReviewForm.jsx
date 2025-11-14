@@ -1,9 +1,13 @@
-// src/components/review/ReviewForm.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { Icon } from '@iconify/react'
+
 import { createReviewThunk, updateReviewThunk } from '../../features/reviewSlice'
-import '../css/review/ReviewForm.css'
+
+import { Textarea, Button, SectionCard, ImageUpload } from '../common'
+
+import './ReviewForm.scss'
 
 /**
  * 통합 리뷰 폼
@@ -43,25 +47,34 @@ export default function ReviewForm({
   const [submitting, setSubmitting] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' }) // 'error' | 'success'
 
-  // SVG
-  const Star = ({ filled }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={18} viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill={filled ? '#ffbf00' : '#000'}
-        stroke="#000"
-        strokeWidth={filled ? 1.2 : 0}
-        d="M23 8v2h-1v1h-1v1h-1v1h-1v1h-1v5h1v4h-2v-1h-2v-1h-2v-1h-2v1H9v1H7v1H5v-4h1v-5H5v-1H4v-1H3v-1H2v-1H1V8h7V6h1V4h1V2h1V1h2v1h1v2h1v2h1v2z"
-      />
-    </svg>
-  )
+  // existingImgs가 변경될 때 imgUrls 업데이트
+  useEffect(() => {
+    if (Array.isArray(existingImgs) && existingImgs.length > 0) {
+      // 이미지 URL을 절대 경로로 변환
+      const apiBase = (import.meta.env.VITE_APP_API_URL || '').replace(/\/$/, '')
+      const absoluteUrls = existingImgs.map((url) => {
+        if (!url) return ''
+        if (url.startsWith('http://') || url.startsWith('https://')) return url
+        return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`
+      }).filter(Boolean)
+      setImgUrls(absoluteUrls)
+      setReviewImages([]) // 기존 이미지가 있으면 새로 추가한 이미지 초기화
+    } else {
+      setImgUrls([])
+    }
+  }, [existingImgs])
 
   // 파일 변경 -> 미리보기 생성
-  const handleImageChange = (e) => {
-    const files = e.target.files
+  const handleImageChange = (files) => {
     if (!files || files.length === 0) return
 
-    const newFiles = Array.from(files).slice(0, 4)
-    setReviewImages(newFiles)
+    // 현재 imgUrls 개수를 기준으로 남은 슬롯 계산
+    const remainingSlots = Math.max(0, 4 - imgUrls.length)
+    const newFiles = Array.from(files).slice(0, remainingSlots)
+    
+    if (newFiles.length === 0) return
+
+    setReviewImages((prev) => [...prev, ...newFiles])
 
     const urlPromises = newFiles.map((file) => {
       const reader = new FileReader()
@@ -72,17 +85,36 @@ export default function ReviewForm({
     })
 
     Promise.all(urlPromises).then((urls) => {
-      // 기존 서버 이미지 미리보기(existings) + 새로 선택한 이미지 미리보기 결합
-      setImgUrls((prev) => [...existingImgs, ...urls])
+      // 기존 imgUrls에 새로 선택한 이미지 미리보기 추가
+      setImgUrls((prev) => [...prev, ...urls])
     })
+  }
 
-    // 같은 파일 다시 선택 가능하게 초기화
-    e.target.value = ''
+  // 이미지 제거
+  const handleImageRemove = (index) => {
+    // existingImgs의 개수를 기준으로 서버 이미지인지 새로 추가한 이미지인지 확인
+    const apiBase = (import.meta.env.VITE_APP_API_URL || '').replace(/\/$/, '')
+    const existingAbsoluteUrls = existingImgs.map((url) => {
+      if (!url) return ''
+      if (url.startsWith('http://') || url.startsWith('https://')) return url
+      return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`
+    }).filter(Boolean)
+    
+    // 서버 이미지인 경우 (existingImgs에 포함된 이미지)
+    if (index < existingAbsoluteUrls.length) {
+      // 서버 이미지는 제거하지 않고, 새로 추가한 이미지만 제거
+      // 실제로는 서버 이미지도 제거할 수 있도록 별도 처리 필요
+      return
+    }
+    
+    // 새로 추가한 이미지의 인덱스 계산
+    const newIndex = index - existingAbsoluteUrls.length
+    setReviewImages((prev) => prev.filter((_, i) => i !== newIndex))
+    setImgUrls((prev) => prev.filter((_, i) => i !== index))
   }
 
   // 제출
   const handleSubmit = (e) => {
-     console.log('🟡 onSubmit fired', { submitting, itemId, rating, reviewContentLen: reviewContent.length });
     e.preventDefault()
     if (submitting) return
 
@@ -126,92 +158,90 @@ export default function ReviewForm({
         navigate(onSuccess, { replace: true })
       })
       .catch((err) => {
-        console.error('리뷰 저장 에러:', err)
         setMessage({ type: 'error', text: `처리 중 문제가 발생했습니다. ${err}` })
       })
       .finally(() => setSubmitting(false))
   }
 
   return (
-    <section id="review-section">
-      <h1 className="section-title">{isEdit ? '리뷰 수정' : '리뷰 작성'}</h1>
+    <section className="container py-5">
+          <h1 className="section-title">{isEdit ? '리뷰 수정' : '리뷰 작성'}</h1>
 
-      <div className="contents-card">
-
-
-        <div className="create-review">
-          <h1 className="review-title">
-            {'\''}{itemName}{'\''}에 대해 얼마나 만족하시나요?
-          </h1>
-
-          {/* 상태 메시지 */}
-          {message.text && (
-            <div className={`form-message ${message.type === 'error' ? 'is-error' : 'is-success'}`}>
-              {message.text}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            {/* ⭐ 별점 */}
-            <div className="rating" aria-label="별점 선택">
+          <SectionCard
+          title={`'${itemName}'에 대해 얼마나 만족하시나요?`}
+          headerActions={
+            <div className="d-flex align-items-center gap-2" aria-label="별점 선택">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
                   key={n}
                   type="button"
-                  className={`star ${(hover || rating) >= n ? 'on' : ''}`}
+                  className={`btn btn-link p-0 border-0 ${(hover || rating) >= n ? 'opacity-100' : 'opacity-50'}`}
                   onMouseEnter={() => setHover(n)}
                   onMouseLeave={() => setHover(0)}
                   onClick={() => setRating(n)}
                   aria-label={`${n}점`}
+                  style={{ transition: 'opacity 0.2s' }}
                 >
-                  <Star filled={(hover || rating) >= n} />
+                  <Icon 
+                    icon={(hover || rating) >= n ? "pixel:star-solid" : "pixel:star"} 
+                    width="24" 
+                    height="24" 
+                    style={{ color: (hover || rating) >= n ? '#ffbf00' : '#fff' }}
+                  />
                 </button>
               ))}
-              <span className="rating-label">
-                {rating > 0 ? `${rating}/5` : '\u2190 별점을 선택해 주세요'}
+              <span className="ms-2 small text-white">
+                {rating > 0 ? `${rating}/5` : '← 별점을 선택해 주세요'}
               </span>
             </div>
-
-            {/* 리뷰 내용 */}
-            <textarea
-              className="review-textarea"
-              placeholder="여기에 리뷰를 작성하세요. (최소 1자)"
-              value={reviewContent}
-              onChange={(e) => setReviewContent(e.target.value)}
-              rows={5}
-            />
-
-            {/* 이미지 미리보기 */}
-            <div className="preview-row">
-              {imgUrls.map((url, idx) => (
-                <div key={`${url}-${idx}`} className="preview-box">
-                  <img src={url} alt={`리뷰 이미지 ${idx + 1}`} className="preview-img" />
+          }
+          >
+              {/* 상태 메시지 */}
+              {message.text && (
+                <div className={`alert ${message.type === 'error' ? 'alert-danger' : 'alert-success'} mb-4`} role="alert">
+                  {message.text}
                 </div>
-              ))}
-            </div>
+              )}
 
-            {/* 파일 업로드 */}
-            <label className="upload-btn">
-              사진 등록
-              <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 32 32" aria-hidden="true">
-                <path fill="#000" d="M30.48 16.76h-1.53v1.52h1.53v7.62H32V6.09h-1.52z" strokeWidth={1} stroke="#000"></path>
-                <path
-                  fill="#000"
-                  d="M28.95 25.9h1.53v1.53h-1.53Zm0-21.33h1.53v1.52h-1.53Zm-1.52 7.62h1.52v1.52h-1.52ZM13.72 27.43V25.9h-3.05v1.53H3.05v1.52h25.9v-1.52zm12.19-10.67h-1.53v-1.52h-4.57v1.52h-1.52v1.52h-3.05v1.53h3.05v1.52h1.52v1.52h3.05v-1.52h3.05v-1.52h3.04v-1.53h-3.04zm0-3.05h1.52v1.53h-1.52Zm-4.57-3.05h1.52v3.05h-1.52Zm-4.58 12.19h3.05v1.53h-3.05Zm0-9.14h1.53v1.53h-1.53Zm-1.52-1.52h1.52v1.52h-1.52Zm-1.52 12.19h3.04v1.52h-3.04Zm-1.53-7.62h3.05v1.52h-3.05Zm-4.57-1.52h4.57v1.52H7.62Zm-3.05 1.52h3.05v1.52H4.57ZM3.05 3.05h25.9v1.52H3.05Zm0 15.23h1.52v1.53H3.05ZM1.53 25.9h1.52v1.53H1.53Zm0-21.33h1.52v1.52H1.53Zm0 16.76h1.52v-1.52H1.53V6.09H0V25.9h1.53z"
-                  strokeWidth={1}
-                  stroke="#000"
-                ></path>
-              </svg>
-              <input type="file" name="img" accept="image/*" hidden multiple onChange={handleImageChange} />
-            </label>
+              <form onSubmit={handleSubmit}>
+              {/* 리뷰 내용 */}
+              <div className="mb-4">
+                  <Textarea
+                    value={reviewContent}
+                    onChange={setReviewContent}
+                    placeholder="여기에 리뷰를 작성하세요. (최소 1자)"
+                    rows={5}
+                    className="w-100"
+                  />
+                </div>
 
-            {/* 제출 */}
-            <button type="submit" className="submit-btn" disabled={submitting}onClick={() => console.log('✅ submit button clicked')}  >
-              {submitting ? (isEdit ? '수정 중...' : '등록 중...') : isEdit ? '수정하기' : '등록하기'}
-            </button>
-          </form>
-        </div>
-      </div>
+                {/* 이미지 업로드 */}
+                <div className="mb-4">
+                  <ImageUpload
+                    multiple
+                    maxFiles={4}
+                    previewUrls={imgUrls}
+                    onChange={handleImageChange}
+                    onRemove={handleImageRemove}
+                    buttonText="사진 등록"
+                    disabled={submitting}
+                  />
+                </div>
+
+                {/* 제출 */}
+                <div className="d-flex justify-content-end">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    disabled={submitting}
+                  >
+                    {submitting ? (isEdit ? '수정 중...' : '등록 중...') : isEdit ? '수정하기' : '등록하기'}
+                  </Button>
+                </div>
+              </form>
+          </SectionCard>
     </section>
   )
 }

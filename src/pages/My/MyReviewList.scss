@@ -1,0 +1,24 @@
+// MyReviewList Styles
+@import '../../styles/variables';
+
+.review-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: $border-radius;
+}
+
+.review-no-img {
+  width: 120px;
+  height: 120px;
+  border-radius: $border-radius;
+  font-size: $font-size-small;
+}
+
+@media (max-width: 576px) {
+  .review-img,
+  .review-no-img {
+    width: 80px;
+    height: 80px;
+  }
+}

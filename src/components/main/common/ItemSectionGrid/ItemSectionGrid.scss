@@ -1,0 +1,21 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.item-section-grid__empty {
+  padding: $spacing-4;
+  text-align: center;
+  color: $secondary-color;
+  background-color: rgba($white, 0.8);
+  border-radius: $border-radius;
+}
+
+
+.more-btn {
+  @include button-reset;
+  font-size: $font-size-base;
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}

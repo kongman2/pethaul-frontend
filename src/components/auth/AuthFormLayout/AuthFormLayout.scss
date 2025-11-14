@@ -1,0 +1,106 @@
+// AuthFormLayout Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.auth-form {
+  max-width: 600px;
+  font-size: $font-size-base;
+  background-color: $white;
+  position: relative;
+  background-repeat: repeat;
+  background-position: center;
+
+  &.login-form {
+    background-image: url('../../../assets/dots.jpeg');
+    background-size: 25%;
+  }
+
+  &.register-form {
+    max-width: 720px;
+    background-image: url('../../../assets/ribbon.jpeg');
+    background-size: 30%;
+  }
+}
+
+.auth-form__title {
+  font-size: $font-size-large;
+
+  > img {
+    margin-left: $spacing-2;
+    width: 24px;
+    height: 24px;
+    animation: paw-wave 3s ease-out infinite;
+  }
+}
+
+.auth-form__subtitle {
+  font-size: $font-size-small;
+}
+
+.auth-form__body {
+  width: 100%;
+}
+
+@keyframes paw-wave {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-13deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-section {
+    padding-block: $spacing-4;
+  }
+
+  .auth-form {
+    max-width: 100%;
+    border-radius: $border-radius-lg;
+    box-shadow: none;
+  }
+
+  .auth-form.login-form,
+  .auth-form.register-form {
+    background-size: 40%;
+  }
+
+  .auth-form__title {
+    font-size: $font-size-large;
+
+    > img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .auth-form__subtitle {
+    font-size: $font-size-small;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-form {
+    padding: $spacing-4 $spacing-3;
+    background-size: 55%;
+  }
+
+  .auth-form__title {
+    font-size: 1.55rem;
+  }
+
+  .auth-form__subtitle {
+    font-size: 0.85rem;
+  }
+}
+

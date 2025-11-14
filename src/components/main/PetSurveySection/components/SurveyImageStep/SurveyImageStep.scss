@@ -1,0 +1,33 @@
+@import '../../../../../styles/variables';
+@import '../../../../../styles/mixins';
+
+.survey-image-step {
+  .image-upload__preview-grid {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .image-upload__preview-item {
+    max-width: 400px;
+    max-height: 300px;
+
+    img {
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .survey-image-step {
+    .image-upload__preview-item {
+      max-height: 250px;
+
+      img {
+        max-height: 250px;
+      }
+    }
+  }
+}
+

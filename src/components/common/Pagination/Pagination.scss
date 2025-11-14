@@ -1,0 +1,49 @@
+@import '../../../styles/_variables';
+
+.pethaul-pagination {
+  display: flex;
+  justify-content: center;
+
+  .pagination {
+    gap: $spacing-1 * 0.75;
+  }
+
+  .page-item {
+    .page-link {
+      min-width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.6rem;
+      border-radius: $border-radius-sm;
+      border: 1px solid rgba($border-color, 0.16);
+      color: $text-color-secondary;
+      font-size: $font-size-small;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        color: $primary-color;
+        border-color: rgba($primary-color, 0.35);
+        background-color: rgba($primary-color, 0.05);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
+      }
+    }
+
+    &.active .page-link {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: $white;
+      box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+    }
+
+    &.disabled .page-link {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+}

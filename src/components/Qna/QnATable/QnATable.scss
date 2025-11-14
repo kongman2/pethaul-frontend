@@ -1,0 +1,190 @@
+// QnATable 공통 스타일
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.qna-table {
+  .qna-table-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 80px 100px 80px;
+    gap: $spacing-2;
+    padding: $spacing-2;
+    font-size: $font-size-small;
+    font-weight: 700;
+    color: $dark-color;
+    margin-bottom: $spacing-2;
+
+    @media (max-width: 991px) {
+      grid-template-columns: 50px 1fr 70px 90px 70px;
+      gap: $spacing-1;
+      padding: $spacing-1 $spacing-2;
+      font-size: 12px;
+    }
+
+    @media (max-width: 767px) {
+      display: none; // 모바일에서는 헤더 숨김
+    }
+  }
+}
+
+.qna-item {
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  margin-bottom: $spacing-2;
+  background-color: $white;
+  box-shadow: 0 6px 18px rgba($primary-color, 0.06);
+  overflow: hidden;
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+}
+
+.qna-summary {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px 100px 80px;
+  gap: $spacing-2;
+  padding: $spacing-3;
+  font-size: $font-size-small;
+  font-weight: 600;
+  color: $secondary-color;
+  align-items: center;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 50px 1fr 70px 90px 70px;
+    gap: $spacing-1;
+    padding: $spacing-2;
+    font-size: 12px;
+  }
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-1;
+    padding: $spacing-2;
+    
+    .col-id {
+      font-size: 11px;
+      color: $secondary-color;
+      order: 1;
+    }
+    
+    .col-title {
+      order: 2;
+      font-weight: 700;
+      font-size: $font-size-base;
+      margin-bottom: $spacing-1;
+    }
+    
+    .col-author,
+    .col-date,
+    .col-status {
+      display: inline-block;
+      font-size: 11px;
+      margin-right: $spacing-2;
+      order: 3;
+    }
+    
+    .col-status {
+      float: right;
+      margin-right: 0;
+    }
+  }
+
+  .col-title {
+    color: $primary-color;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.qna-body {
+  display: grid;
+  gap: $spacing-3;
+  padding: $spacing-3;
+  font-size: $font-size-small;
+  color: $primary-color;
+  background-color: rgba($primary-color, 0.02);
+}
+
+.qna-question {
+  display: grid;
+  gap: $spacing-1;
+}
+
+.qna-label {
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.qna-content {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.qna-actions {
+  display: flex;
+  gap: $spacing-2;
+  justify-content: flex-end;
+
+  .btn {
+    @include button-reset;
+    padding: $spacing-1 $spacing-3;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-small;
+    font-weight: 600;
+    transition: $transition-fast;
+    background-color: lighten($primary-color, 42%);
+    color: $primary-color;
+
+    &.danger {
+      background-color: rgba($danger-color, 0.1);
+      color: $danger-color;
+    }
+
+    &:hover {
+      filter: brightness(0.95);
+    }
+  }
+}
+
+.qna-reply {
+  display: grid;
+  gap: $spacing-1;
+  padding: $spacing-3;
+  background-color: $white;
+  border-radius: $border-radius;
+  border: 1px dashed rgba($primary-color, 0.2);
+}
+
+.qna-reply-title {
+  font-size: $font-size-small;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.qna-reply-content {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.qna-reply-empty {
+  margin: 0;
+  color: $secondary-color;
+}
+
+.qna-textarea {
+  @include input-base;
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+}
+
+details[open] {
+  .qna-summary {
+    color: $primary-color;
+  }
+}
+
+

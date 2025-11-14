@@ -4,9 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './store/store'
 
-import './index.css'
+import "bootstrap/dist/css/bootstrap.min.css";
 import 'galmuri/dist/galmuri.css'
-import '@iconify-icon/react'
+import './index.scss'
+
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(

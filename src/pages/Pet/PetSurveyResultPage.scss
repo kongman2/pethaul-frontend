@@ -1,0 +1,215 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+#pet-survey-result {
+  min-height: 80vh;
+}
+
+.result-pet-image {
+  width: 100%;
+  max-width: 280px;
+  height: 220px;
+  margin: 0 auto $spacing-4;
+  border-radius: $border-radius;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+// MBTI 스타일 결과 화면
+.result-reveal-animation {
+  animation: fadeInUp 0.8s ease-out;
+  
+  .result-emoji {
+    font-size: 100px;
+    margin-bottom: $spacing-3;
+    animation: scaleIn 0.6s ease-out 0.2s both;
+  }
+  
+  .result-type-title {
+    font-size: $font-size-xxlarge;
+    color: $primary-color;
+    margin-bottom: $spacing-2;
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+  }
+  
+  .result-type-code {
+    display: inline-block;
+    font-size: $font-size-large;
+    color: white;
+    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+    padding: $spacing-2 $spacing-4;
+    border-radius: $border-radius;
+    animation: fadeInUp 0.6s ease-out 0.6s both;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.survey-result-card {
+  background: white;
+  border-radius: $border-radius;
+  padding: $spacing-5;
+}
+
+.result-header {
+  .result-pet-name {
+    font-size: $font-size-xxlarge;
+    color: $primary-color;
+    margin-bottom: $spacing-2;
+  }
+  
+  .result-pet-info {
+    font-size: $font-size-large;
+    color: $secondary-color;
+    margin: 0;
+  }
+}
+
+.result-type-description {
+  background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+  padding: $spacing-4;
+  border-radius: $border-radius;
+  border-left: 4px solid $primary-color;
+  
+  h3 {
+    color: $primary-color;
+    font-size: $font-size-large;
+  }
+  
+  .type-description {
+    font-size: $font-size-base;
+    line-height: 1.8;
+    color: $primary-color;
+    margin: 0;
+  }
+}
+
+.result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+  justify-content: center;
+  
+  .pet-tag {
+    display: inline-block;
+    padding: $spacing-2 $spacing-3;
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+    border-radius: $border-radius;
+    font-size: $font-size-small;
+  }
+}
+
+.result-recommendations,
+.result-activities {
+  h3 {
+    color: $primary-color;
+    font-size: $font-size-large;
+  }
+}
+
+.recommendation-list,
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.recommendation-item,
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-3;
+  background-color: $secondary-color;
+  border-radius: $border-radius;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    transform: translateX(5px);
+  }
+  
+  .rec-icon,
+  .activity-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $primary-color;
+    color: white;
+    border-radius: 50%;
+    font-size: $font-size-small;
+  }
+  
+  span:not(.rec-icon):not(.activity-icon) {
+    font-size: $font-size-base;
+    color: $primary-color;
+  }
+}
+
+// 반응형
+@media (max-width: 768px) {
+  .result-reveal-animation {
+    .result-emoji {
+      font-size: 70px;
+    }
+    
+    .result-type-title {
+      font-size: $font-size-xlarge;
+    }
+    
+    .result-type-code {
+      font-size: $font-size-base;
+      padding: $spacing-2 $spacing-3;
+    }
+  }
+  
+  .survey-result-card {
+    padding: $spacing-3;
+    
+    .result-pet-image {
+      max-width: 100%;
+      height: 200px;
+    }
+  }
+  
+  .result-header {
+    .result-pet-name {
+      font-size: $font-size-xlarge;
+    }
+    
+    .result-pet-info {
+      font-size: $font-size-base;
+    }
+  }
+}
+

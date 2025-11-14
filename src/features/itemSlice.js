@@ -1,4 +1,3 @@
-// src/features/itemSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { createItem, updateItem, deleteItem, getItems, getItemById, fetchSortData } from '../api/itemApi'
 import { recommendLikes } from '../api/recommend'
@@ -179,7 +178,13 @@ const itemSlice = createSlice({
          })
          .addCase(fetchSortDataThunk.fulfilled, (state, action) => {
             state.loading = false
-            state.main = action.payload || { topSales: [], topToday: [], newItems: [] }
+            const payload = action.payload ?? {}
+            const data = payload?.data ?? payload?.result ?? payload
+            state.main = {
+               topSales: Array.isArray(data?.topSales) ? data.topSales : [],
+               topToday: Array.isArray(data?.topToday) ? data.topToday : [],
+               newItems: Array.isArray(data?.newItems) ? data.newItems : [],
+            }
             // :x: 더 이상 state.items를 건드리지 않음 (메인/목록 분리)
          })
          .addCase(fetchSortDataThunk.rejected, (state, action) => {

@@ -1,0 +1,222 @@
+@import '../../../styles/_variables';
+
+header.navbar {
+  padding: 0;
+  background: rgba(255, 253, 233, 0.95);
+  border-bottom: 1px solid rgba($border-color, 0.08);
+  top: 0;
+  z-index: 1300;
+  backdrop-filter: blur(6px);
+  color: $black;
+}
+
+#navbar-section {
+  height: 74px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  padding-inline: $spacing-3;
+}
+
+#navbar-section a,
+#navbar-section button {
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo {
+  font-size: $font-size-large;
+  padding: $spacing-3;
+  font-family: $font-family-secondary;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+#navbar-section .navbar-nav {
+    display: flex;
+    align-items: center;
+  gap: $spacing-4;
+}
+
+#navbar-section .navbar-nav > li {
+    display: flex;
+  font-size: $font-size-small;
+    list-style: none;
+  padding: $spacing-3 0;
+  transition: $transition-base;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-item > button {
+  all: unset;
+}
+
+.nav--pc-contents {
+  display: inline-block;
+    animation: float 3s ease-in-out infinite,
+             sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+#navbar-section .navbar-nav > li > a:hover,
+.nav-item > button:hover {
+  transform: translate(0px, -5px);
+}
+
+
+.mobile-menu,
+.mob-search-icon{
+    display: none;
+}
+
+#navbar-section .icon {
+    display: flex;
+}
+
+
+.right-icon-bar {
+display: flex;
+align-items: center;
+  gap: $spacing-3;
+}
+
+/* 검색 말풍선 스타일 */
+.search-bubble {
+  position: relative;
+  background: $accent-yellow;
+  border-radius: $border-radius-lg;
+  padding: $spacing-1 $spacing-2;
+  min-width: 280px;
+  max-width: 90vw;
+  box-shadow: $box-shadow-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  border: 1px solid $border-color;
+
+  /* 애니메이션 */
+  animation: bubble-pop-in 160ms ease-out, bubble-fade-slide 220ms ease-out;
+  transform-origin: top right; /* pop 방향 */
+}
+
+.search-bubble::before {
+  content: "";
+  position: absolute;
+  top: -4.5px;        /* 말풍선 위에 걸치게 */
+  right: var(--arrow-right, 22px);     
+  width: 12px;
+  height: 12px;
+  background: $accent-yellow;
+  transform: rotate(55deg);
+  box-shadow: -1px -1px 1px rgba(0,0,0,0.05);
+  border-top: 1px solid $border-color;
+  border-left: 1px solid $border-color;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* 입력창 */
+.search-bubble .search-input {
+  all: unset;
+  width: 100%;
+  padding: $spacing-1 $spacing-2;
+  font-size: $font-size-small;
+}
+
+.search-bubble .search-input:focus {
+  border-color: #999;
+}
+
+/* 제출 버튼 */
+.search-bubble .search-submit {
+  all: unset;
+  color: $black;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.search-bubble .search-submit:hover {
+  filter: brightness(1.1);
+}
+
+
+/* 애니메이션 정의 */
+@keyframes bubble-pop-in {
+  0% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+@keyframes bubble-fade-slide {
+  0% { opacity: 0; translate: 0 -6px; }
+  100% { opacity: 1; translate: 0 0; }
+}
+
+/* 공통: 앵커는 기준 컨테이너 */
+.search-anchor,
+.nav-item { position: relative; }
+
+/* 말풍선/유저메뉴 기본 위치 + 미세조정 변수 */
+.search-anchor .search-bubble {
+  position: absolute;
+  top: calc(100% + 12px + var(--nudge-y, 0px));
+  right: calc(0px + var(--nudge-x, 0px));
+  z-index: 1000;
+}
+
+/* PC/모바일별로 원하는 만큼 보정 */
+.pc-search-icon .search-bubble { --nudge-x: -8px; --nudge-y: 0px; }
+.mob-search-icon .search-bubble { --nudge-x: 6px;  --nudge-y: 2px; }
+
+
+
+/* 애니메이션 */
+@keyframes bubble-pop-in {
+  0% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+@keyframes bubble-fade-slide {
+  0% { opacity: 0; translate: 0 -6px; }
+  100% { opacity: 1; translate: 0 0; }
+}
+
+@media (max-width: 1024px) {
+#navbar-section .navbar-nav {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  #navbar-section .navbar-nav,
+  #navbar-section .icon,
+    .pc-search-icon {
+        display: none;
+    }
+
+.mobile-menu,
+.mob-search-icon{
+    display: flex;
+}
+
+.right-icon-bar{
+    gap: 10px;
+}
+}
+
+
+/* 모바일 안전폭 */
+@media (max-width: 480px) {
+  .search-bubble { min-width: min(280px, 92vw); }
+}

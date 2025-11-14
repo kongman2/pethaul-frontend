@@ -1,0 +1,78 @@
+// MenuBar Styles
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.mypage-menu {
+  width: 100%;
+}
+
+.mypage-menu__card {
+  .section-card__header {
+    justify-content: flex-start;
+  }
+
+  .section-card__header-actions {
+    margin-left: auto;
+  }
+
+  .section-card__body {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.mypage-menu__header-action {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba($primary-color, 0.08);
+  color: $primary-color;
+  transition: $transition-base;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: rgba($primary-color, 0.18);
+  }
+
+}
+
+.mypage-menu__button {
+  @include button-reset;
+  width: 100%;
+  font-size: $font-size-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: $transition-base;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    transform: translateY(-4px);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+}
+
+.mypage-menu__label {
+  font-size: $font-size-small;
+  letter-spacing: 0.04em;
+  color: $text-color-secondary;
+}
+
+.mypage-menu__value {
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.mypage-menu__empty {
+  padding: $spacing-3 0;
+}
+

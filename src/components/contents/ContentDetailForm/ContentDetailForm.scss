@@ -1,0 +1,146 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+:root {
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --brand: #463832;
+}
+
+.detail-form {
+  background: $white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+.detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-2;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 800;
+  }
+}
+
+.head-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+
+  > label {
+    font-weight: 700;
+  }
+
+  input,
+  textarea,
+  select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px $spacing-2;
+    font-size: 14px;
+    outline: none;
+
+    &:disabled {
+      background: #f9fafb;
+      color: #6b7280;
+    }
+  }
+}
+
+.grid-2 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.grid-3 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 860px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.uploading {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-2;
+  margin-top: $spacing-2;
+}
+
+.btn-primary {
+  background: var(--brand);
+  color: $white;
+  border: none;
+  border-radius: 999px;
+  padding: $spacing-2 18px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: $white;
+  border: none;
+  border-radius: 999px;
+  padding: $spacing-2 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: $white;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+

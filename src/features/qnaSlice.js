@@ -1,12 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getQna, createQna, getQnaDetail, editQna, enterComment, deleteQna } from '../api/qnaApi'
-import petHaulApi from '../api/axiosApi'
 
 // 문의 조회
 export const getQnaThunk = createAsyncThunk('qna/getQna', async (data, { rejectWithValue }) => {
    try {
-      console.log('slice=========data:', data)
-      const response = await petHaulApi.get(`/api/qna/${id}`)
+      const response = await getQna(data)
       return response.data
    } catch (error) {
       return rejectWithValue(error.response?.data?.message || '문의 조회 실패')
@@ -26,8 +24,7 @@ export const getQnaDetailThunk = createAsyncThunk('qna/getQnaDetail', async (id,
 // 문의 작성
 export const createQnaThunk = createAsyncThunk('qna/createQna', async (data, { rejectWithValue }) => {
    try {
-      const response = await petHaulApi.post('/api/qna/write', data)
-
+      const response = await createQna(data)
       return response.data
    } catch (error) {
       return rejectWithValue(error.response?.data?.message || '문의 등록 실패')
