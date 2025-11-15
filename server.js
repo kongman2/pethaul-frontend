@@ -26,16 +26,26 @@ if (!existsSync(indexHtmlPath)) {
 
 console.log('✅ dist 폴더 확인 완료:', distPath)
 
-// 정적 파일 서빙
+// 정적 파일 서빙 (assets, images 등)
 app.use(express.static(distPath, {
    maxAge: '1d',
-   etag: true
+   etag: true,
+   index: false // index.html 자동 서빙 비활성화
 }))
 
-// 모든 경로를 index.html로 리다이렉트 (SPA 라우팅)
-app.get('*', (req, res) => {
+// SPA 라우팅: HTML 요청이거나 정적 파일이 아닌 경우 index.html 반환
+app.get('*', (req, res, next) => {
+   // 정적 파일 요청은 express.static이 처리하도록 next() 호출
+   const isStaticFile = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(req.path)
+   
+   if (isStaticFile) {
+      // 정적 파일은 express.static이 처리 (404는 자동으로 반환됨)
+      return next()
+   }
+   
+   // HTML 요청이거나 라우트 경로인 경우 index.html 반환
    try {
-      console.log('📄 요청 경로:', req.path)
+      console.log('📄 SPA 라우팅 요청:', req.path)
       const html = readFileSync(indexHtmlPath, 'utf-8')
       res.setHeader('Content-Type', 'text/html; charset=utf-8')
       res.send(html)
