@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
@@ -120,6 +120,16 @@ const RichTextEditor = ({
 
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }, [editor])
+
+  // 외부에서 value가 변경될 때 에디터 내용 업데이트 (수정 모드 등)
+  useEffect(() => {
+    if (!editor) return
+    const currentHtml = editor.getHTML()
+    // value가 변경되었고, 현재 에디터 내용과 다를 때만 업데이트
+    if (value !== undefined && currentHtml !== value) {
+      editor.commands.setContent(value || '', false)
+    }
+  }, [value, editor])
 
   if (!editor) {
     return null
