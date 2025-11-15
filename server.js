@@ -27,23 +27,17 @@ if (!existsSync(indexHtmlPath)) {
 console.log('✅ dist 폴더 확인 완료:', distPath)
 
 // 정적 파일 서빙 (assets, images 등)
+// express.static은 파일을 찾지 못하면 자동으로 next()를 호출
 app.use(express.static(distPath, {
    maxAge: '1d',
    etag: true,
    index: false // index.html 자동 서빙 비활성화
 }))
 
-// SPA 라우팅: HTML 요청이거나 정적 파일이 아닌 경우 index.html 반환
-app.get('*', (req, res, next) => {
-   // 정적 파일 요청은 express.static이 처리하도록 next() 호출
-   const isStaticFile = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(req.path)
-   
-   if (isStaticFile) {
-      // 정적 파일은 express.static이 처리 (404는 자동으로 반환됨)
-      return next()
-   }
-   
-   // HTML 요청이거나 라우트 경로인 경우 index.html 반환
+// SPA 라우팅: 정적 파일이 아닌 모든 경로는 index.html 반환
+app.get('*', (req, res) => {
+   // 정적 파일 확장자가 있는 요청은 이미 express.static이 처리했거나 404를 반환했음
+   // 여기서는 라우트 경로만 처리
    try {
       console.log('📄 SPA 라우팅 요청:', req.path)
       const html = readFileSync(indexHtmlPath, 'utf-8')
