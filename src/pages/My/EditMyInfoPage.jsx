@@ -441,7 +441,9 @@ function EditMyInfoPage() {
       alert('회원 정보를 성공적으로 수정했습니다.', '완료', 'success')
       navigate('/mypage')
     } catch (error) {
-      alert('회원 정보 수정 중 오류가 발생했습니다.', '오류', 'danger')
+      const errorMessage = error?.response?.data?.message || error?.message || '회원 정보 수정 중 오류가 발생했습니다.'
+      console.error('회원 정보 수정 오류:', error)
+      alert(errorMessage, '오류', 'danger')
     } finally {
       setSubmitting(false)
     }
@@ -503,6 +505,7 @@ function EditMyInfoPage() {
                   id="myinfo-email"
                   name="email"
                   type="email"
+                  autoComplete="username"
                   placeholder="example@pethaul.com"
                   value={inputEmail}
                   onChange={handleChangeEmail}
@@ -573,6 +576,7 @@ function EditMyInfoPage() {
                       id="myinfo-password"
                       name="new-password"
                       type="password"
+                      autoComplete="new-password"
                       placeholder="변경할 비밀번호를 입력하세요"
                       value={newPassword}
                       onChange={setNewPassword}
@@ -585,6 +589,7 @@ function EditMyInfoPage() {
                       id="myinfo-password-confirm"
                       name="check-new-password"
                       type="password"
+                      autoComplete="new-password"
                       placeholder="변경할 비밀번호를 한 번 더 입력하세요"
                       value={checkNewPassword}
                       onChange={setCheckNewPassword}
