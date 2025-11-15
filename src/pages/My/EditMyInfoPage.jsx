@@ -53,23 +53,40 @@ const normalizeAddressParts = (address = '', detail = '') => {
   return { address: trimmedAddress, detail: '' }
 }
 
+// 구글 사용자 확인 함수
+const isSocialUser = (user, googleAuthenticated) => {
+  if (!user) return false
+  const provider = user?.provider
+  const hasSocialMarkers = Boolean(user?.snsId || user?.socialId || user?.loginType)
+  const isNonLocal = provider && String(provider).toLowerCase() !== 'local'
+  return googleAuthenticated || isNonLocal || hasSocialMarkers
+}
+
 function EditMyInfoPage() {
   useAppBackground('app-bg--blue')
   const dispatch = useDispatch()
   const { alert, alertModal } = useModalHelpers()
-  const { user, loading, error } = useSelector((s) => s.auth)
+  const { user, loading, error, googleAuthenticated } = useSelector((s) => s.auth)
   const location = useLocation()
   const navigate = useNavigate()
   const verified = location.state?.verified === true
 
+  // 구글 사용자는 비밀번호 확인 건너뛰기
+  const socialUser = isSocialUser(user, googleAuthenticated)
+
   const openedRef = useRef(false)
   useEffect(() => {
+    // 구글 사용자는 비밀번호 확인 없이 바로 접근 가능
+    if (socialUser) {
+      return
+    }
+    
     if (!verified && !openedRef.current) {
       openedRef.current = true
       // 현재 위치를 배경으로 넘기면서 모달 오픈
       navigate('/verify', { state: { backgroundLocation: location }, replace: true })
     }
-  }, [verified, location, navigate])
+  }, [verified, location, navigate, socialUser])
 
   const initialPhone = useMemo(() => (user?.phoneNumber ? String(user.phoneNumber).replace(/\D/g, '') : ''), [user?.phoneNumber])
 
@@ -82,9 +99,10 @@ function EditMyInfoPage() {
     user?.defaultDeliveryAddressDetail ?? ''
   )
 
-  const [inputName, setInputName] = useState(user?.name ?? '')
-  const [inputEmail, setInputEmail] = useState(user?.email ?? '')
-  const [phoneNumber, setPhoneNumber] = useState(initialPhone)
+  // 초기값 설정: 구글 사용자는 구글에서 가져온 정보만 표시, 나머지는 빈 값
+  const [inputName, setInputName] = useState(socialUser ? (user?.name || '') : (user?.name ?? ''))
+  const [inputEmail, setInputEmail] = useState(socialUser ? (user?.email || '') : (user?.email ?? ''))
+  const [phoneNumber, setPhoneNumber] = useState(socialUser ? '' : initialPhone)
   const [newPassword, setNewPassword] = useState('')
   const [checkNewPassword, setCheckNewPassword] = useState('')
   const [inputAddress, setInputAddress] = useState(initialMainAddress)
@@ -213,16 +231,43 @@ function EditMyInfoPage() {
   }
 
   useEffect(() => {
-    setInputName(user?.name ?? '')
-    setInputEmail(user?.email ?? '')
-    setPhoneNumber(user?.phoneNumber ? String(user.phoneNumber).replace(/\D/g, '') : '')
-
-    const { address: normalizedMainAddress, detail: normalizedMainDetail } = normalizeAddressParts(
-      user?.address ?? '',
-      user?.addressDetail ?? ''
-    )
-    setInputAddress(normalizedMainAddress)
-    setInputAddressDetail(normalizedMainDetail)
+    // 구글 사용자: 구글에서 가져온 기본 정보(이름, 이메일)만 표시, 나머지는 빈 값
+    // 로컬 사용자: 기존 값 사용
+    if (socialUser) {
+      // 구글 사용자는 이름과 이메일만 구글에서 가져온 값 사용
+      // 전화번호, 주소 등은 사용자가 직접 입력한 경우에만 표시
+      setInputName(user?.name || '')
+      setInputEmail(user?.email || '')
+      // 전화번호는 사용자가 이전에 입력한 경우에만 표시
+      setPhoneNumber(user?.phoneNumber ? String(user.phoneNumber).replace(/\D/g, '') : '')
+      
+      // 주소는 사용자가 이전에 입력한 경우에만 표시
+      const { address: normalizedMainAddress, detail: normalizedMainDetail } = normalizeAddressParts(
+        user?.address ?? '',
+        user?.addressDetail ?? ''
+      )
+      // 주소가 비어있지 않을 때만 설정 (사용자가 입력한 경우)
+      if (normalizedMainAddress || normalizedMainDetail) {
+        setInputAddress(normalizedMainAddress)
+        setInputAddressDetail(normalizedMainDetail)
+      } else {
+        // 주소가 없으면 빈 값으로 설정
+        setInputAddress('')
+        setInputAddressDetail('')
+      }
+    } else {
+      // 로컬 사용자: 기존 값 사용
+      setInputName(user?.name ?? '')
+      setInputEmail(user?.email ?? '')
+      setPhoneNumber(user?.phoneNumber ? String(user.phoneNumber).replace(/\D/g, '') : '')
+      
+      const { address: normalizedMainAddress, detail: normalizedMainDetail } = normalizeAddressParts(
+        user?.address ?? '',
+        user?.addressDetail ?? ''
+      )
+      setInputAddress(normalizedMainAddress)
+      setInputAddressDetail(normalizedMainDetail)
+    }
 
     setDefaultDeliveryName(user?.defaultDeliveryName ?? '')
     setDefaultDeliveryPhone(user?.defaultDeliveryPhone ? String(user.defaultDeliveryPhone).replace(/\D/g, '') : '')
