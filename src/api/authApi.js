@@ -132,5 +132,5 @@ export const getAllUsers = async ({ page = 1, limit = 20, searchTerm = '' } = {}
    const response = await petHaulApi.get('/auth/all', {
       params: { page, limit, searchTerm },
    })
-   return response
+      return response
 }

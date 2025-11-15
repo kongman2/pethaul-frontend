@@ -19,7 +19,7 @@ function App() {
   }, [dispatch])
 
   // 인증 체크를 기다리지 않고 즉시 앱 렌더링 (ProtectedRoute에서 처리)
-  return <AppRouter />
+   return <AppRouter />
 }
 
 export default App

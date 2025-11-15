@@ -77,7 +77,7 @@ function ItemCard({
                 {/* 대표 태그 1개만 표시 */}
                 <span className="item-card__tag">
                   #{tags[0]}
-                </span>
+                  </span>
               </div>
             )}
             {likeButton}

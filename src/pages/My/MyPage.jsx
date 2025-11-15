@@ -67,13 +67,13 @@ function MyPage() {
     
     // 관리자가 아닐 때만 데이터 fetch (관리자는 프로필만 보여줌)
     if (!isAdmin) {
-      Promise.allSettled([
-        dispatch(getUserPetsThunk()),
-        dispatch(getUserReviewThunk({ page: 1, limit: 100 })),
-        dispatch(fetchOrdersThunk({ page: 1, limit: 100 }))
-      ]).finally(() => {
-        isFetchingRef.current = false
-      })
+    Promise.allSettled([
+      dispatch(getUserPetsThunk()),
+      dispatch(getUserReviewThunk({ page: 1, limit: 100 })),
+      dispatch(fetchOrdersThunk({ page: 1, limit: 100 }))
+    ]).finally(() => {
+      isFetchingRef.current = false
+    })
     } else {
       isFetchingRef.current = false
     }
@@ -113,16 +113,16 @@ function MyPage() {
               <Profile user={user} loading={userLoading} />
             </SectionCard>
             {!isAdmin && (
-              <SectionCard className="flex-grow-1" bodyClassName="overflow-hidden p-4" title="주문현황">
-                <OrderState order={latestOrder} />
-              </SectionCard>
+            <SectionCard className="flex-grow-1" bodyClassName="overflow-hidden p-4" title="주문현황">
+              <OrderState order={latestOrder} />
+            </SectionCard>
             )}
         </div>
 
               {!isAdmin && (
                 <>
-                  <MenuBar id={userId} isGuest={isGuest} />
-                  <PetProfileSlider className="mt-4" pets={pets} onDelete={handleDeletePet} />
+              <MenuBar id={userId} isGuest={isGuest} />
+              <PetProfileSlider className="mt-4" pets={pets} onDelete={handleDeletePet} />
                 </>
               )}
       <AlertModal

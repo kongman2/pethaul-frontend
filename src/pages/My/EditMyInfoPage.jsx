@@ -266,16 +266,16 @@ function EditMyInfoPage() {
       }
     } else {
       // 로컬 사용자: 기존 값 사용
-      setInputName(user?.name ?? '')
-      setInputEmail(user?.email ?? '')
-      setPhoneNumber(user?.phoneNumber ? String(user.phoneNumber).replace(/\D/g, '') : '')
-      
-      const { address: normalizedMainAddress, detail: normalizedMainDetail } = normalizeAddressParts(
-        user?.address ?? '',
-        user?.addressDetail ?? ''
-      )
-      setInputAddress(normalizedMainAddress)
-      setInputAddressDetail(normalizedMainDetail)
+    setInputName(user?.name ?? '')
+    setInputEmail(user?.email ?? '')
+    setPhoneNumber(user?.phoneNumber ? String(user.phoneNumber).replace(/\D/g, '') : '')
+
+    const { address: normalizedMainAddress, detail: normalizedMainDetail } = normalizeAddressParts(
+      user?.address ?? '',
+      user?.addressDetail ?? ''
+    )
+    setInputAddress(normalizedMainAddress)
+    setInputAddressDetail(normalizedMainDetail)
     }
 
     setDefaultDeliveryName(user?.defaultDeliveryName ?? '')
@@ -421,21 +421,21 @@ function EditMyInfoPage() {
         } finally {
           setUploadingAvatar(false)
         }
-      }
+    }
 
-      const payload = {
-        name: inputName,
-        email: inputEmail,
-        phoneNumber: cleanedPhone,
-        address: inputAddress.trim(),
-        addressDetail: inputAddressDetail.trim(),
-        ...(newPassword ? { newPassword } : {}),
-        defaultDeliveryName: defaultDeliveryName.trim(),
-        defaultDeliveryPhone: cleanedDefaultPhone,
-        defaultDeliveryAddress: defaultDeliveryAddress.trim(),
-        defaultDeliveryAddressDetail: defaultDeliveryAddressDetail.trim(),
-        defaultDeliveryRequest: resolvedDefaultRequest || '',
-      }
+    const payload = {
+      name: inputName,
+      email: inputEmail,
+      phoneNumber: cleanedPhone,
+      address: inputAddress.trim(),
+      addressDetail: inputAddressDetail.trim(),
+      ...(newPassword ? { newPassword } : {}),
+      defaultDeliveryName: defaultDeliveryName.trim(),
+      defaultDeliveryPhone: cleanedDefaultPhone,
+      defaultDeliveryAddress: defaultDeliveryAddress.trim(),
+      defaultDeliveryAddressDetail: defaultDeliveryAddressDetail.trim(),
+      defaultDeliveryRequest: resolvedDefaultRequest || '',
+    }
 
       await dispatch(updateMyInfoThunk(payload)).unwrap()
       alert('회원 정보를 성공적으로 수정했습니다.', '완료', 'success')
