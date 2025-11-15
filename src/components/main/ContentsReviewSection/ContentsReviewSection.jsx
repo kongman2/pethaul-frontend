@@ -31,7 +31,6 @@ function ContentsReviewSection({ posts = [], reviews = [], promotions = [], keyw
                   title="NEW CONTENTS"
                   headerActions={
                      <Link to="/contents" className="section-card__link">
-                        보러가기
                         <Icon icon="pixel:angle-right" width={20} height={20} />
                      </Link>
                   }
@@ -50,16 +49,19 @@ function ContentsReviewSection({ posts = [], reviews = [], promotions = [], keyw
                   bodyClassName="p-0"
                >
                   <div className="keyword-card">
-                     {displayKeywords.map((keyword, index) => (
-                        <div 
-                           key={typeof keyword === 'string' ? keyword : index} 
-                           className={`topic ${typeof keyword === 'string' ? 'topic--clickable' : ''}`}
-                           onClick={() => handleKeywordClick(keyword)}
-                        >
-                           <span className="topic__number">{index + 1}.</span>
-                           <span className="topic__text">{keyword}</span>
-                        </div>
-                     ))}
+                     {displayKeywords.map((keyword, index) => {
+                        const isValidKeyword = typeof keyword === 'string' && keyword.trim() !== ''
+                        return (
+                           <div 
+                              key={typeof keyword === 'string' ? keyword : index} 
+                              className={`topic ${isValidKeyword ? 'topic--clickable' : ''}`}
+                              onClick={() => handleKeywordClick(keyword)}
+                           >
+                              {isValidKeyword && <span className="topic__number">{index + 1}.</span>}
+                              <span className="topic__text">{isValidKeyword ? keyword : ''}</span>
+                           </div>
+                        )
+                     })}
                   </div>
                </SectionCard>
 
