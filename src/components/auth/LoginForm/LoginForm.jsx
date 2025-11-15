@@ -35,6 +35,7 @@ function LoginForm() {
 
   // 더블클릭 보호
   const submittedRef = useRef(false)
+  const googleLoginLoadingRef = useRef(false)
 
   // 저장된 ID 불러오기
   useEffect(() => {
@@ -67,6 +68,26 @@ function LoginForm() {
       ...prev,
       saveIdToggle: checked,
     }))
+  }
+
+  const handleGoogleLogin = () => {
+    // 중복 클릭 방지
+    if (googleLoginLoadingRef.current || loading) {
+      return
+    }
+
+    googleLoginLoadingRef.current = true
+    
+    // 서버가 슬립 모드일 수 있으므로 사용자에게 알림
+    alert('구글 로그인 페이지로 이동합니다. 서버가 깨어나는 중일 수 있어 첫 요청이 느릴 수 있습니다.', '구글 로그인', 'info')
+    
+    // 리다이렉트
+    window.location.href = `${API}/auth/google`
+    
+    // 3초 후 리셋 (사용자가 뒤로 가기를 눌렀을 경우를 대비)
+    setTimeout(() => {
+      googleLoginLoadingRef.current = false
+    }, 3000)
   }
 
   const handleSubmit = (e) => {
@@ -164,11 +185,11 @@ function LoginForm() {
               variant="auth-secondary"
               type="button"
               size="lg"
-              onClick={() => { window.location.href = `${API}/auth/google` }}
-              disabled={loading}
+              onClick={handleGoogleLogin}
+              disabled={loading || googleLoginLoadingRef.current}
             >
               <img src={GoogleImg} alt="google" />
-              구글 아이디로 로그인
+              {googleLoginLoadingRef.current ? '이동 중...' : '구글 아이디로 로그인'}
             </Button>
           </div>
         </div>
