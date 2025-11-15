@@ -23,20 +23,45 @@ function AuthPage() {
          const searchParams = new URLSearchParams(location.search)
          const token = searchParams.get('token')
          
-         // 토큰이 있으면 바로 저장
+         // 토큰이 있으면 저장하고 인증 상태 확인
          if (token) {
             localStorage.setItem('token', token)
             console.log('✅ 구글 로그인 응답에서 JWT 토큰을 받아 저장했습니다.')
             
-            // 토큰이 있으면 바로 홈으로 이동 (인증 상태 확인 생략)
-         toast.success('구글 로그인에 성공했습니다.', {
-            position: 'top-center',
-            autoClose: 2000,
-         })
-
-            setTimeout(() => {
-            navigate('/')
-         }, 2000)
+            // 토큰 저장 후 Redux 상태 업데이트를 위해 인증 상태 확인
+            dispatch(checkUnifiedAuthThunk())
+               .unwrap()
+               .then((result) => {
+                  if (result?.isAuthenticated) {
+                     toast.success('구글 로그인에 성공했습니다.', {
+                        position: 'top-center',
+                        autoClose: 2000,
+                     })
+                     setTimeout(() => {
+                        navigate('/')
+                     }, 2000)
+                  } else {
+                     // 토큰은 있지만 인증 확인 실패 - 토큰이 유효하지 않을 수 있음
+                     console.warn('⚠️ 토큰은 있지만 인증 확인에 실패했습니다.')
+                     toast.error('인증 확인에 실패했습니다. 다시 시도해주세요.', {
+                        position: 'top-center',
+                        autoClose: 2000,
+                     })
+                     setTimeout(() => {
+                        navigate('/login')
+                     }, 2000)
+                  }
+               })
+               .catch((error) => {
+                  console.error('구글 로그인 인증 확인 실패:', error)
+                  toast.error('인증 확인 중 오류가 발생했습니다.', {
+                     position: 'top-center',
+                     autoClose: 2000,
+                  })
+                  setTimeout(() => {
+                     navigate('/login')
+                  }, 2000)
+               })
             return
          }
          
