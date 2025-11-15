@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { registerUser, loginUser, logoutUser, checkAuthStatus, googleLoginUser, googleCheckStatus, findId, updatePassword, updateMyInfo, verifyPassword } from '../api/authApi'
+import { getTokenThunk } from './tokenSlice'
 const normalizeAuthPayload = (raw) => {
    // 허용 형태: axios res, res.data, 혹은 이미 얕은 객체
    const p = raw?.data ?? raw ?? {}
@@ -61,10 +62,26 @@ export const registerUserThunk = createAsyncThunk('auth/registerUser', async (us
 })
 
 // 로그인
-export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
+export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue, dispatch }) => {
    try {
       const response = await loginUser(credentials)
-      return response.data.user
+      const user = response.data.user
+      
+      // 로그인 성공 후 자동으로 JWT 토큰 발급 (세션 기반 인증이므로 가능)
+      try {
+         const tokenResult = await dispatch(getTokenThunk())
+         if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+            localStorage.setItem('token', tokenResult.payload)
+            console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
+         } else {
+            console.warn('⚠️ 토큰 발급 실패:', tokenResult.error || tokenResult.payload)
+         }
+      } catch (tokenError) {
+         // 토큰 발급 실패해도 로그인은 성공으로 처리
+         console.warn('⚠️ 토큰 자동 발급 중 오류:', tokenError)
+      }
+      
+      return user
    } catch (error) {
       return rejectWithValue(error.response?.data?.message || '로그인 실패')
    }
@@ -143,6 +160,22 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
 
    if (authed.length > 0) {
       authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
+      
+      // 인증된 사용자인데 토큰이 없으면 자동으로 발급
+      const token = localStorage.getItem('token')
+      if (!token) {
+         try {
+            const { getTokenThunk } = await import('./tokenSlice')
+            const tokenResult = await dispatch(getTokenThunk())
+            if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+               localStorage.setItem('token', tokenResult.payload)
+               console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
+            }
+         } catch (tokenError) {
+            console.warn('⚠️ 토큰 자동 발급 실패:', tokenError)
+         }
+      }
+      
       return { ...authed[0], uncertain: false }
    }
 
