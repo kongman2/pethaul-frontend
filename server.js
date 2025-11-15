@@ -3,6 +3,7 @@ import express from 'express'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import { readFileSync, existsSync } from 'fs'
+import { randomBytes } from 'crypto'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -60,8 +61,26 @@ app.get('*', (req, res) => {
          VITE_APP_AUTH_KEY: process.env.VITE_APP_AUTH_KEY || ''
       }
       
-      // 환경 변수 스크립트 (가장 먼저 실행되도록)
-      const envScript = `<script>window.__ENV__ = ${JSON.stringify(envVars)};</script>`
+      // CSP nonce 생성 (매 요청마다 고유한 nonce)
+      const nonce = randomBytes(16).toString('base64')
+      
+      // CSP 헤더 설정 (nonce를 사용하여 인라인 스크립트 허용)
+      const cspHeader = [
+         "default-src 'self'",
+         "script-src 'self' 'nonce-" + nonce + "'",
+         "style-src 'self' 'unsafe-inline'", // CSS는 unsafe-inline 허용 (일반적)
+         "img-src 'self' data: https:",
+         "font-src 'self' data:",
+         "connect-src 'self' https:",
+         "frame-ancestors 'none'",
+         "base-uri 'self'",
+         "form-action 'self'"
+      ].join('; ')
+      
+      res.setHeader('Content-Security-Policy', cspHeader)
+      
+      // 환경 변수 스크립트 (nonce 포함)
+      const envScript = `<script nonce="${nonce}">window.__ENV__ = ${JSON.stringify(envVars)};</script>`
       
       // </head> 태그 앞에 삽입 (없으면 <head> 뒤에, 그것도 없으면 <body> 앞에)
       if (html.includes('</head>')) {
