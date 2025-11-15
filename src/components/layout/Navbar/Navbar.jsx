@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react'
 
 import { logoutUserThunk } from '../../../features/authSlice'
 import { useModalHelpers } from '../../../hooks/useModalHelpers'
+import { throttle } from '../../../utils/performanceUtils'
 
 import { AlertModal, ConfirmModal } from '../../common'
 import UserMenuPopover from '../UserMenuPopover/UserMenuPopover'
@@ -110,6 +111,16 @@ function Navbar() {
    // 공통: 리사이즈/스크롤/바깥클릭 + 브레이크포인트 동기화
    // -----------------------------
    useEffect(() => {
+      // 메뉴/검색이 열려있을 때만 화살표 업데이트
+      if (searchOpen) requestAnimationFrame(updateSearchArrow)
+      if (menuOpen) requestAnimationFrame(updateMenuArrow)
+   }, [searchOpen, menuOpen, updateSearchArrow, updateMenuArrow])
+
+   // throttle된 핸들러를 ref로 저장 (이벤트 리스너 제거를 위해)
+   const resizeHandlerRef = useRef(null)
+   const scrollHandlerRef = useRef(null)
+
+   useEffect(() => {
       const syncByBreakpoint = () => {
          const w = window.innerWidth
          const isDesktop = w >= BREAKPOINT
@@ -118,19 +129,21 @@ function Navbar() {
          if (menuOpen && menuOwner === 'pc' && isMobile) closeMenu()
       }
 
-      if (searchOpen) requestAnimationFrame(updateSearchArrow)
-      if (menuOpen) requestAnimationFrame(updateMenuArrow)
-      syncByBreakpoint()
-
-      const onResize = () => {
+      // resize 핸들러 생성 및 저장
+      const handleResize = () => {
          syncByBreakpoint()
-         if (searchOpen) updateSearchArrow()
-         if (menuOpen) updateMenuArrow()
+         if (searchOpen) requestAnimationFrame(updateSearchArrow)
+         if (menuOpen) requestAnimationFrame(updateMenuArrow)
       }
-      const onScroll = () => {
-         if (searchOpen) updateSearchArrow()
-         if (menuOpen) updateMenuArrow()
+      resizeHandlerRef.current = throttle(handleResize, 150)
+
+      // scroll 핸들러 생성 및 저장 (메뉴/검색이 열려있을 때만 실행)
+      const handleScroll = () => {
+         if (searchOpen) requestAnimationFrame(updateSearchArrow)
+         if (menuOpen) requestAnimationFrame(updateMenuArrow)
       }
+      scrollHandlerRef.current = throttle(handleScroll, 100)
+
       const onDown = (e) => {
          // 검색
          const sB = searchBubbleRef.current
@@ -148,17 +161,25 @@ function Navbar() {
          // 유저 메뉴는 UserMenuPopover 내부에서 바깥클릭 처리
       }
 
-      window.addEventListener('resize', onResize)
-      window.addEventListener('orientationchange', onResize)
-      window.addEventListener('scroll', onScroll, true)
+      // 초기 브레이크포인트 체크
+      syncByBreakpoint()
+
+      window.addEventListener('resize', resizeHandlerRef.current)
+      window.addEventListener('orientationchange', resizeHandlerRef.current)
+      // 스크롤 이벤트는 passive 옵션 사용 (성능 향상)
+      window.addEventListener('scroll', scrollHandlerRef.current, { passive: true })
       document.addEventListener('mousedown', onDown)
       return () => {
-         window.removeEventListener('resize', onResize)
-         window.removeEventListener('orientationchange', onResize)
-         window.removeEventListener('scroll', onScroll, true)
+         if (resizeHandlerRef.current) {
+            window.removeEventListener('resize', resizeHandlerRef.current)
+            window.removeEventListener('orientationchange', resizeHandlerRef.current)
+         }
+         if (scrollHandlerRef.current) {
+            window.removeEventListener('scroll', scrollHandlerRef.current, { passive: true })
+         }
          document.removeEventListener('mousedown', onDown)
       }
-   }, [BREAKPOINT, searchOpen, menuOpen, menuOwner, updateSearchArrow, updateMenuArrow, closeSearch, closeMenu])
+   }, [BREAKPOINT, searchOpen, menuOpen, menuOwner, closeSearch, closeMenu, updateSearchArrow, updateMenuArrow])
 
    useEffect(() => {
       closeMenu()

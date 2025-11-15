@@ -36,7 +36,8 @@ function MainPage() {
    const [keywords, setKeywords] = useState([])
 
    //  메인 데이터만 구독 (list/검색 상태, 전역 loading 변화에 영향 안 받음)
-   const mainData = useSelector((s) => s.item.main)
+   // shallowEqual로 불필요한 리렌더링 방지
+   const mainData = useSelector((s) => s.item.main, shallowEqual)
 
    const { topSales, topToday, newItems } = useMemo(
       () => ({
@@ -47,7 +48,8 @@ function MainPage() {
       [mainData]
    )
    // NEW CONTENTS용 - published 상태만 필터링하고 모두 프로모션 형식으로 변환
-   const allPosts = useSelector((s) => s.content?.posts ?? [])
+   // shallowEqual로 불필요한 리렌더링 방지
+   const allPosts = useSelector((s) => s.content?.posts ?? [], shallowEqual)
    const contentPromotions = useMemo(
       () => allPosts
          .filter(post => post.status === 'published') // 공개된 콘텐츠만
@@ -88,24 +90,32 @@ function MainPage() {
          setLoading(false)
       }, 30000)
       
+      // 점진적 로딩: 중요한 데이터 먼저, 나머지는 백그라운드에서
       ;(async () => {
          try {
-            const results = await Promise.allSettled([
+            // 1단계: 핵심 데이터 먼저 로드 (사용자가 즉시 볼 수 있는 콘텐츠)
+            const criticalResults = await Promise.allSettled([
                dispatch(fetchSortDataThunk(5)),
                dispatch(fetchItemsThunk({ sellCategory: ['강아지/장마'] })),
+            ])
+            
+            // 핵심 데이터 로드 완료 후 즉시 UI 표시
+            setLoading(false)
+            clearTimeout(timeoutId)
+            
+            // 2단계: 부가 데이터는 백그라운드에서 로드 (UI 블로킹 없음)
+            Promise.allSettled([
                dispatch(fetchPostsThunk()),
                dispatch(fetchNewReviewsThunk({ page: 1, size: 6 })),
-            ])
+            ]).catch(() => {})
             
             getPopularKeywords(4).then((kw) => {
                setKeywords(kw)
             }).catch(() => {})
             
-            clearTimeout(timeoutId)
-            
-            const failed = results.filter((r) => r.status === 'rejected')
+            const failed = criticalResults.filter((r) => r.status === 'rejected')
             if (failed.length > 0) {
-               if (results[0].status === 'rejected') {
+               if (criticalResults[0].status === 'rejected') {
                   const errorMsg = failed[0].reason?.message || '메인 데이터를 불러오지 못했습니다.'
                   setError(errorMsg)
                }
@@ -113,7 +123,6 @@ function MainPage() {
          } catch (e) {
             clearTimeout(timeoutId)
             setError(e?.message || '데이터를 불러오지 못했습니다.')
-         } finally {
             setLoading(false)
          }
       })()

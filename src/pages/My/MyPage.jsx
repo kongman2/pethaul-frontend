@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 import { deletePetThunk, getUserPetsThunk } from '../../features/petSlice'
@@ -18,10 +18,10 @@ function MyPage() {
   useAppBackground('app-bg--dots')
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { user, loading: userLoading } = useSelector((state) => state.auth)
+  const { user, loading: userLoading } = useSelector((state) => state.auth, shallowEqual)
   const { alert, alertModal } = useModalHelpers()
-  const { pets } = useSelector((state) => state.pet)
-  const { orders } = useSelector((state) => state.order)
+  const { pets } = useSelector((state) => state.pet, shallowEqual)
+  const { orders } = useSelector((state) => state.order, shallowEqual)
   const hasInitializedRef = useRef(false)
   const lastUserIdRef = useRef(null)
   const isFetchingRef = useRef(false)

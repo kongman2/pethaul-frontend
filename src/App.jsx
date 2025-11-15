@@ -1,32 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import AppRouter from './routes/AppRouter'
 import { checkUnifiedAuthThunk } from './features/authSlice'
-import { Spinner } from './components/common'
 
 function App() {
   const dispatch = useDispatch()
-  const { loading } = useSelector((state) => state.auth || {})
   const hasCheckedAuth = useRef(false)
-  const [isInitializing, setIsInitializing] = useState(true)
 
-  // 앱 시작 시 인증 상태 확인 (한 번만 실행)
+  // 앱 시작 시 인증 상태 확인 (비블로킹, 백그라운드에서 실행)
   useEffect(() => {
     if (!hasCheckedAuth.current) {
       hasCheckedAuth.current = true
-    dispatch(checkUnifiedAuthThunk())
-        .finally(() => {
-          setIsInitializing(false)
-        })
+      // 인증 체크를 비동기로 실행하되, 앱 렌더링은 블로킹하지 않음
+      dispatch(checkUnifiedAuthThunk()).catch(() => {
+        // 인증 실패는 조용히 처리 (로그인 페이지에서 처리)
+      })
     }
   }, [dispatch])
 
-  // 초기 인증 체크가 완료될 때까지 대기
-  if (isInitializing || loading) {
-    return <Spinner fullPage text="로딩 중..." />
-  }
-
-   return <AppRouter />
+  // 인증 체크를 기다리지 않고 즉시 앱 렌더링 (ProtectedRoute에서 처리)
+  return <AppRouter />
 }
 
 export default App
