@@ -107,12 +107,12 @@ petHaulApi.interceptors.response.use(
                   return petHaulApi(originalRequest)
                }
             } else {
-               // 세션이 없으면 재발급 불가능
-               console.warn('⚠️ 세션이 없어 토큰 재발급이 불가능합니다. 다시 로그인해주세요.')
+               // 세션이 없으면 재발급 불가능 (조용히 처리)
+               // console.debug로 변경하여 불필요한 경고 제거
             }
          } catch (tokenError) {
-            // 토큰 발급 실패 시 원래 에러 반환
-            console.warn('⚠️ 토큰 자동 재발급 실패:', tokenError)
+            // 토큰 발급 실패 시 원래 에러 반환 (조용히 처리)
+            // 500 오류는 백엔드 문제이므로 사용자에게 노출하지 않음
             return Promise.reject(error)
          }
       }

@@ -67,18 +67,34 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
       const response = await loginUser(credentials)
       const user = response.data.user
       
-      // 로그인 성공 후 자동으로 JWT 토큰 발급 (세션 기반 인증이므로 가능)
+      // 로그인 성공 후 자동으로 JWT 토큰 발급
+      // 세션이 완전히 설정될 때까지 약간의 지연 후 시도
       try {
-         const tokenResult = await dispatch(getTokenThunk())
-         if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
-            localStorage.setItem('token', tokenResult.payload)
-            console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
-         } else {
-            console.warn('⚠️ 토큰 발급 실패:', tokenResult.error || tokenResult.payload)
+         // 세션이 완전히 설정될 때까지 짧은 지연
+         await new Promise(resolve => setTimeout(resolve, 100))
+         
+         // 최대 3번까지 재시도
+         let tokenResult = null
+         for (let attempt = 0; attempt < 3; attempt++) {
+            tokenResult = await dispatch(getTokenThunk())
+            if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+               localStorage.setItem('token', tokenResult.payload)
+               console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
+               break
+            }
+            // 실패 시 200ms 대기 후 재시도
+            if (attempt < 2) {
+               await new Promise(resolve => setTimeout(resolve, 200))
+            }
+         }
+         
+         // 모든 시도 실패 시 경고 (하지만 로그인은 성공으로 처리)
+         if (tokenResult?.type !== 'token/getToken/fulfilled') {
+            console.warn('⚠️ 토큰 자동 발급 실패 (나중에 수동으로 발급 가능)')
          }
       } catch (tokenError) {
-         // 토큰 발급 실패해도 로그인은 성공으로 처리
-         console.warn('⚠️ 토큰 자동 발급 중 오류:', tokenError)
+         // 예외 발생 시에도 로그인은 성공으로 처리
+         console.warn('⚠️ 토큰 자동 발급 중 예외 발생:', tokenError)
       }
       
       return user
@@ -162,25 +178,35 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
       authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
       
       // 인증된 사용자인데 토큰이 없으면 자동으로 발급 시도
-      // 단, 세션이 있어야 하므로 세션 확인 후 발급
       const token = localStorage.getItem('token')
       if (!token) {
          try {
-            // 세션이 있는지 확인 (isAuthenticated가 true면 세션이 있음)
-            // authed[0]에 이미 인증 정보가 있으므로 토큰 발급 시도
+            // 세션이 완전히 설정될 때까지 짧은 지연
+            await new Promise(resolve => setTimeout(resolve, 100))
+            
+            // 최대 3번까지 재시도
             const { getTokenThunk } = await import('./tokenSlice')
-            const tokenResult = await dispatch(getTokenThunk())
-            if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
-               localStorage.setItem('token', tokenResult.payload)
-               console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
-            } else if (tokenResult.type === 'token/getToken/rejected') {
-               // 토큰 발급 실패는 조용히 무시 (세션이 없거나 req.user가 없을 수 있음)
-               // 500 오류는 백엔드 문제이므로 조용히 처리
-               console.debug('토큰 자동 발급 실패 (무시됨)')
+            let tokenResult = null
+            for (let attempt = 0; attempt < 3; attempt++) {
+               tokenResult = await dispatch(getTokenThunk())
+               if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+                  localStorage.setItem('token', tokenResult.payload)
+                  console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
+                  break
+               }
+               // 실패 시 200ms 대기 후 재시도
+               if (attempt < 2) {
+                  await new Promise(resolve => setTimeout(resolve, 200))
+               }
+            }
+            
+            // 모든 시도 실패 시 경고
+            if (tokenResult?.type !== 'token/getToken/fulfilled') {
+               console.warn('⚠️ 토큰 자동 발급 실패 (나중에 수동으로 발급 가능)')
             }
          } catch (tokenError) {
-            // 토큰 발급 실패는 조용히 처리
-            console.debug('토큰 자동 발급 중 예외 발생 (무시됨)')
+            // 예외 발생 시에도 조용히 처리
+            console.warn('⚠️ 토큰 자동 발급 중 예외 발생:', tokenError)
          }
       }
       
