@@ -11,7 +11,14 @@ import 발바닥Img from '../../../assets/발바닥.png'
 import './LoginForm.scss'
 
 // API Base (구글 OAuth 리다이렉트용)
-const API = (import.meta.env.VITE_APP_API_URL || 'https://pethaul-api.onrender.com').replace(/\/$/, '')
+const getApiUrl = () => {
+   const buildTimeUrl = import.meta.env.VITE_APP_API_URL
+   if (buildTimeUrl && buildTimeUrl !== 'undefined') {
+      return buildTimeUrl
+   }
+   return 'https://pethaul-api.onrender.com'
+}
+const API = getApiUrl().replace(/\/$/, '')
 
 function LoginForm() {
   const dispatch = useDispatch()

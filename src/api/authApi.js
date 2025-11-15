@@ -1,7 +1,21 @@
 import petHaulApi from './axiosApi'
 
-// .env에 등록된 백엔드 주소 사용
-const BASE_API_URL = import.meta.env.VITE_APP_API_URL || 'https://pethaul-api.onrender.com'
+// .env에 등록된 백엔드 주소 사용 (빌드 타임 또는 런타임)
+const getBaseApiUrl = () => {
+   // 빌드 타임 환경 변수
+   const buildTimeUrl = import.meta.env.VITE_APP_API_URL
+   if (buildTimeUrl && buildTimeUrl !== 'undefined') {
+      return buildTimeUrl
+   }
+   // 런타임 환경 변수 (서버 사이드 렌더링 등)
+   if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
+      return window.__ENV__.VITE_APP_API_URL
+   }
+   // 기본값
+   return 'https://pethaul-api.onrender.com'
+}
+
+const BASE_API_URL = getBaseApiUrl()
 
 // 회원가입
 export const registerUser = async (userData) => {
