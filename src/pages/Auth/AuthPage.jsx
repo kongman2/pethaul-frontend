@@ -29,14 +29,14 @@ function AuthPage() {
             console.log('✅ 구글 로그인 응답에서 JWT 토큰을 받아 저장했습니다.')
             
             // 토큰이 있으면 바로 홈으로 이동 (인증 상태 확인 생략)
-            toast.success('구글 로그인에 성공했습니다.', {
-               position: 'top-center',
-               autoClose: 2000,
-            })
-            
+         toast.success('구글 로그인에 성공했습니다.', {
+            position: 'top-center',
+            autoClose: 2000,
+         })
+
             setTimeout(() => {
-               navigate('/')
-            }, 2000)
+            navigate('/')
+         }, 2000)
             return
          }
          

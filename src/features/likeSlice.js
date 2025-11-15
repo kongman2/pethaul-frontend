@@ -82,8 +82,8 @@ const likeSlice = createSlice({
                st.errorCode = null
                st.idsMap = {} // 빈 맵으로 초기화
             } else {
-               st.error = ac.payload?.message || '좋아요 ID 조회 실패'
-               st.errorCode = ac.payload?.status ?? null
+            st.error = ac.payload?.message || '좋아요 ID 조회 실패'
+            st.errorCode = ac.payload?.status ?? null
             }
          })
          // 상세 목록 조회

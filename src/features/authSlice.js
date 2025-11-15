@@ -211,12 +211,12 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
       const localOk = localRes.status === 'fulfilled' && localRes.value ? normalizeAuthPayload(localRes.value) : null
       const googleOk = googleRes.status === 'fulfilled' && googleRes.value ? normalizeAuthPayload(googleRes.value) : null
 
-      // 우선순위: 인증 true인 결과들 중 사용자 정보가 있는 쪽 우선
-      const candidates = [localOk, googleOk].filter(Boolean)
-      const authed = candidates.filter((c) => c.isAuthenticated)
+   // 우선순위: 인증 true인 결과들 중 사용자 정보가 있는 쪽 우선
+   const candidates = [localOk, googleOk].filter(Boolean)
+   const authed = candidates.filter((c) => c.isAuthenticated)
 
-      if (authed.length > 0) {
-         authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
+   if (authed.length > 0) {
+      authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
          
          // 인증된 사용자인데 토큰이 없으면 자동으로 발급 시도
          const token = localStorage.getItem('token')
@@ -258,12 +258,12 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
             }
          }
          
-         return { ...authed[0], uncertain: false }
-      }
+      return { ...authed[0], uncertain: false }
+   }
 
-      // 둘 다 실패 혹은 둘 다 비로그인
-      // 네트워크 불안정 같은 경우를 위해 불확실 플래그 제공
-      const anyRejected = localRes.status === 'rejected' || googleRes.status === 'rejected'
+   // 둘 다 실패 혹은 둘 다 비로그인
+   // 네트워크 불안정 같은 경우를 위해 불확실 플래그 제공
+   const anyRejected = localRes.status === 'rejected' || googleRes.status === 'rejected'
       const anyNetworkError = 
          (localRes.status === 'rejected' && (localRes.reason?.code === 'ERR_NETWORK' || localRes.reason?.code === 'ECONNREFUSED' || localRes.reason?.code === 'ETIMEDOUT' || localRes.reason?.message?.includes('ERR_CONNECTION_REFUSED'))) ||
          (googleRes.status === 'rejected' && (googleRes.reason?.code === 'ERR_NETWORK' || googleRes.reason?.code === 'ECONNREFUSED' || googleRes.reason?.code === 'ETIMEDOUT' || googleRes.reason?.message?.includes('ERR_CONNECTION_REFUSED')))

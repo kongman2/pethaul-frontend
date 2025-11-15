@@ -14,7 +14,7 @@ function App() {
   useEffect(() => {
     if (!hasCheckedAuth.current) {
       hasCheckedAuth.current = true
-      dispatch(checkUnifiedAuthThunk())
+    dispatch(checkUnifiedAuthThunk())
         .finally(() => {
           setIsInitializing(false)
         })

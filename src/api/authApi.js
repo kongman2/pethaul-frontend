@@ -1,7 +1,20 @@
 import petHaulApi from './axiosApi'
 
 // .env에 등록된 백엔드 주소 사용 (빌드 타임 또는 런타임)
+// 런타임에 평가되도록 함수로 유지 (모듈 로드 시점이 아닌 호출 시점에 평가)
 const getBaseApiUrl = () => {
+   // 런타임 환경 변수 우선 확인 (server.js에서 주입)
+   if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
+      const runtimeUrl = window.__ENV__.VITE_APP_API_URL
+      if (runtimeUrl && 
+          runtimeUrl !== 'undefined' && 
+          typeof runtimeUrl === 'string' &&
+          runtimeUrl.trim() !== '' &&
+          runtimeUrl.startsWith('http')) {
+         return runtimeUrl
+      }
+   }
+   
    // 빌드 타임 환경 변수
    const buildTimeUrl = import.meta.env.VITE_APP_API_URL
    
@@ -15,19 +28,12 @@ const getBaseApiUrl = () => {
       return buildTimeUrl
    }
    
-   // 런타임 환경 변수 (window.__ENV__)
-   if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
-      const runtimeUrl = window.__ENV__.VITE_APP_API_URL
-      if (runtimeUrl && runtimeUrl !== 'undefined' && runtimeUrl.startsWith('http')) {
-         return runtimeUrl
-      }
-   }
-   
    // 기본값
    return 'https://pethaul-api.onrender.com'
 }
 
-const BASE_API_URL = getBaseApiUrl()
+// 함수로 유지하여 런타임에 평가되도록 함
+const getBASE_API_URL = () => getBaseApiUrl()
 
 // 회원가입
 export const registerUser = async (userData) => {
@@ -69,7 +75,8 @@ export const checkEmail = async (email) => {
 
 // 구글 로그인 리다이렉트
 export const redirectToGoogleLogin = () => {
-   window.location.href = `${BASE_API_URL}/auth/google`
+   const apiUrl = getBASE_API_URL()
+   window.location.href = `${apiUrl}/auth/google`
 }
 
 // 구글 로그인(DB 저장용 요청 함수)

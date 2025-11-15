@@ -10,8 +10,20 @@ import GoogleImg from '../../../assets/Google.png'
 import 발바닥Img from '../../../assets/발바닥.png'
 import './LoginForm.scss'
 
-// API Base (구글 OAuth 리다이렉트용)
+// API Base (구글 OAuth 리다이렉트용) - 런타임에 평가되도록 함수로 유지
 const getApiUrl = () => {
+   // 런타임 환경 변수 우선 확인 (server.js에서 주입)
+   if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
+      const runtimeUrl = window.__ENV__.VITE_APP_API_URL
+      if (runtimeUrl && 
+          runtimeUrl !== 'undefined' && 
+          typeof runtimeUrl === 'string' &&
+          runtimeUrl.trim() !== '' &&
+          runtimeUrl.startsWith('http')) {
+         return runtimeUrl.replace(/\/$/, '')
+      }
+   }
+   
    // 빌드 타임 환경 변수
    const buildTimeUrl = import.meta.env.VITE_APP_API_URL
    
@@ -22,21 +34,12 @@ const getApiUrl = () => {
        typeof buildTimeUrl === 'string' &&
        buildTimeUrl.trim() !== '' &&
        buildTimeUrl.startsWith('http')) {
-      return buildTimeUrl
-   }
-   
-   // 런타임 환경 변수 (window.__ENV__)
-   if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
-      const runtimeUrl = window.__ENV__.VITE_APP_API_URL
-      if (runtimeUrl && runtimeUrl !== 'undefined' && runtimeUrl.startsWith('http')) {
-         return runtimeUrl
-      }
+      return buildTimeUrl.replace(/\/$/, '')
    }
    
    // 기본값
    return 'https://pethaul-api.onrender.com'
 }
-const API = getApiUrl().replace(/\/$/, '')
 
 function LoginForm() {
   const dispatch = useDispatch()
@@ -96,11 +99,14 @@ function LoginForm() {
 
     googleLoginLoadingRef.current = true
     
+    // 런타임에 API URL 가져오기 (함수 호출)
+    const apiUrl = getApiUrl()
+    
     // 서버가 슬립 모드일 수 있으므로 사용자에게 알림
     alert('구글 로그인 페이지로 이동합니다. 서버가 깨어나는 중일 수 있어 첫 요청이 느릴 수 있습니다.', '구글 로그인', 'info')
     
     // 리다이렉트
-    window.location.href = `${API}/auth/google`
+    window.location.href = `${apiUrl}/auth/google`
     
     // 3초 후 리셋 (사용자가 뒤로 가기를 눌렀을 경우를 대비)
     setTimeout(() => {
