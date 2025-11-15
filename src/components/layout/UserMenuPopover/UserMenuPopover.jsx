@@ -92,7 +92,7 @@ export default function UserMenuPopover({
           <>
             <button type="button" role="menuitem" className="user-menu__item" onClick={onGoMyPage}>
               <span className="user-menu__icon">
-                <Icon icon="pixelarticons:home" width={20} height={20} />
+                <Icon icon="pixelarticons:home" width={24} height={24} />
               </span>
               마이페이지
             </button>
@@ -102,14 +102,14 @@ export default function UserMenuPopover({
                 <div className="user-menu__divider" />
                 <button type="button" role="menuitem" className="user-menu__item" onClick={onGoAdmin}>
                   <span className="user-menu__icon">
-                    <Icon icon="pixelarticons:settings" width={20} height={20} />
+                    <Icon icon="pixel:user-headset-solid" width={24} height={24} />
                   </span>
                   관리자 페이지
                 </button>
                 {!isGoogleUser && (
                   <button type="button" role="menuitem" className="user-menu__item" onClick={onCreateItem}>
                     <span className="user-menu__icon">
-                      <Icon icon="pixelarticons:plus" width={20} height={20} />
+                      <Icon icon="pixelarticons:plus" width={24} height={24} />
                     </span>
                     상품 등록
                   </button>
@@ -120,7 +120,7 @@ export default function UserMenuPopover({
             <div className="user-menu__divider" />
             <button type="button" role="menuitem" className="user-menu__item" onClick={onLogout}>
               <span className="user-menu__icon">
-                <Icon icon="pixelarticons:logout" width={20} height={20} />
+                <Icon icon="pixelarticons:logout" width={24} height={24} />
               </span>
               로그아웃
             </button>
@@ -129,13 +129,13 @@ export default function UserMenuPopover({
           <>
             <button type="button" role="menuitem" className="user-menu__item" onClick={onLogin}>
               <span className="user-menu__icon">
-                <Icon icon="pixelarticons:lock" width={20} height={20} />
+                <Icon icon="pixelarticons:lock" width={24} height={24} />
               </span>
               로그인
             </button>
             <button type="button" role="menuitem" className="user-menu__item" onClick={onJoin}>
               <span className="user-menu__icon">
-                <Icon icon="pixelarticons:user" width={20} height={20} />
+                <Icon icon="pixelarticons:user" width={24} height={24} />
               </span>
               회원가입
             </button>

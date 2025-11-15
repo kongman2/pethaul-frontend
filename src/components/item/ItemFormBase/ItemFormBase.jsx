@@ -1,8 +1,9 @@
 import './ItemFormBase.scss'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { formatWithComma, stripComma } from '../../../utils/priceSet'
-import { Button, Input, Textarea, SectionCard, ImageUpload, Selector, AlertModal } from '../../common'
+import { Button, Input, Textarea, SectionCard, ImageUpload, Selector, AlertModal, RichTextEditor } from '../../common'
 import { useModalHelpers } from '../../../hooks/useModalHelpers'
+import { uploadContentImageApi } from '../../../api/contentApi'
 
 // initialData 유연 정규화
 function normalize(raw) {
@@ -420,15 +421,23 @@ function ItemFormBase({
 
             {/* 상품 상세 설명 */}
             <div className="col-12">
-              <label htmlFor="item-detail" className="form-label fw-semibold">
-                상품 상세 설명
-              </label>
-              <Textarea
+              <RichTextEditor
+                label="상품 상세 설명"
                 id="item-detail"
-                placeholder="상품에 대한 자세한 설명을 작성해주세요"
                 value={itemDetail}
-                onChange={setItemDetail}
-                rows={8}
+                onChange={(html) => setItemDetail(html)}
+                placeholder="상품에 대한 자세한 설명을 작성해주세요. 이미지와 링크를 넣을 수 있어요!"
+                onImageUpload={async (file) => {
+                  try {
+                    // 컨텐츠 이미지 업로드 API 재사용
+                    const result = await uploadContentImageApi(file)
+                    return result.url
+                  } catch (error) {
+                    alert('이미지 업로드에 실패했습니다.', '오류', 'danger')
+                    throw error
+                  }
+                }}
+                hint="텍스트 서식, 이미지, 링크를 추가할 수 있습니다."
               />
             </div>
           </div>

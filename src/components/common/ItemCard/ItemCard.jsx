@@ -74,11 +74,10 @@ function ItemCard({
           <div className="item-card__meta">
             {tags.length > 0 && (
               <div className="item-card__tags">
-                {tags.map((tag) => (
-                  <span key={tag} className="item-card__tag">
-                    #{tag}
-                  </span>
-                ))}
+                {/* 대표 태그 1개만 표시 */}
+                <span className="item-card__tag">
+                  #{tags[0]}
+                </span>
               </div>
             )}
             {likeButton}
