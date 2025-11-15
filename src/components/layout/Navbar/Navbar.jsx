@@ -261,8 +261,8 @@ function Navbar() {
                      </NavLink>
                   </li>
                   <li>
-                     <NavLink to="/items/search?filter=이벤트&filter=세일" className="d-flex align-items-center gap-1">
-                        SALE EVENT
+                     <NavLink to="/items/search?filter=이벤트" className="d-flex align-items-center gap-1">
+                        EVENT
                         <Icon icon="fluent-emoji:star" width={16} height={16} />
                      </NavLink>
                   </li>
