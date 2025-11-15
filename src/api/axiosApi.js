@@ -2,10 +2,27 @@ import axios from 'axios'
 
 // BASE_URL 설정 (빌드 타임 환경 변수 체크)
 const getBaseUrl = () => {
+   // 빌드 타임 환경 변수
    const buildTimeUrl = import.meta.env.VITE_APP_API_URL
-   if (buildTimeUrl && buildTimeUrl !== 'undefined' && buildTimeUrl.trim() !== '') {
+   
+   // undefined 문자열 체크 (빌드 타임에 undefined가 문자열로 주입되는 경우)
+   if (buildTimeUrl && 
+       buildTimeUrl !== 'undefined' && 
+       buildTimeUrl !== undefined &&
+       typeof buildTimeUrl === 'string' &&
+       buildTimeUrl.trim() !== '' &&
+       buildTimeUrl.startsWith('http')) {
       return buildTimeUrl.replace(/\/$/, '')
    }
+   
+   // 런타임 환경 변수 (window.__ENV__)
+   if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
+      const runtimeUrl = window.__ENV__.VITE_APP_API_URL
+      if (runtimeUrl && runtimeUrl !== 'undefined' && runtimeUrl.startsWith('http')) {
+         return runtimeUrl.replace(/\/$/, '')
+      }
+   }
+   
    // 기본값
    return 'https://pethaul-api.onrender.com'
 }

@@ -40,7 +40,22 @@ app.get('*', (req, res) => {
    // 여기서는 라우트 경로만 처리
    try {
       console.log('📄 SPA 라우팅 요청:', req.path)
-      const html = readFileSync(indexHtmlPath, 'utf-8')
+      let html = readFileSync(indexHtmlPath, 'utf-8')
+      
+      // 런타임 환경 변수를 HTML에 주입
+      const envVars = {
+         VITE_APP_API_URL: process.env.VITE_APP_API_URL || 'https://pethaul-api.onrender.com',
+         VITE_APP_AUTH_KEY: process.env.VITE_APP_AUTH_KEY || ''
+      }
+      
+      // </head> 태그 앞에 환경 변수 스크립트 주입
+      const envScript = `
+      <script>
+         window.__ENV__ = ${JSON.stringify(envVars)};
+      </script>
+      `
+      html = html.replace('</head>', `${envScript}</head>`)
+      
       res.setHeader('Content-Type', 'text/html; charset=utf-8')
       res.send(html)
    } catch (error) {
