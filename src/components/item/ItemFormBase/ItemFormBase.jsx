@@ -16,6 +16,7 @@ function normalize(raw) {
     itemSellStatus: raw.itemSellStatus ?? raw.status ?? 'SELL',
     itemDetail: raw.itemDetail ?? raw.description ?? '',
     itemSummary: raw.itemSummary ?? raw.summary ?? '',
+    discountPercent: raw.discountPercent ?? 0,
     ItemImages: raw.ItemImages ?? raw.images ?? raw.photos ?? [],
     Categories: (raw.Categories ?? raw.categories ?? []).map((c) => (typeof c === 'string' ? { categoryName: c } : { categoryName: c?.categoryName ?? c?.name ?? '' })),
   }
@@ -92,6 +93,7 @@ function ItemFormBase({
   const [itemSellStatus, setItemSellStatus] = useState(norm?.itemSellStatus ?? 'SELL')
   const [itemDetail, setItemDetail] = useState(norm?.itemDetail ?? '')
   const [itemSummary, setItemSummary] = useState(norm?.itemSummary ?? '')
+  const [discountPercent, setDiscountPercent] = useState(String(norm?.discountPercent ?? '0'))
   const [selectedCategories, setSelectedCategories] = useState(initialSelectedCategories)
   const [customCategoryInput, setCustomCategoryInput] = useState('')
 
@@ -105,6 +107,7 @@ function ItemFormBase({
     setItemSellStatus(norm.itemSellStatus ?? 'SELL')
     setItemDetail(norm.itemDetail ?? '')
     setItemSummary(norm.itemSummary ?? '')
+    setDiscountPercent(String(norm.discountPercent ?? '0'))
     setSelectedCategories(initialSelectedCategories)
     setCustomCategoryInput('')
   }, [formMode, norm, initialServerImgUrls, initialSelectedCategories])
@@ -167,6 +170,24 @@ function ItemFormBase({
     if (n !== null) setStockNumber(n)
   }
 
+  const handleDiscountChange = (raw) => {
+    const n = handleNumeric(raw)
+    if (n !== null) {
+      // 0-100 사이로 제한
+      const clamped = Math.min(Math.max(parseInt(n, 10) || 0, 0), 100)
+      setDiscountPercent(String(clamped))
+    }
+  }
+
+  // 할인 가격 계산
+  const calculateDiscountedPrice = useMemo(() => {
+    const priceNum = parseInt(stripComma(price), 10) || 0
+    const discountNum = parseInt(discountPercent, 10) || 0
+    if (priceNum === 0 || discountNum === 0) return null
+    const discounted = Math.floor(priceNum * (1 - discountNum / 100))
+    return formatWithComma(String(discounted))
+  }, [price, discountPercent])
+
   const buildFormData = () => {
     const fd = new FormData()
     if (formMode === 'edit' && norm?.id != null) fd.append('id', String(norm.id))
@@ -177,6 +198,7 @@ function ItemFormBase({
     fd.append('itemSellStatus', itemSellStatus)
     fd.append('itemDetail', itemDetail)
     fd.append('itemSummary', itemSummary)
+    fd.append('discountPercent', String(discountPercent || '0'))
 
     if (imgFiles?.length) {
       imgFiles.forEach((file) => {
@@ -284,7 +306,7 @@ function ItemFormBase({
                 onChange={handleImageChange}
                 onRemove={handleImageRemove}
                 error={imgError}
-                hint="jpg, png, webp, gif 형식의 이미지를 업로드해주세요."
+                hint="jpg, png, webp, gif 형식의 이미지를 업로드해주세요. (정사각형 비율 권장)"
                 id="item-images"
               />
             </div>
@@ -401,6 +423,33 @@ function ItemFormBase({
                 options={sellStatusOptions}
                 placeholder="판매 상태 선택"
               />
+            </div>
+
+            {/* 할인율 */}
+            <div className="col-12 col-md-4">
+              <label htmlFor="item-discount" className="form-label fw-semibold">
+                할인율 (%)
+              </label>
+              <Input
+                id="item-discount"
+                type="text"
+                inputMode="numeric"
+                placeholder="0"
+                value={discountPercent}
+                onChange={handleDiscountChange}
+                maxLength={3}
+                rightButton={{
+                  text: '%',
+                  disabled: true,
+                  variant: 'outline',
+                  size: 'sm',
+                }}
+              />
+              {calculateDiscountedPrice && (
+                <small className="text-muted d-block mt-1">
+                  할인 가격: ₩{calculateDiscountedPrice} (원가 ₩{formatWithComma(price)}에서 {discountPercent}% 할인)
+                </small>
+              )}
             </div>
 
             {/* 상품 요약 */}

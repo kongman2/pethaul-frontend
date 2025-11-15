@@ -116,3 +116,21 @@ export const verifyPassword = async (password) => {
       const response = await petHaulApi.post('/auth/verify', { password })
       return response
 }
+
+// 프로필 이미지 업로드
+export const uploadAvatar = async (file) => {
+   const formData = new FormData()
+   formData.append('avatar', file)
+   const response = await petHaulApi.post('/auth/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+   })
+   return response
+}
+
+// 전체 사용자 목록 조회 (관리자 전용)
+export const getAllUsers = async ({ page = 1, limit = 20, searchTerm = '' } = {}) => {
+   const response = await petHaulApi.get('/auth/all', {
+      params: { page, limit, searchTerm },
+   })
+   return response
+}

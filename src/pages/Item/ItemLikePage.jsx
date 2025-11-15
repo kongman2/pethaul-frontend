@@ -211,8 +211,44 @@ export default function ItemLikePage() {
         const categories = extractCategories(item)
 
         const rawPrice = item.price ?? item?.Price?.amount ?? item?.amount
-        const prettyPrice = formatPrice(rawPrice)
-        const priceLabel = isSoldOut ? '' : prettyPrice ? `${prettyPrice}원` : '가격 정보 없음'
+        const discountPercent = item?.discountPercent ?? 0
+        const priceNum = rawPrice ? Number(rawPrice) : 0
+        const discountNum = discountPercent ? Number(discountPercent) : 0
+        
+        // 할인 가격 계산
+        const discountedPrice = discountNum > 0 && priceNum > 0 
+           ? Math.floor(priceNum * (1 - discountNum / 100))
+           : null
+        
+        const displayPrice = discountedPrice ?? priceNum
+        const prettyPrice = formatPrice(displayPrice)
+        const originalPrice = discountNum > 0 && priceNum > 0 ? formatPrice(priceNum) : null
+        
+        // 가격 레이블 생성 (할인 가격이 있으면 원가 취소선 표시)
+        let priceLabel = ''
+        if (!isSoldOut) {
+           if (prettyPrice) {
+              if (discountedPrice && originalPrice) {
+                 priceLabel = (
+                    <div className="item-card__price-wrapper">
+                       <span className="item-card__price-original" style={{ textDecoration: 'line-through', color: '#999', fontSize: '0.9em', marginRight: '0.5rem' }}>
+                          {originalPrice}원
+                       </span>
+                       <span className="item-card__price-discounted" style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                          {prettyPrice}원
+                       </span>
+                       <span className="item-card__discount-badge" style={{ marginLeft: '0.5rem', color: '#e74c3c', fontSize: '0.85em' }}>
+                          {discountNum}%
+                       </span>
+                    </div>
+                 )
+              } else {
+                 priceLabel = `${prettyPrice}원`
+              }
+           } else {
+              priceLabel = '가격 정보 없음'
+           }
+        }
 
         const overlayStart = isSoldOut ? <span className="badge text-bg-danger rounded-pill shadow-sm">SOLD OUT</span> : null
 

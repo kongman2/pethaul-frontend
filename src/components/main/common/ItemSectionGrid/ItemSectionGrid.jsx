@@ -13,7 +13,41 @@ import './ItemSectionGrid.scss'
 const defaultGetItemId = (item) => item?.itemId ?? item?.id ?? item?.ItemId ?? item?.Item?.id
 const defaultGetImage = (item) => item?.ItemImages?.[0]?.imgUrl ?? item?.imageUrl ?? item?.thumbnail
 const defaultGetTitle = (item) => item?.itemNm ?? item?.title ?? item?.name ?? ''
-const defaultGetPriceLabel = (item) => (item?.price != null ? `${item.price}원` : undefined)
+const defaultGetPriceLabel = (item) => {
+   const rawPrice = item?.price ?? item?.Price?.amount ?? item?.amount
+   const discountPercent = item?.discountPercent ?? 0
+   const priceNum = rawPrice ? Number(rawPrice) : 0
+   const discountNum = discountPercent ? Number(discountPercent) : 0
+   
+   if (priceNum === 0) return undefined
+   
+   // 할인 가격 계산
+   const discountedPrice = discountNum > 0 && priceNum > 0 
+      ? Math.floor(priceNum * (1 - discountNum / 100))
+      : null
+   
+   const displayPrice = discountedPrice ?? priceNum
+   const originalPrice = discountNum > 0 && priceNum > 0 ? priceNum : null
+   
+   // 할인 가격이 있으면 원가 취소선 표시
+   if (discountedPrice && originalPrice) {
+      return (
+         <div className="item-card__price-wrapper">
+            <span className="item-card__price-original" style={{ textDecoration: 'line-through', color: '#999', fontSize: '0.9em', marginRight: '0.5rem' }}>
+               {originalPrice.toLocaleString()}원
+            </span>
+            <span className="item-card__price-discounted" style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+               {discountedPrice.toLocaleString()}원
+            </span>
+            <span className="item-card__discount-badge" style={{ marginLeft: '0.5rem', color: '#e74c3c', fontSize: '0.85em' }}>
+               {discountNum}%
+            </span>
+         </div>
+      )
+   }
+   
+   return `${displayPrice.toLocaleString()}원`
+}
 const defaultGetTags = (item) => {
    if (Array.isArray(item?.Categories)) {
       return item.Categories.map((c) => c?.categoryName ?? c?.name).filter(Boolean)

@@ -266,6 +266,12 @@ function Navbar() {
                         <Icon icon="fluent-emoji:star" width={16} height={16} />
                      </NavLink>
                   </li>
+                  <li>
+                     <NavLink to="/contents">
+                        CONTENTS
+                        <Icon icon="streamline-pixel:content-files-newspaper" width={16} height={16} />
+                     </NavLink>
+                  </li>
                </ul>
 
                {/* 우측 아이콘 바 */}

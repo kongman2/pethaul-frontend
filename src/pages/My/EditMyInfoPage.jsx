@@ -2,13 +2,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-import { updateMyInfoThunk } from '../../features/authSlice'
+import { updateMyInfoThunk, checkUnifiedAuthThunk } from '../../features/authSlice'
 import { checkEmail } from '../../api/authApi'
 
 import { formatPhoneNumber } from '../../utils/phoneFormat'
-import { SectionCard, Input, Button, Spinner, PageHeader, Textarea, Selector, AlertModal } from '../../components/common'
+import { SectionCard, Input, Button, Spinner, PageHeader, Textarea, Selector, AlertModal, ImageUpload } from '../../components/common'
 import { useModalHelpers } from '../../hooks/useModalHelpers'
 import useAppBackground from '../../hooks/useAppBackground'
+import { uploadAvatar } from '../../api/authApi'
+import { getProfileImage, buildImageUrl } from '../../utils/imageUtils'
 
 const REQUEST_OPTIONS = [
   { value: '', label: '선택 안 함' },
@@ -70,6 +72,8 @@ function EditMyInfoPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const verified = location.state?.verified === true
+  const uploadAvatarFromProfile = location.state?.uploadAvatar === true
+  const avatarFileFromProfile = location.state?.avatarFile
 
   // 구글 사용자는 비밀번호 확인 건너뛰기
   const socialUser = isSocialUser(user, googleAuthenticated)
@@ -127,6 +131,11 @@ function EditMyInfoPage() {
   const [defaultRequestCustom, setDefaultRequestCustom] = useState(
     !isPresetRequest(initialDefaultRequest) ? initialDefaultRequest : ''
   )
+
+  // 프로필 이미지 관련 상태
+  const [avatarFile, setAvatarFile] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   const postcodePromiseRef = useRef(null)
 
@@ -294,6 +303,15 @@ function EditMyInfoPage() {
     setCheckedEmail(false)
     setNewPassword('')
     setCheckNewPassword('')
+    
+    // 프로필 이미지 초기화
+    const currentAvatar = user?.avatar || user?.picture
+    if (currentAvatar) {
+      setAvatarPreview(buildImageUrl(currentAvatar))
+    } else {
+      setAvatarPreview(null)
+    }
+    setAvatarFile(null)
   }, [
     user?.name,
     user?.email,
@@ -305,7 +323,46 @@ function EditMyInfoPage() {
     user?.defaultDeliveryAddress,
     user?.defaultDeliveryAddressDetail,
     user?.defaultDeliveryRequest,
+    user?.avatar,
+    user?.picture,
   ])
+
+  // Profile 컴포넌트에서 전달받은 파일 처리
+  useEffect(() => {
+    if (uploadAvatarFromProfile && avatarFileFromProfile) {
+      const file = avatarFileFromProfile
+      setAvatarFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result)
+      }
+      reader.readAsDataURL(file)
+      // state 초기화
+      navigate(location.pathname, { replace: true, state: { verified } })
+    }
+  }, [uploadAvatarFromProfile, avatarFileFromProfile, navigate, location.pathname, verified])
+
+  const handleAvatarChange = (files) => {
+    if (files && files.length > 0) {
+      const file = files[0]
+      setAvatarFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleAvatarRemove = () => {
+    setAvatarFile(null)
+    const currentAvatar = user?.avatar || user?.picture
+    if (currentAvatar) {
+      setAvatarPreview(buildImageUrl(currentAvatar))
+    } else {
+      setAvatarPreview(null)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -341,22 +398,45 @@ function EditMyInfoPage() {
       return
     }
 
-    const payload = {
-      name: inputName,
-      email: inputEmail,
-      phoneNumber: cleanedPhone,
-      address: inputAddress.trim(),
-      addressDetail: inputAddressDetail.trim(),
-      ...(newPassword ? { newPassword } : {}),
-      defaultDeliveryName: defaultDeliveryName.trim(),
-      defaultDeliveryPhone: cleanedDefaultPhone,
-      defaultDeliveryAddress: defaultDeliveryAddress.trim(),
-      defaultDeliveryAddressDetail: defaultDeliveryAddressDetail.trim(),
-      defaultDeliveryRequest: resolvedDefaultRequest || '',
-    }
-
     try {
       setSubmitting(true)
+
+      // 프로필 이미지 업로드 (파일이 있는 경우)
+      if (avatarFile) {
+        try {
+          setUploadingAvatar(true)
+          const avatarResponse = await uploadAvatar(avatarFile)
+          // 업로드 성공 후 사용자 정보 다시 가져오기
+          if (avatarResponse?.data?.avatar) {
+            // Redux store에 avatar 업데이트
+            await dispatch(updateMyInfoThunk({ avatar: avatarResponse.data.avatar })).unwrap()
+            // 사용자 정보 다시 가져오기 (서버에서 최신 정보 반영)
+            await dispatch(checkUnifiedAuthThunk()).unwrap()
+          }
+        } catch (avatarError) {
+          alert('프로필 이미지 업로드 중 오류가 발생했습니다.', '오류', 'danger')
+          setUploadingAvatar(false)
+          setSubmitting(false)
+          return
+        } finally {
+          setUploadingAvatar(false)
+        }
+      }
+
+      const payload = {
+        name: inputName,
+        email: inputEmail,
+        phoneNumber: cleanedPhone,
+        address: inputAddress.trim(),
+        addressDetail: inputAddressDetail.trim(),
+        ...(newPassword ? { newPassword } : {}),
+        defaultDeliveryName: defaultDeliveryName.trim(),
+        defaultDeliveryPhone: cleanedDefaultPhone,
+        defaultDeliveryAddress: defaultDeliveryAddress.trim(),
+        defaultDeliveryAddressDetail: defaultDeliveryAddressDetail.trim(),
+        defaultDeliveryRequest: resolvedDefaultRequest || '',
+      }
+
       await dispatch(updateMyInfoThunk(payload)).unwrap()
       alert('회원 정보를 성공적으로 수정했습니다.', '완료', 'success')
       navigate('/mypage')
@@ -379,6 +459,20 @@ function EditMyInfoPage() {
         <SectionCard title="회원정보를 다시 입력해주세요." headerActions={null} className="section-card--overflow-visible">
           <form className="d-flex flex-column gap-4 p-4" onSubmit={handleSubmit}>
             <div className="row g-4">
+              {/* 프로필 이미지 업로드 */}
+              <div className="col-12">
+                <ImageUpload
+                  label="프로필 이미지"
+                  id="profile-avatar"
+                  multiple={false}
+                  previewUrls={avatarPreview ? [avatarPreview] : []}
+                  onChange={handleAvatarChange}
+                  onRemove={handleAvatarRemove}
+                  uploading={uploadingAvatar}
+                  hint="jpg, png, webp, gif 형식의 이미지를 업로드해주세요. (최대 5MB)"
+                />
+              </div>
+
               <div className="col-12 col-md-6">
                 <label htmlFor="myinfo-id" className="form-label fw-semibold">
                   ID

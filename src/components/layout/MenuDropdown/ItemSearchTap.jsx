@@ -29,9 +29,6 @@ function ItemSearchTap({ onClose = () => {} }) {
         <div className="d-flex justify-content-center">
           <FilterButton label="전체상품보기" value="" />
         </div>
-        <div className="d-flex justify-content-center">
-          <FilterButton label="CONTENTS" to="/contents" state={null} />
-        </div>
          </div>
 
       <div className="filter-group mb-4">

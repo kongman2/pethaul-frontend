@@ -1,8 +1,27 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useRef } from 'react'
 import { getProfileImage } from '../../../utils/imageUtils'
 import './Profile.scss'
 
 function Profile({ user, loading = false }) {
+  const navigate = useNavigate()
+  const fileInputRef = useRef(null)
+
+  const handleAvatarClick = () => {
+    if (!loading && user) {
+      fileInputRef.current?.click()
+    }
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // 회원정보 수정 페이지로 이동하면서 파일 정보 전달
+      navigate('/mypage/edit', { state: { uploadAvatar: true, avatarFile: file } })
+    }
+    e.target.value = ''
+  }
+
   if (loading || !user) {
     return (
       <div className="profile-card profile-card--loading">
@@ -26,6 +45,13 @@ function Profile({ user, loading = false }) {
   return (
     <div className="profile-card d-flex flex-column flex-sm-row flex-lg-column align-items-center justify-content-center gap-3">
       <div className="profile-card__visual flex-grow-1">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="d-none"
+        />
         <img
           src={avatar}
           alt={`${displayName}의 프로필 사진`}
@@ -33,6 +59,9 @@ function Profile({ user, loading = false }) {
             e.currentTarget.src = getProfileImage()
           }}
           className="profile-card__avatar"
+          onClick={handleAvatarClick}
+          style={{ cursor: 'pointer' }}
+          title="클릭하여 프로필 사진 변경"
         />
       </div>
 

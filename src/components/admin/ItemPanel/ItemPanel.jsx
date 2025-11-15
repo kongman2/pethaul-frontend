@@ -184,8 +184,42 @@ function ItemPanel({ searchTerm, sellCategory }) {
             {filteredList.map((item, idx) => {
                const categories = (item?.Categories ?? []).map((c) => c?.categoryName ?? c?.name).filter(Boolean)
                const rawPrice = item?.price ?? item?.Price?.amount ?? item?.amount
-               const prettyPrice = formatPrice(rawPrice)
-               const priceLabel = prettyPrice ? `₩${prettyPrice}` : '가격 정보 없음'
+               const discountPercent = item?.discountPercent ?? 0
+               const priceNum = rawPrice ? Number(rawPrice) : 0
+               const discountNum = discountPercent ? Number(discountPercent) : 0
+               
+               // 할인 가격 계산
+               const discountedPrice = discountNum > 0 && priceNum > 0 
+                  ? Math.floor(priceNum * (1 - discountNum / 100))
+                  : null
+               
+               const displayPrice = discountedPrice ?? priceNum
+               const prettyPrice = formatPrice(displayPrice)
+               const originalPrice = discountNum > 0 && priceNum > 0 ? formatPrice(priceNum) : null
+               
+               // 가격 레이블 생성 (할인 가격이 있으면 원가 취소선 표시)
+               let priceLabel = ''
+               if (prettyPrice) {
+                  if (discountedPrice && originalPrice) {
+                     priceLabel = (
+                        <div className="item-card__price-wrapper">
+                           <span className="item-card__price-original" style={{ textDecoration: 'line-through', color: '#999', fontSize: '0.9em', marginRight: '0.5rem' }}>
+                              ₩{originalPrice}
+                           </span>
+                           <span className="item-card__price-discounted" style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                              ₩{prettyPrice}
+                           </span>
+                           <span className="item-card__discount-badge" style={{ marginLeft: '0.5rem', color: '#e74c3c', fontSize: '0.85em' }}>
+                              {discountNum}%
+                           </span>
+                        </div>
+                     )
+                  } else {
+                     priceLabel = `₩${prettyPrice}`
+                  }
+               } else {
+                  priceLabel = '가격 정보 없음'
+               }
                const isSoldOut = (item?.itemSellStatus ?? item?.sellStatus) === 'SOLD_OUT'
                const overlayStart = isSoldOut ? (
                   <span className="badge text-bg-danger rounded-pill shadow-sm">품절</span>

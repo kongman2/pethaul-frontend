@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
-import { createItemThunk, fetchItemByIdThunk, updateItemThunk } from '../../features/itemSlice'
+import { createItemThunk, fetchItemByIdThunk, updateItemThunk, fetchItemsThunk } from '../../features/itemSlice'
 
 import ItemFormBase from '../../components/item/ItemFormBase'
 import useAppBackground from '../../hooks/useAppBackground'
@@ -32,6 +32,8 @@ function ItemFormPage() {
       } else {
         await dispatch(createItemThunk(formData)).unwrap()
         alert('상품이 등록되었습니다.', '완료', 'success')
+        // 상품 등록 후 어드민 페이지 상품관리 목록 새로고침
+        await dispatch(fetchItemsThunk({ page: 1, limit: 100 }))
       }
       navigate('/admin')
     } catch (err) {

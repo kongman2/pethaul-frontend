@@ -171,8 +171,11 @@ export const updatePasswordThunk = createAsyncThunk('auth/updatePassword', async
 // 회원 정보 수정
 export const updateMyInfoThunk = createAsyncThunk('auth/updateMyInfo', async (data, { rejectWithValue }) => {
    try {
+      // avatar만 업데이트하는 경우는 API 호출 없이 바로 반환
+      if (data.avatar && Object.keys(data).length === 1) {
+         return { user: { avatar: data.avatar } }
+      }
       const response = await updateMyInfo(data)
-
       return response.data
    } catch (error) {
       return rejectWithValue(error.response?.data?.message || '회원 정보 수정 실패')
@@ -426,7 +429,10 @@ const authSlice = createSlice({
          })
          .addCase(updateMyInfoThunk.fulfilled, (state, action) => {
             state.loading = false
-            state.user = action.payload.user
+            if (action.payload?.user) {
+               // 기존 사용자 정보와 병합
+               state.user = { ...state.user, ...action.payload.user }
+            }
          })
          .addCase(updateMyInfoThunk.rejected, (state, action) => {
             state.loading = false

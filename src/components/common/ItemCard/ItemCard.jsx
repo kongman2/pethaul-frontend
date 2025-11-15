@@ -89,7 +89,11 @@ function ItemCard({
           {subtitle && <p className="item-card__subtitle">{subtitle}</p>}
         </div>
 
-        {priceLabel && <div className="item-card__price">{priceLabel}</div>}
+        {priceLabel && (
+          <div className="item-card__price">
+            {typeof priceLabel === 'string' ? priceLabel : priceLabel}
+          </div>
+        )}
 
         {children}
 
@@ -113,7 +117,7 @@ ItemCard.propTypes = {
   imageUrl: PropTypes.string,
   title: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
-  priceLabel: PropTypes.string,
+  priceLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   tags: PropTypes.arrayOf(PropTypes.string),
   href: PropTypes.string,
   overlayStart: PropTypes.node,
