@@ -62,14 +62,8 @@ export default function VerifyModal() {
 
   const onCloseIcon = (e) => {
     e.preventDefault()
-    alertModal.open({
-      title: '알림',
-      message: '마이페이지로 돌아갑니다.',
-      variant: 'info',
-      onClose: () => {
-        navigate('/mypage', { replace: true })
-      },
-    })
+    // X 버튼 클릭 시 바로 마이페이지로 이동
+    navigate('/mypage', { replace: true })
   }
 
   // Backdrop 클릭 시 입력만 초기화 (모달은 닫지 않음)
