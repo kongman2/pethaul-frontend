@@ -47,6 +47,10 @@ export const googleCheckStatusThunk = createAsyncThunk('auth/googleCheckStatus',
       const response = await googleCheckStatus()
       return response // 백엔드가 data를 감싸든 말든 normalize에서 처리
    } catch (error) {
+      // 네트워크 오류는 조용히 처리 (백엔드 서버가 실행되지 않았을 수 있음)
+      if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED' || error.message?.includes('ERR_CONNECTION_REFUSED') || error.code === 'ETIMEDOUT') {
+         return rejectWithValue({ code: 'ERR_NETWORK', message: '서버에 연결할 수 없습니다' })
+      }
       return rejectWithValue(error.response?.data?.message || '구글 로그인 상태 확인 실패')
    }
 })
@@ -136,6 +140,10 @@ export const checkAuthStatusThunk = createAsyncThunk('auth/checkAuthStatus', asy
       const response = await checkAuthStatus()
       return response.data
    } catch (error) {
+      // 네트워크 오류는 조용히 처리 (백엔드 서버가 실행되지 않았을 수 있음)
+      if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED' || error.message?.includes('ERR_CONNECTION_REFUSED') || error.code === 'ETIMEDOUT') {
+         return rejectWithValue({ code: 'ERR_NETWORK', message: '서버에 연결할 수 없습니다' })
+      }
       return rejectWithValue(error.response?.data?.message || '로그인 상태 확인 실패')
    }
 })
@@ -181,66 +189,95 @@ export const verifyPasswordThunk = createAsyncThunk('auth/verifyPassword', async
    }
 })
 
-export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async (_, { dispatch }) => {
-   const [localRes, googleRes] = await Promise.allSettled([dispatch(checkAuthStatusThunk()).unwrap(), dispatch(googleCheckStatusThunk()).unwrap()])
-
-   const localOk = localRes.status === 'fulfilled' ? normalizeAuthPayload(localRes.value) : null
-   const googleOk = googleRes.status === 'fulfilled' ? normalizeAuthPayload(googleRes.value) : null
-
-   // 우선순위: 인증 true인 결과들 중 사용자 정보가 있는 쪽 우선
-   const candidates = [localOk, googleOk].filter(Boolean)
-   const authed = candidates.filter((c) => c.isAuthenticated)
-
-   if (authed.length > 0) {
-      authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
-      
-      // 인증된 사용자인데 토큰이 없으면 자동으로 발급 시도
-      const token = localStorage.getItem('token')
-      if (!token) {
-         try {
-            // 세션이 완전히 설정될 때까지 충분한 지연 (500ms)
-            await new Promise(resolve => setTimeout(resolve, 500))
-            
-            // user 객체가 있는지 확인 (authed[0]에 이미 있음)
-            if (authed[0]?.user?.id) {
-               // 최대 5번까지 재시도 (더 많은 기회 제공)
-               const { getTokenThunk } = await import('./tokenSlice')
-               let tokenResult = null
-               for (let attempt = 0; attempt < 5; attempt++) {
-                  tokenResult = await dispatch(getTokenThunk())
-                  if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
-                     localStorage.setItem('token', tokenResult.payload)
-                     console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
-                     break
-                  }
-                  // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms, 1000ms)
-                  if (attempt < 4) {
-                     const delay = 300 + (attempt * 200)
-                     await new Promise(resolve => setTimeout(resolve, delay))
-                  }
-               }
-               
-               // 모든 시도 실패 시 조용히 처리 (토큰 없이도 세션 기반으로 작동 가능)
-               if (tokenResult?.type !== 'token/getToken/fulfilled') {
-                  console.debug('토큰 자동 발급 실패 (세션 기반 인증으로 계속 사용 가능)')
-               }
-            } else {
-               // user 객체가 없으면 토큰 발급 불가능
-               console.debug('사용자 정보가 없어 토큰 발급을 건너뜁니다.')
+export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async (_, { dispatch, rejectWithValue }) => {
+   try {
+      const [localRes, googleRes] = await Promise.allSettled([
+         dispatch(checkAuthStatusThunk()).unwrap().catch(err => {
+            // 네트워크 오류는 조용히 처리 (백엔드 서버가 실행되지 않았을 수 있음)
+            if (err?.code === 'ERR_NETWORK' || err?.code === 'ECONNREFUSED' || err?.message?.includes('ERR_CONNECTION_REFUSED') || err?.code === 'ETIMEDOUT') {
+               return null
             }
-         } catch (tokenError) {
-            // 예외 발생 시에도 조용히 처리 (세션 기반 인증으로 작동 가능)
-            console.debug('토큰 자동 발급 중 예외 발생 (무시됨):', tokenError.message)
+            throw err
+         }),
+         dispatch(googleCheckStatusThunk()).unwrap().catch(err => {
+            // 네트워크 오류는 조용히 처리
+            if (err?.code === 'ERR_NETWORK' || err?.code === 'ECONNREFUSED' || err?.message?.includes('ERR_CONNECTION_REFUSED') || err?.code === 'ETIMEDOUT') {
+               return null
+            }
+            throw err
+         })
+      ])
+
+      const localOk = localRes.status === 'fulfilled' && localRes.value ? normalizeAuthPayload(localRes.value) : null
+      const googleOk = googleRes.status === 'fulfilled' && googleRes.value ? normalizeAuthPayload(googleRes.value) : null
+
+      // 우선순위: 인증 true인 결과들 중 사용자 정보가 있는 쪽 우선
+      const candidates = [localOk, googleOk].filter(Boolean)
+      const authed = candidates.filter((c) => c.isAuthenticated)
+
+      if (authed.length > 0) {
+         authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
+         
+         // 인증된 사용자인데 토큰이 없으면 자동으로 발급 시도
+         const token = localStorage.getItem('token')
+         if (!token) {
+            try {
+               // 세션이 완전히 설정될 때까지 충분한 지연 (500ms)
+               await new Promise(resolve => setTimeout(resolve, 500))
+               
+               // user 객체가 있는지 확인 (authed[0]에 이미 있음)
+               if (authed[0]?.user?.id) {
+                  // 최대 5번까지 재시도 (더 많은 기회 제공)
+                  const { getTokenThunk } = await import('./tokenSlice')
+                  let tokenResult = null
+                  for (let attempt = 0; attempt < 5; attempt++) {
+                     tokenResult = await dispatch(getTokenThunk())
+                     if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+                        localStorage.setItem('token', tokenResult.payload)
+                        console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
+                        break
+                     }
+                     // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms, 1000ms)
+                     if (attempt < 4) {
+                        const delay = 300 + (attempt * 200)
+                        await new Promise(resolve => setTimeout(resolve, delay))
+                     }
+                  }
+                  
+                  // 모든 시도 실패 시 조용히 처리 (토큰 없이도 세션 기반으로 작동 가능)
+                  if (tokenResult?.type !== 'token/getToken/fulfilled') {
+                     console.debug('토큰 자동 발급 실패 (세션 기반 인증으로 계속 사용 가능)')
+                  }
+               } else {
+                  // user 객체가 없으면 토큰 발급 불가능
+                  console.debug('사용자 정보가 없어 토큰 발급을 건너뜁니다.')
+               }
+            } catch (tokenError) {
+               // 예외 발생 시에도 조용히 처리 (세션 기반 인증으로 작동 가능)
+               console.debug('토큰 자동 발급 중 예외 발생 (무시됨):', tokenError.message)
+            }
          }
+         
+         return { ...authed[0], uncertain: false }
+      }
+
+      // 둘 다 실패 혹은 둘 다 비로그인
+      // 네트워크 불안정 같은 경우를 위해 불확실 플래그 제공
+      const anyRejected = localRes.status === 'rejected' || googleRes.status === 'rejected'
+      const anyNetworkError = 
+         (localRes.status === 'rejected' && (localRes.reason?.code === 'ERR_NETWORK' || localRes.reason?.code === 'ECONNREFUSED' || localRes.reason?.code === 'ETIMEDOUT' || localRes.reason?.message?.includes('ERR_CONNECTION_REFUSED'))) ||
+         (googleRes.status === 'rejected' && (googleRes.reason?.code === 'ERR_NETWORK' || googleRes.reason?.code === 'ECONNREFUSED' || googleRes.reason?.code === 'ETIMEDOUT' || googleRes.reason?.message?.includes('ERR_CONNECTION_REFUSED')))
+      
+      // 네트워크 오류가 있으면 조용히 처리 (백엔드 서버가 실행되지 않았을 수 있음)
+      if (anyNetworkError) {
+         console.debug('백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인하세요.')
       }
       
-      return { ...authed[0], uncertain: false }
+      return { user: null, isAuthenticated: false, googleAuthenticated: false, uncertain: anyRejected && !anyNetworkError }
+   } catch (error) {
+      // 예상치 못한 오류는 rejectWithValue로 처리
+      return rejectWithValue(error.message || '인증 상태 확인 실패')
    }
-
-   // 둘 다 실패 혹은 둘 다 비로그인
-   // 네트워크 불안정 같은 경우를 위해 불확실 플래그 제공
-   const anyRejected = localRes.status === 'rejected' || googleRes.status === 'rejected'
-   return { user: null, isAuthenticated: false, googleAuthenticated: false, uncertain: anyRejected }
 })
 
 // -----------------------------
@@ -326,40 +363,31 @@ const authSlice = createSlice({
          })
 
          .addCase(googleCheckStatusThunk.pending, (state) => {
-            state.loading = true
-            state.error = null
+            // checkUnifiedAuthThunk가 loading을 관리하므로 여기서는 변경하지 않음
          })
          .addCase(googleCheckStatusThunk.fulfilled, (state, action) => {
-            state.loading = false
-            const norm = normalizeAuthPayload(action.payload)
-            // 통합 체크가 없다면 단독으로도 합리적으로 동작
-            state.isAuthenticated = norm.isAuthenticated
-            state.user = norm.user
-            state.googleAuthenticated = norm.googleAuthenticated
+            // checkUnifiedAuthThunk가 loading을 관리하므로 여기서는 변경하지 않음
+            // checkUnifiedAuthThunk에서 통합 관리하므로 여기서는 상태 변경하지 않음
          })
          .addCase(googleCheckStatusThunk.rejected, (state, action) => {
-            state.loading = false
-            state.error = action.payload
-            // 여기서 상태를 강제로 false로 만들지 않는다
+            // checkUnifiedAuthThunk가 loading을 관리하므로 여기서는 변경하지 않음
          })
 
          .addCase(checkAuthStatusThunk.pending, (state) => {
-            state.loading = true
+            // checkUnifiedAuthThunk가 loading을 관리하므로 여기서는 변경하지 않음
          })
          .addCase(checkAuthStatusThunk.fulfilled, (state, action) => {
-            state.loading = false
+            // checkUnifiedAuthThunk가 loading을 관리하므로 여기서는 변경하지 않음
             const norm = normalizeAuthPayload(action.payload)
-            state.isAuthenticated = norm.isAuthenticated
-            state.user = norm.user
+            // checkUnifiedAuthThunk에서 통합 관리하므로 여기서는 상태 변경하지 않음
          })
          .addCase(checkAuthStatusThunk.rejected, (state, action) => {
-            state.loading = false
-            state.error = action.payload
-            // 여기서도 강제 false 처리 금지
+            // checkUnifiedAuthThunk가 loading을 관리하므로 여기서는 변경하지 않음
          })
 
          .addCase(checkUnifiedAuthThunk.pending, (state) => {
             state.loading = true
+            state.error = null
          })
          .addCase(checkUnifiedAuthThunk.fulfilled, (state, action) => {
             state.loading = false
@@ -371,10 +399,12 @@ const authSlice = createSlice({
             state.isAuthenticated = isAuthenticated
             state.user = user
             state.googleAuthenticated = !!googleAuthenticated
+            state.error = null
          })
-         .addCase(checkUnifiedAuthThunk.rejected, (state) => {
+         .addCase(checkUnifiedAuthThunk.rejected, (state, action) => {
             state.loading = false
             // rejected 시에도 기존 인증 상태 유지 (네트워크 오류 등)
+            state.error = action.payload || '인증 상태 확인 실패'
          })
          // 아이디 찾기
          .addCase(findIdThunk.pending, (state) => {

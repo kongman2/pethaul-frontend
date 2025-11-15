@@ -23,7 +23,9 @@ export const logoutUser = async () => {
 
 // 로그인 상태 확인
 export const checkAuthStatus = async () => {
-      const response = await petHaulApi.get('/auth/check')
+      const response = await petHaulApi.get('/auth/check', {
+         timeout: 5000, // 5초 타임아웃
+      })
       return response
 }
 
@@ -52,7 +54,9 @@ export const googleLoginUser = async (googleData) => {
 
 // 구글 로그인 상태 확인
 export const googleCheckStatus = async () => {
-      const response = await petHaulApi.get('/auth/googlecheck')
+      const response = await petHaulApi.get('/auth/googlecheck', {
+         timeout: 5000, // 5초 타임아웃
+      })
       return response.data
 }
 

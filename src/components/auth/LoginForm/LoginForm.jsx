@@ -101,6 +101,7 @@ function LoginForm() {
                 placeholder="아이디를 입력하세요"
                 id="login-id"
                 name="id"
+                autoComplete="username"
                 className="w-100"
                 variant="auth"
               />
@@ -116,6 +117,7 @@ function LoginForm() {
                 showPasswordToggle={true}
                 id="login-password"
                 name="password"
+                autoComplete="current-password"
                 className="w-100"
                 variant="auth"
               />
