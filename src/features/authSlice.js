@@ -69,32 +69,44 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
       
       // 로그인 성공 후 자동으로 JWT 토큰 발급
       // 세션이 완전히 설정될 때까지 약간의 지연 후 시도
+      // 토큰 발급은 선택적이므로 실패해도 로그인은 성공으로 처리
       try {
-         // 세션이 완전히 설정될 때까지 짧은 지연
-         await new Promise(resolve => setTimeout(resolve, 100))
+         // 세션이 완전히 설정될 때까지 충분한 지연 (500ms)
+         await new Promise(resolve => setTimeout(resolve, 500))
          
-         // 최대 3번까지 재시도
-         let tokenResult = null
-         for (let attempt = 0; attempt < 3; attempt++) {
-            tokenResult = await dispatch(getTokenThunk())
-            if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
-               localStorage.setItem('token', tokenResult.payload)
-               console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
-               break
-            }
-            // 실패 시 200ms 대기 후 재시도
-            if (attempt < 2) {
-               await new Promise(resolve => setTimeout(resolve, 200))
-            }
-         }
+         // 먼저 세션 상태 확인 (user 객체가 있는지 확인)
+         const { checkAuthStatus } = await import('../api/authApi')
+         const authCheck = await checkAuthStatus()
          
-         // 모든 시도 실패 시 경고 (하지만 로그인은 성공으로 처리)
-         if (tokenResult?.type !== 'token/getToken/fulfilled') {
-            console.warn('⚠️ 토큰 자동 발급 실패 (나중에 수동으로 발급 가능)')
+         // 세션이 있고 user 객체가 있을 때만 토큰 발급 시도
+         if (authCheck.data?.isAuthenticated && authCheck.data?.user?.id) {
+            // 최대 5번까지 재시도 (더 많은 기회 제공)
+            let tokenResult = null
+            for (let attempt = 0; attempt < 5; attempt++) {
+               tokenResult = await dispatch(getTokenThunk())
+               if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+                  localStorage.setItem('token', tokenResult.payload)
+                  console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
+                  break
+               }
+               // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms, 1000ms)
+               if (attempt < 4) {
+                  const delay = 300 + (attempt * 200)
+                  await new Promise(resolve => setTimeout(resolve, delay))
+               }
+            }
+            
+            // 모든 시도 실패 시 조용히 처리 (토큰 없이도 세션 기반으로 작동 가능)
+            if (tokenResult?.type !== 'token/getToken/fulfilled') {
+               console.debug('토큰 자동 발급 실패 (세션 기반 인증으로 계속 사용 가능)')
+            }
+         } else {
+            // 세션이 없거나 user 객체가 없으면 토큰 발급 불가능
+            console.debug('세션 또는 사용자 정보가 없어 토큰 발급을 건너뜁니다.')
          }
       } catch (tokenError) {
-         // 예외 발생 시에도 로그인은 성공으로 처리
-         console.warn('⚠️ 토큰 자동 발급 중 예외 발생:', tokenError)
+         // 예외 발생 시에도 로그인은 성공으로 처리 (세션 기반 인증으로 작동 가능)
+         console.debug('토큰 자동 발급 중 예외 발생 (무시됨):', tokenError.message)
       }
       
       return user
@@ -181,32 +193,39 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
       const token = localStorage.getItem('token')
       if (!token) {
          try {
-            // 세션이 완전히 설정될 때까지 짧은 지연
-            await new Promise(resolve => setTimeout(resolve, 100))
+            // 세션이 완전히 설정될 때까지 충분한 지연 (500ms)
+            await new Promise(resolve => setTimeout(resolve, 500))
             
-            // 최대 3번까지 재시도
-            const { getTokenThunk } = await import('./tokenSlice')
-            let tokenResult = null
-            for (let attempt = 0; attempt < 3; attempt++) {
-               tokenResult = await dispatch(getTokenThunk())
-               if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
-                  localStorage.setItem('token', tokenResult.payload)
-                  console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
-                  break
+            // user 객체가 있는지 확인 (authed[0]에 이미 있음)
+            if (authed[0]?.user?.id) {
+               // 최대 5번까지 재시도 (더 많은 기회 제공)
+               const { getTokenThunk } = await import('./tokenSlice')
+               let tokenResult = null
+               for (let attempt = 0; attempt < 5; attempt++) {
+                  tokenResult = await dispatch(getTokenThunk())
+                  if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
+                     localStorage.setItem('token', tokenResult.payload)
+                     console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
+                     break
+                  }
+                  // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms, 1000ms)
+                  if (attempt < 4) {
+                     const delay = 300 + (attempt * 200)
+                     await new Promise(resolve => setTimeout(resolve, delay))
+                  }
                }
-               // 실패 시 200ms 대기 후 재시도
-               if (attempt < 2) {
-                  await new Promise(resolve => setTimeout(resolve, 200))
+               
+               // 모든 시도 실패 시 조용히 처리 (토큰 없이도 세션 기반으로 작동 가능)
+               if (tokenResult?.type !== 'token/getToken/fulfilled') {
+                  console.debug('토큰 자동 발급 실패 (세션 기반 인증으로 계속 사용 가능)')
                }
-            }
-            
-            // 모든 시도 실패 시 경고
-            if (tokenResult?.type !== 'token/getToken/fulfilled') {
-               console.warn('⚠️ 토큰 자동 발급 실패 (나중에 수동으로 발급 가능)')
+            } else {
+               // user 객체가 없으면 토큰 발급 불가능
+               console.debug('사용자 정보가 없어 토큰 발급을 건너뜁니다.')
             }
          } catch (tokenError) {
-            // 예외 발생 시에도 조용히 처리
-            console.warn('⚠️ 토큰 자동 발급 중 예외 발생:', tokenError)
+            // 예외 발생 시에도 조용히 처리 (세션 기반 인증으로 작동 가능)
+            console.debug('토큰 자동 발급 중 예외 발생 (무시됨):', tokenError.message)
          }
       }
       

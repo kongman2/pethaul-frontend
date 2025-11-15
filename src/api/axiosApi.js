@@ -89,30 +89,46 @@ petHaulApi.interceptors.response.use(
                },
             })
 
-            // 세션이 있고 인증된 상태인 경우에만 토큰 발급 시도
-            if (authCheckResponse.data?.isAuthenticated) {
-               const tokenResponse = await axios.get(`${BASE_URL}/token/get`, {
-                  withCredentials: true,
-                  headers: {
-                     'Content-Type': 'application/json',
-                     Authorization: AUTH_KEY,
-                  },
-               })
+            // 세션이 있고 인증된 상태이며 user 객체가 있는 경우에만 토큰 발급 시도
+            if (authCheckResponse.data?.isAuthenticated && authCheckResponse.data?.user?.id) {
+               // 토큰 발급 시도 (최대 3번 재시도)
+               let tokenResponse = null
+               for (let attempt = 0; attempt < 3; attempt++) {
+                  try {
+                     tokenResponse = await axios.get(`${BASE_URL}/token/get`, {
+                        withCredentials: true,
+                        headers: {
+                           'Content-Type': 'application/json',
+                           Authorization: AUTH_KEY,
+                        },
+                     })
+                     
+                     if (tokenResponse.data?.token) {
+                        break // 성공하면 루프 종료
+                     }
+                  } catch (tokenError) {
+                     // 마지막 시도가 아니면 재시도
+                     if (attempt < 2) {
+                        await new Promise(resolve => setTimeout(resolve, 300 + (attempt * 200)))
+                        continue
+                     }
+                     // 모든 시도 실패 시 원래 에러 반환
+                     return Promise.reject(error)
+                  }
+               }
 
-               if (tokenResponse.data?.token) {
+               if (tokenResponse?.data?.token) {
                   localStorage.setItem('token', tokenResponse.data.token)
                   // 원래 요청의 Authorization 헤더 업데이트
                   originalRequest.headers.Authorization = tokenResponse.data.token
                   // 원래 요청 재시도
                   return petHaulApi(originalRequest)
                }
-            } else {
-               // 세션이 없으면 재발급 불가능 (조용히 처리)
-               // console.debug로 변경하여 불필요한 경고 제거
             }
+            // 세션이 없거나 user 객체가 없으면 재발급 불가능 (조용히 처리)
+            return Promise.reject(error)
          } catch (tokenError) {
             // 토큰 발급 실패 시 원래 에러 반환 (조용히 처리)
-            // 500 오류는 백엔드 문제이므로 사용자에게 노출하지 않음
             return Promise.reject(error)
          }
       }
