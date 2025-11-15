@@ -28,40 +28,71 @@ function AuthPage() {
             localStorage.setItem('token', token)
             console.log('✅ 구글 로그인 응답에서 JWT 토큰을 받아 저장했습니다.')
             
-            // 토큰 저장 후 Redux 상태 업데이트를 위해 인증 상태 확인
-            dispatch(checkUnifiedAuthThunk())
-               .unwrap()
-               .then((result) => {
-                  if (result?.isAuthenticated) {
-                     toast.success('구글 로그인에 성공했습니다.', {
-                        position: 'top-center',
-                        autoClose: 2000,
-                     })
-                     setTimeout(() => {
-                        navigate('/')
-                     }, 2000)
-                  } else {
-                     // 토큰은 있지만 인증 확인 실패 - 토큰이 유효하지 않을 수 있음
-                     console.warn('⚠️ 토큰은 있지만 인증 확인에 실패했습니다.')
-                     toast.error('인증 확인에 실패했습니다. 다시 시도해주세요.', {
+            // 토큰 저장 후 세션이 설정될 때까지 잠시 대기 (크로스 도메인 리다이렉트로 인한 지연 고려)
+            // 그 후 인증 상태 확인
+            setTimeout(() => {
+               dispatch(checkUnifiedAuthThunk())
+                  .unwrap()
+                  .then((result) => {
+                     if (result?.isAuthenticated) {
+                        toast.success('구글 로그인에 성공했습니다.', {
+                           position: 'top-center',
+                           autoClose: 2000,
+                        })
+                        setTimeout(() => {
+                           navigate('/')
+                        }, 2000)
+                     } else {
+                        // 세션 확인 실패 시 재시도 (세션이 아직 설정되지 않았을 수 있음)
+                        console.warn('⚠️ 첫 번째 인증 확인 실패, 재시도 중...')
+                        setTimeout(() => {
+                           dispatch(checkUnifiedAuthThunk())
+                              .unwrap()
+                              .then((retryResult) => {
+                                 if (retryResult?.isAuthenticated) {
+                                    toast.success('구글 로그인에 성공했습니다.', {
+                                       position: 'top-center',
+                                       autoClose: 2000,
+                                    })
+                                    setTimeout(() => {
+                                       navigate('/')
+                                    }, 2000)
+                                 } else {
+                                    // 재시도도 실패 - 토큰은 있지만 세션이 설정되지 않음
+                                    console.warn('⚠️ 재시도 후에도 인증 확인 실패. 토큰은 있지만 세션이 설정되지 않았을 수 있습니다.')
+                                    toast.error('인증 확인에 실패했습니다. 다시 시도해주세요.', {
+                                       position: 'top-center',
+                                       autoClose: 2000,
+                                    })
+                                    setTimeout(() => {
+                                       navigate('/login')
+                                    }, 2000)
+                                 }
+                              })
+                              .catch((retryError) => {
+                                 console.error('구글 로그인 인증 확인 재시도 실패:', retryError)
+                                 toast.error('인증 확인 중 오류가 발생했습니다.', {
+                                    position: 'top-center',
+                                    autoClose: 2000,
+                                 })
+                                 setTimeout(() => {
+                                    navigate('/login')
+                                 }, 2000)
+                              })
+                        }, 1000) // 1초 후 재시도
+                     }
+                  })
+                  .catch((error) => {
+                     console.error('구글 로그인 인증 확인 실패:', error)
+                     toast.error('인증 확인 중 오류가 발생했습니다.', {
                         position: 'top-center',
                         autoClose: 2000,
                      })
                      setTimeout(() => {
                         navigate('/login')
                      }, 2000)
-                  }
-               })
-               .catch((error) => {
-                  console.error('구글 로그인 인증 확인 실패:', error)
-                  toast.error('인증 확인 중 오류가 발생했습니다.', {
-                     position: 'top-center',
-                     autoClose: 2000,
                   })
-                  setTimeout(() => {
-                     navigate('/login')
-                  }, 2000)
-               })
+            }, 500) // 500ms 대기 후 인증 확인
             return
          }
          
