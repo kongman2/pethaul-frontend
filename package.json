@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js"
   },
   "dependencies": {
     "@iconify-json/pixelarticons": "^1.2.2",
@@ -36,7 +37,8 @@
     "sass": "^1.93.3",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.19",
-    "swiper": "^11.2.10"
+    "swiper": "^11.2.10",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
