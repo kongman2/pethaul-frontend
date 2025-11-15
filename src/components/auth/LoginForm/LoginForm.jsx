@@ -99,14 +99,11 @@ function LoginForm() {
 
     googleLoginLoadingRef.current = true
     
-    // 런타임에 API URL 가져오기 (함수 호출)
-    const apiUrl = getApiUrl()
-    
     // 서버가 슬립 모드일 수 있으므로 사용자에게 알림
     alert('구글 로그인 페이지로 이동합니다. 서버가 깨어나는 중일 수 있어 첫 요청이 느릴 수 있습니다.', '구글 로그인', 'info')
     
-    // 리다이렉트
-    window.location.href = `${apiUrl}/auth/google`
+    // 리다이렉트 - 고정 URL 사용 (환경 변수 문제 방지)
+    window.location.href = 'https://pethaul-api.onrender.com/auth/google'
     
     // 3초 후 리셋 (사용자가 뒤로 가기를 눌렀을 경우를 대비)
     setTimeout(() => {

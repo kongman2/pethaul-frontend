@@ -75,8 +75,8 @@ export const checkEmail = async (email) => {
 
 // 구글 로그인 리다이렉트
 export const redirectToGoogleLogin = () => {
-   const apiUrl = getBASE_API_URL()
-   window.location.href = `${apiUrl}/auth/google`
+   // 고정 URL 사용 (환경 변수 문제 방지)
+   window.location.href = 'https://pethaul-api.onrender.com/auth/google'
 }
 
 // 구글 로그인(DB 저장용 요청 함수)
