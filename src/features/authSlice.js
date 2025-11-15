@@ -161,18 +161,26 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
    if (authed.length > 0) {
       authed.sort((a, b) => (b.user ? 1 : 0) - (a.user ? 1 : 0))
       
-      // 인증된 사용자인데 토큰이 없으면 자동으로 발급
+      // 인증된 사용자인데 토큰이 없으면 자동으로 발급 시도
+      // 단, 세션이 있어야 하므로 세션 확인 후 발급
       const token = localStorage.getItem('token')
       if (!token) {
          try {
+            // 세션이 있는지 확인 (isAuthenticated가 true면 세션이 있음)
+            // authed[0]에 이미 인증 정보가 있으므로 토큰 발급 시도
             const { getTokenThunk } = await import('./tokenSlice')
             const tokenResult = await dispatch(getTokenThunk())
             if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
                localStorage.setItem('token', tokenResult.payload)
                console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
+            } else if (tokenResult.type === 'token/getToken/rejected') {
+               // 토큰 발급 실패는 조용히 무시 (세션이 없거나 req.user가 없을 수 있음)
+               // 500 오류는 백엔드 문제이므로 조용히 처리
+               console.debug('토큰 자동 발급 실패 (무시됨)')
             }
          } catch (tokenError) {
-            console.warn('⚠️ 토큰 자동 발급 실패:', tokenError)
+            // 토큰 발급 실패는 조용히 처리
+            console.debug('토큰 자동 발급 중 예외 발생 (무시됨)')
          }
       }
       

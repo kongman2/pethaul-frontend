@@ -8,6 +8,10 @@ export const fetchMyLikeIdsThunk = createAsyncThunk('like/fetchIds', async (_, {
       return response.data?.itemIds ?? []
    } catch (e) {
       const status = e.response?.status
+      // 401/403 오류는 로그인하지 않은 상태이므로 조용히 처리
+      if (status === 401 || status === 403) {
+         return rejectWithValue({ status, message: '로그인이 필요합니다.', silent: true })
+      }
       const message = e.response?.data?.message || '좋아요 ID 조회 실패'
       return rejectWithValue({ status, message })
    }
@@ -72,8 +76,15 @@ const likeSlice = createSlice({
          })
          .addCase(fetchMyLikeIdsThunk.rejected, (st, ac) => {
             st.loadIdsLoading = false
-            st.error = ac.payload?.message || '좋아요 ID 조회 실패'
-            st.errorCode = ac.payload?.status ?? null
+            // 401/403 오류는 조용히 처리 (로그인하지 않은 상태)
+            if (ac.payload?.silent) {
+               st.error = null
+               st.errorCode = null
+               st.idsMap = {} // 빈 맵으로 초기화
+            } else {
+               st.error = ac.payload?.message || '좋아요 ID 조회 실패'
+               st.errorCode = ac.payload?.status ?? null
+            }
          })
          // 상세 목록 조회
          .addCase(fetchMyLikedItemsThunk.pending, (st) => {
