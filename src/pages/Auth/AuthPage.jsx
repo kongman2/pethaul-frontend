@@ -24,22 +24,30 @@ function AuthPage() {
          const error = searchParams.get('error')
          
          if (error) {
+            console.error('❌ 구글 로그인 에러:', error, {
+               fullUrl: window.location.href,
+               searchParams: location.search,
+            })
+            
             let errorMessage = '로그인에 실패했습니다.'
             
             switch (error) {
                case 'google_auth_failed':
-                  errorMessage = 'Google 로그인에 실패했습니다. 다시 시도해주세요.'
+                  errorMessage = 'Google 로그인에 실패했습니다. 서버 로그를 확인하거나 다시 시도해주세요.'
                   break
                case 'session_failed':
                   errorMessage = '세션 설정에 실패했습니다. 다시 시도해주세요.'
                   break
+               case 'access_denied':
+                  errorMessage = 'Google 로그인 권한이 거부되었습니다.'
+                  break
                default:
-                  errorMessage = '로그인 중 오류가 발생했습니다. 다시 시도해주세요.'
+                  errorMessage = `로그인 중 오류가 발생했습니다. (${error})`
             }
             
             toast.error(errorMessage, {
                position: 'top-center',
-               autoClose: 3000,
+               autoClose: 5000,
             })
             
             // URL에서 error 파라미터 제거
@@ -53,9 +61,17 @@ function AuthPage() {
 
    useEffect(() => {
       if (pathname === '/google-success') {
+         console.log('🔍 /google-success 경로 접근:', {
+            timestamp: new Date().toISOString(),
+            searchParams: location.search,
+            fullUrl: window.location.href,
+         })
+         
          // URL 파라미터에서 토큰 확인
          const searchParams = new URLSearchParams(location.search)
          const token = searchParams.get('token')
+         
+         console.log('🔍 토큰 확인:', { hasToken: !!token, tokenLength: token?.length })
          
          // 토큰이 있으면 저장하고 인증 상태 확인
          if (token) {

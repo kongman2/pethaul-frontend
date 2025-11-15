@@ -99,11 +99,23 @@ function LoginForm() {
 
     googleLoginLoadingRef.current = true
     
+    // 디버깅: 구글 로그인 시작 로그
+    console.log('🔍 구글 로그인 시작:', {
+      timestamp: new Date().toISOString(),
+      redirectUrl: 'https://pethaul-api.onrender.com/auth/google',
+    })
+    
     // 서버가 슬립 모드일 수 있으므로 사용자에게 알림
     alert('구글 로그인 페이지로 이동합니다. 잠시만 기다려 주세요.', '구글 로그인', 'info')
     
     // 리다이렉트 - 고정 URL 사용 (환경 변수 문제 방지)
-    window.location.href = 'https://pethaul-api.onrender.com/auth/google'
+    try {
+      window.location.href = 'https://pethaul-api.onrender.com/auth/google'
+    } catch (error) {
+      console.error('❌ 구글 로그인 리다이렉트 실패:', error)
+      alert('구글 로그인 페이지로 이동하는 중 오류가 발생했습니다.', '오류', 'error')
+      googleLoginLoadingRef.current = false
+    }
     
     // 3초 후 리셋 (사용자가 뒤로 가기를 눌렀을 경우를 대비)
     setTimeout(() => {
