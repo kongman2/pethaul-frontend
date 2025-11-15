@@ -48,13 +48,20 @@ app.get('*', (req, res) => {
          VITE_APP_AUTH_KEY: process.env.VITE_APP_AUTH_KEY || ''
       }
       
-      // </head> 태그 앞에 환경 변수 스크립트 주입
-      const envScript = `
-      <script>
-         window.__ENV__ = ${JSON.stringify(envVars)};
-      </script>
-      `
-      html = html.replace('</head>', `${envScript}</head>`)
+      // 환경 변수 스크립트 (가장 먼저 실행되도록)
+      const envScript = `<script>window.__ENV__ = ${JSON.stringify(envVars)};</script>`
+      
+      // </head> 태그 앞에 삽입 (없으면 <head> 뒤에, 그것도 없으면 <body> 앞에)
+      if (html.includes('</head>')) {
+         html = html.replace('</head>', `${envScript}</head>`)
+      } else if (html.includes('<head>')) {
+         html = html.replace('<head>', `<head>${envScript}`)
+      } else if (html.includes('<body>')) {
+         html = html.replace('<body>', `${envScript}<body>`)
+      } else {
+         // 최후의 수단: 맨 앞에 삽입
+         html = envScript + html
+      }
       
       res.setHeader('Content-Type', 'text/html; charset=utf-8')
       res.send(html)
