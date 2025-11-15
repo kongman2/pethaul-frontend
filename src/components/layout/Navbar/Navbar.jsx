@@ -310,38 +310,37 @@ function Navbar() {
                         </button>
                      </div>
                   )}
-                     {/* icon: user-single-aim */}
-                     <div className="user-anchor" ref={userAnchorRef}>
-                        <button type="button" className="btn btn-link p-0" onClick={openUserMenu} aria-expanded={userMenuOpen} aria-haspopup="dialog" aria-label="유저 메뉴">
-                           <Icon icon="streamline-pixel:user-single-aim" width={24} height={24} />
-                        </button>
+                  {/* icon: user-single-aim */}
+                  <div className="user-anchor" ref={userAnchorRef}>
+                     <button type="button" className="btn btn-link p-0" onClick={openUserMenu} aria-expanded={userMenuOpen} aria-haspopup="dialog" aria-label="유저 메뉴">
+                        <Icon icon="streamline-pixel:user-single-aim" width={24} height={24} />
+                     </button>
 
-                        <UserMenuPopover
-                           open={userMenuOpen}
-                           onClose={closeUserMenu}
-                           anchorRef={userAnchorRef}
-                           variant="pc"
-                           isAuthenticated={isAuthenticated}
-                           isAdmin={isAdmin}
-                           isGoogleUser={isGoogleUser}
-                           user={user}
-                           onLogin={handleLogin}
-                           onJoin={handleJoin}
-                           onLogout={handleLogout}
-                           onGoMyPage={() => {
-                              closeUserMenu()
-                              navigate('/mypage')
-                           }}
-                           onGoAdmin={() => {
-                              closeUserMenu()
-                              navigate('/admin')
-                           }}
-                           onCreateItem={() => {
-                              closeUserMenu()
-                              navigate('/items/create')
-                           }}
-                        />
-                     </div>
+                     <UserMenuPopover
+                        open={userMenuOpen}
+                        onClose={closeUserMenu}
+                        anchorRef={userAnchorRef}
+                        variant="pc"
+                        isAuthenticated={isAuthenticated}
+                        isAdmin={isAdmin}
+                        isGoogleUser={isGoogleUser}
+                        user={user}
+                        onLogin={handleLogin}
+                        onJoin={handleJoin}
+                        onLogout={handleLogout}
+                        onGoMyPage={() => {
+                           closeUserMenu()
+                           navigate('/mypage')
+                        }}
+                        onGoAdmin={() => {
+                           closeUserMenu()
+                           navigate('/admin')
+                        }}
+                        onCreateItem={() => {
+                           closeUserMenu()
+                           navigate('/items/create')
+                        }}
+                     />
                   </div>
 
                   {/* icon: interface-essential-navigation-menu-3 */}
