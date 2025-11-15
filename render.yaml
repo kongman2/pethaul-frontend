@@ -1,0 +1,13 @@
+services:
+  # 프론트엔드 React 앱
+  - type: web
+    name: pethaul-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /
+
