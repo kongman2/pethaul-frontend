@@ -35,6 +35,18 @@ function AuthPage() {
                case 'google_auth_failed':
                   errorMessage = 'Google 로그인에 실패했습니다. 서버 로그를 확인하거나 다시 시도해주세요.'
                   break
+               case 'google_auth_failed:redirect_uri_mismatch':
+                  errorMessage = 'Google OAuth 설정 오류: Redirect URI가 일치하지 않습니다. 관리자에게 문의하세요.'
+                  break
+               case 'google_auth_failed:invalid_client':
+                  errorMessage = 'Google OAuth 설정 오류: Client ID 또는 Secret이 잘못되었습니다. 관리자에게 문의하세요.'
+                  break
+               case 'google_auth_failed:invalid_grant':
+                  errorMessage = 'Google OAuth 토큰 교환 실패. 다시 시도해주세요.'
+                  break
+               case 'google_strategy_not_found':
+                  errorMessage = 'Google OAuth가 설정되지 않았습니다. 관리자에게 문의하세요.'
+                  break
                case 'session_failed':
                   errorMessage = '세션 설정에 실패했습니다. 다시 시도해주세요.'
                   break
@@ -42,7 +54,11 @@ function AuthPage() {
                   errorMessage = 'Google 로그인 권한이 거부되었습니다.'
                   break
                default:
-                  errorMessage = `로그인 중 오류가 발생했습니다. (${error})`
+                  if (error?.startsWith('google_auth_failed:')) {
+                     errorMessage = `Google 로그인 오류: ${error.split(':')[1]}. 관리자에게 문의하세요.`
+                  } else {
+                     errorMessage = `로그인 중 오류가 발생했습니다. (${error})`
+                  }
             }
             
             toast.error(errorMessage, {
