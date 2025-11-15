@@ -255,19 +255,19 @@ function Navbar() {
                   </li>
 
                   <li>
-                     <NavLink to="/items/search?filter=시즌">
+                     <NavLink to="/items/search?filter=시즌" className="d-flex align-items-center gap-1">
                         SEASON
                         <Icon icon="fluent-emoji-flat:chestnut" width={16} height={16} />
                      </NavLink>
                   </li>
                   <li>
-                     <NavLink to="/items/search?filter=이벤트&filter=세일">
+                     <NavLink to="/items/search?filter=이벤트&filter=세일" className="d-flex align-items-center gap-1">
                         SALE EVENT
                         <Icon icon="fluent-emoji:star" width={16} height={16} />
                      </NavLink>
                   </li>
                   <li>
-                     <NavLink to="/contents">
+                     <NavLink to="/contents" className="d-flex align-items-center gap-1">
                         CONTENTS
                         <Icon icon="streamline-pixel:content-files-newspaper" width={16} height={16} />
                      </NavLink>
