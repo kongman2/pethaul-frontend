@@ -1,6 +1,16 @@
 import axios from 'axios'
 
-const BASE_URL = (import.meta.env.VITE_APP_API_URL || '').replace(/\/$/, '') // 끝의 슬래시 제거
+// BASE_URL 설정 (빌드 타임 환경 변수 체크)
+const getBaseUrl = () => {
+   const buildTimeUrl = import.meta.env.VITE_APP_API_URL
+   if (buildTimeUrl && buildTimeUrl !== 'undefined' && buildTimeUrl.trim() !== '') {
+      return buildTimeUrl.replace(/\/$/, '')
+   }
+   // 기본값
+   return 'https://pethaul-api.onrender.com'
+}
+
+const BASE_URL = getBaseUrl() // 끝의 슬래시 제거
 const AUTH_KEY = import.meta.env.VITE_APP_AUTH_KEY
 
 //axios 인스턴스 생성
