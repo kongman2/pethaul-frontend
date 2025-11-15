@@ -69,17 +69,19 @@ petHaulApi.interceptors.response.use(
 
       // 403 Forbidden 또는 401 Unauthorized 에러 발생 시 토큰 재발급 시도
       // 단, /token/get 요청 자체가 실패한 경우는 제외 (무한 루프 방지)
+      // 세션 기반 인증이 필요한 경우에만 재발급 시도
       if (
          (error.response?.status === 403 || error.response?.status === 401) &&
          !originalRequest._retry &&
-         requestUrl !== '/token/get'
+         requestUrl !== '/token/get' &&
+         requestUrl !== '/auth/check' &&
+         requestUrl !== '/auth/googlecheck'
       ) {
          originalRequest._retry = true
 
          try {
-            // 토큰 발급 API 호출 (세션 기반 인증이므로 가능)
-            // AUTH_KEY를 사용하여 세션 기반 인증으로 토큰 발급
-            const tokenResponse = await axios.get(`${BASE_URL}/token/get`, {
+            // 먼저 세션 상태 확인 (세션이 있어야 토큰 발급 가능)
+            const authCheckResponse = await axios.get(`${BASE_URL}/auth/check`, {
                withCredentials: true,
                headers: {
                   'Content-Type': 'application/json',
@@ -87,12 +89,26 @@ petHaulApi.interceptors.response.use(
                },
             })
 
-            if (tokenResponse.data?.token) {
-               localStorage.setItem('token', tokenResponse.data.token)
-               // 원래 요청의 Authorization 헤더 업데이트
-               originalRequest.headers.Authorization = tokenResponse.data.token
-               // 원래 요청 재시도
-               return petHaulApi(originalRequest)
+            // 세션이 있고 인증된 상태인 경우에만 토큰 발급 시도
+            if (authCheckResponse.data?.isAuthenticated) {
+               const tokenResponse = await axios.get(`${BASE_URL}/token/get`, {
+                  withCredentials: true,
+                  headers: {
+                     'Content-Type': 'application/json',
+                     Authorization: AUTH_KEY,
+                  },
+               })
+
+               if (tokenResponse.data?.token) {
+                  localStorage.setItem('token', tokenResponse.data.token)
+                  // 원래 요청의 Authorization 헤더 업데이트
+                  originalRequest.headers.Authorization = tokenResponse.data.token
+                  // 원래 요청 재시도
+                  return petHaulApi(originalRequest)
+               }
+            } else {
+               // 세션이 없으면 재발급 불가능
+               console.warn('⚠️ 세션이 없어 토큰 재발급이 불가능합니다. 다시 로그인해주세요.')
             }
          } catch (tokenError) {
             // 토큰 발급 실패 시 원래 에러 반환
