@@ -67,9 +67,14 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
       const response = await loginUser(credentials)
       const user = response.data.user
       
-      // 로그인 성공 후 자동으로 JWT 토큰 발급
-      // 세션이 완전히 설정될 때까지 약간의 지연 후 시도
-      // 토큰 발급은 선택적이므로 실패해도 로그인은 성공으로 처리
+      // 로그인 응답에 토큰이 포함되어 있으면 바로 사용
+      if (response.data.token) {
+         localStorage.setItem('token', response.data.token)
+         console.log('✅ 로그인 응답에서 JWT 토큰을 받아 저장했습니다.')
+         return user
+      }
+      
+      // 토큰이 없으면 기존 방식으로 발급 시도 (하위 호환성)
       try {
          // 세션이 완전히 설정될 때까지 충분한 지연 (500ms)
          await new Promise(resolve => setTimeout(resolve, 500))
@@ -80,17 +85,17 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
          
          // 세션이 있고 user 객체가 있을 때만 토큰 발급 시도
          if (authCheck.data?.isAuthenticated && authCheck.data?.user?.id) {
-            // 최대 5번까지 재시도 (더 많은 기회 제공)
+            // 최대 3번까지 재시도
             let tokenResult = null
-            for (let attempt = 0; attempt < 5; attempt++) {
+            for (let attempt = 0; attempt < 3; attempt++) {
                tokenResult = await dispatch(getTokenThunk())
                if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
                   localStorage.setItem('token', tokenResult.payload)
                   console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
                   break
                }
-               // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms, 1000ms)
-               if (attempt < 4) {
+               // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms)
+               if (attempt < 2) {
                   const delay = 300 + (attempt * 200)
                   await new Promise(resolve => setTimeout(resolve, delay))
                }
