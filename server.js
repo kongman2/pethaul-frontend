@@ -26,6 +26,18 @@ if (!existsSync(indexHtmlPath)) {
 
 console.log('✅ dist 폴더 확인 완료:', distPath)
 
+// favicon.ico 요청 처리 (404 오류 방지)
+app.get('/favicon.ico', (req, res) => {
+   // pethaul.svg를 favicon으로 사용하거나, 204 No Content 반환
+   const faviconPath = join(distPath, 'pethaul.svg')
+   if (existsSync(faviconPath)) {
+      res.sendFile(faviconPath)
+   } else {
+      // favicon이 없으면 204 No Content 반환 (브라우저가 계속 요청하지 않도록)
+      res.status(204).end()
+   }
+})
+
 // 정적 파일 서빙 (assets, images 등)
 // express.static은 파일을 찾지 못하면 자동으로 next()를 호출
 app.use(express.static(distPath, {
