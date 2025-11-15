@@ -68,9 +68,10 @@ app.get('*', (req, res) => {
       const cspHeader = [
          "default-src 'self'",
          "script-src 'self' 'nonce-" + nonce + "'",
-         "style-src 'self' 'unsafe-inline'", // CSS는 unsafe-inline 허용 (일반적)
+         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Google Fonts 허용
+         "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com", // 외부 스타일시트 허용
          "img-src 'self' data: https:",
-         "font-src 'self' data:",
+         "font-src 'self' data: https://fonts.gstatic.com", // Google Fonts 폰트 파일 허용
          "connect-src 'self' https:",
          "frame-ancestors 'none'",
          "base-uri 'self'",
