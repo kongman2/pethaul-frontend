@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { Icon } from '@iconify/react'
 
 import './UserMenuPopover.scss'
 export default function UserMenuPopover({
@@ -73,7 +74,9 @@ export default function UserMenuPopover({
       <div className="user-menu__header">
         {isAuthenticated ? (
           <>
-            <span className="user-menu__avatar" aria-hidden="true">👤</span>
+            <span className="user-menu__avatar" aria-hidden="true">
+              <Icon icon="pixelarticons:user" width={24} height={24} />
+            </span>
             <div className="user-menu__meta">
               <strong className="user-menu__name">{user?.nickname ?? user?.name ?? '사용자'}</strong>
               <span className="user-menu__role">{isAdmin ? 'ADMIN' : 'MEMBER'}</span>
@@ -88,7 +91,9 @@ export default function UserMenuPopover({
         {isAuthenticated ? (
           <>
             <button type="button" role="menuitem" className="user-menu__item" onClick={onGoMyPage}>
-              <span className="user-menu__icon">🏠</span>
+              <span className="user-menu__icon">
+                <Icon icon="pixelarticons:home" width={20} height={20} />
+              </span>
               마이페이지
             </button>
 
@@ -96,12 +101,16 @@ export default function UserMenuPopover({
               <>
                 <div className="user-menu__divider" />
                 <button type="button" role="menuitem" className="user-menu__item" onClick={onGoAdmin}>
-                  <span className="user-menu__icon">🛠️</span>
+                  <span className="user-menu__icon">
+                    <Icon icon="pixelarticons:settings" width={20} height={20} />
+                  </span>
                   관리자 페이지
                 </button>
                 {!isGoogleUser && (
                   <button type="button" role="menuitem" className="user-menu__item" onClick={onCreateItem}>
-                    <span className="user-menu__icon">➕</span>
+                    <span className="user-menu__icon">
+                      <Icon icon="pixelarticons:plus" width={20} height={20} />
+                    </span>
                     상품 등록
                   </button>
                 )}
@@ -110,18 +119,24 @@ export default function UserMenuPopover({
 
             <div className="user-menu__divider" />
             <button type="button" role="menuitem" className="user-menu__item" onClick={onLogout}>
-              <span className="user-menu__icon">🚪</span>
+              <span className="user-menu__icon">
+                <Icon icon="pixelarticons:logout" width={20} height={20} />
+              </span>
               로그아웃
             </button>
           </>
         ) : (
           <>
             <button type="button" role="menuitem" className="user-menu__item" onClick={onLogin}>
-              <span className="user-menu__icon"></span>
+              <span className="user-menu__icon">
+                <Icon icon="pixelarticons:lock" width={20} height={20} />
+              </span>
               로그인
             </button>
             <button type="button" role="menuitem" className="user-menu__item" onClick={onJoin}>
-              <span className="user-menu__icon"></span>
+              <span className="user-menu__icon">
+                <Icon icon="pixelarticons:user" width={20} height={20} />
+              </span>
               회원가입
             </button>
           </>

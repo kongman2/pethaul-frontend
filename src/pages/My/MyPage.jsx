@@ -28,6 +28,7 @@ function MyPage() {
 
   // userId를 직접 추출 (메모이제이션 제거 - 값이 실제로 변경될 때만 useEffect 실행)
   const userId = user?.id ?? user?._id ?? user?.userId ?? null
+  const isAdmin = user?.role === 'ADMIN' || user?.isAdmin === true
 
   useEffect(() => {
     // userId가 없으면 스킵
@@ -64,15 +65,19 @@ function MyPage() {
     hasInitializedRef.current = true
     isFetchingRef.current = true
     
-    // 모든 데이터를 한 번에 fetch (checkAuthStatusThunk는 App.jsx에서 이미 호출하므로 제외)
-    Promise.allSettled([
-      dispatch(getUserPetsThunk()),
-      dispatch(getUserReviewThunk({ page: 1, limit: 100 })),
-      dispatch(fetchOrdersThunk({ page: 1, limit: 100 }))
-    ]).finally(() => {
+    // 관리자가 아닐 때만 데이터 fetch (관리자는 프로필만 보여줌)
+    if (!isAdmin) {
+      Promise.allSettled([
+        dispatch(getUserPetsThunk()),
+        dispatch(getUserReviewThunk({ page: 1, limit: 100 })),
+        dispatch(fetchOrdersThunk({ page: 1, limit: 100 }))
+      ]).finally(() => {
+        isFetchingRef.current = false
+      })
+    } else {
       isFetchingRef.current = false
-    })
-  }, [dispatch, userId]) // userId를 의존성에 포함하되, 내부 로직으로 중복 방지
+    }
+  }, [dispatch, userId, isAdmin]) // userId를 의존성에 포함하되, 내부 로직으로 중복 방지
 
   const latestOrder = useMemo(() => {
     if (!Array.isArray(orders) || orders.length === 0) return null
@@ -107,14 +112,19 @@ function MyPage() {
             <SectionCard className="flex-grow-1" bodyClassName="overflow-hidden p-4" title="PROFILE">
               <Profile user={user} loading={userLoading} />
             </SectionCard>
-            <SectionCard className="flex-grow-1" bodyClassName="overflow-hidden p-4" title="주문현황">
-              <OrderState order={latestOrder} />
-            </SectionCard>
+            {!isAdmin && (
+              <SectionCard className="flex-grow-1" bodyClassName="overflow-hidden p-4" title="주문현황">
+                <OrderState order={latestOrder} />
+              </SectionCard>
+            )}
         </div>
 
-              <MenuBar id={userId} isGuest={isGuest} />
-
-              <PetProfileSlider className="mt-4" pets={pets} onDelete={handleDeletePet} />
+              {!isAdmin && (
+                <>
+                  <MenuBar id={userId} isGuest={isGuest} />
+                  <PetProfileSlider className="mt-4" pets={pets} onDelete={handleDeletePet} />
+                </>
+              )}
       <AlertModal
         open={alertModal.isOpen}
         onClose={alertModal.close}

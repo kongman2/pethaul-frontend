@@ -245,9 +245,6 @@ function Navbar() {
                         <Icon icon="fluent-emoji:star" width={16} height={16} />
                      </NavLink>
                   </li>
-                  <li>
-                     <NavLink to="/myQnAlist">1:1 문의</NavLink>
-                  </li>
                </ul>
 
                {/* 우측 아이콘 바 */}
@@ -303,13 +300,16 @@ function Navbar() {
                   </div>
 
                   {/* icon: heart, shopping-shipping-basket */}
-                  <div className="icon d-none d-md-flex align-items-center gap-2">
-                     <button type="button" className="btn btn-link p-0" onClick={() => navigate('/likes/item')}>
-                        <Icon icon="pixelarticons:heart" width={24} height={24} />
-                     </button>
-                     <button type="button" className="btn btn-link p-0" onClick={() => navigate('/cart')}>
-                        <Icon icon="streamline-pixel:shopping-shipping-basket" width={24} height={24} />
-                     </button>
+                  {!isAdmin && (
+                     <div className="icon d-none d-md-flex align-items-center gap-2">
+                        <button type="button" className="btn btn-link p-0" onClick={() => navigate('/likes/item')}>
+                           <Icon icon="pixelarticons:heart" width={24} height={24} />
+                        </button>
+                        <button type="button" className="btn btn-link p-0" onClick={() => navigate('/cart')}>
+                           <Icon icon="streamline-pixel:shopping-shipping-basket" width={24} height={24} />
+                        </button>
+                     </div>
+                  )}
                      {/* icon: user-single-aim */}
                      <div className="user-anchor" ref={userAnchorRef}>
                         <button type="button" className="btn btn-link p-0" onClick={openUserMenu} aria-expanded={userMenuOpen} aria-haspopup="dialog" aria-label="유저 메뉴">

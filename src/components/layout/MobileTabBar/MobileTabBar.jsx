@@ -47,12 +47,14 @@ export default function MobileTabBar() {
       </NavLink>
 
       {/* 좋아요 */}
-      <NavLink to="/likes/item" className="m-tab" aria-label="좋아요">
-        <span className="m-tab__icon">
-          <Icon icon="pixelarticons:heart" width={26} height={26} />
-        </span>
-        <span className="m-tab__label">좋아요</span>
-      </NavLink>
+      {!isAdmin && (
+        <NavLink to="/likes/item" className="m-tab" aria-label="좋아요">
+          <span className="m-tab__icon">
+            <Icon icon="pixelarticons:heart" width={26} height={26} />
+          </span>
+          <span className="m-tab__label">좋아요</span>
+        </NavLink>
+      )}
 
       {/* 컨텐츠 (TODO: 실제 링크로 교체) */}
       <NavLink to="/contents" className="m-tab" aria-label="컨텐츠">
@@ -66,12 +68,14 @@ export default function MobileTabBar() {
       </NavLink>
 
       {/* 장바구니 */}
-      <NavLink to="/cart" className="m-tab" aria-label="장바구니">
-        <span className="m-tab__icon">
-          <Icon icon="streamline-pixel:shopping-shipping-basket" width={24} height={24} />
-        </span>
-        <span className="m-tab__label">장바구니</span>
-      </NavLink>
+      {!isAdmin && (
+        <NavLink to="/cart" className="m-tab" aria-label="장바구니">
+          <span className="m-tab__icon">
+            <Icon icon="streamline-pixel:shopping-shipping-basket" width={24} height={24} />
+          </span>
+          <span className="m-tab__label">장바구니</span>
+        </NavLink>
+      )}
 
       {/* 마이 (버튼 + 팝오버) */}
       <div className="m-tab" aria-label="마이" ref={userAnchorRef}>
