@@ -1,7 +1,7 @@
 import petHaulApi from './axiosApi'
 
 // .env에 등록된 백엔드 주소 사용
-const BASE_API_URL = import.meta.env.VITE_APP_API_URL
+const BASE_API_URL = import.meta.env.VITE_APP_API_URL || 'https://pethaul-api.onrender.com'
 
 // 회원가입
 export const registerUser = async (userData) => {

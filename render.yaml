@@ -9,5 +9,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: VITE_APP_API_URL
+        sync: false
     healthCheckPath: /
 
