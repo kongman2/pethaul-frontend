@@ -7,7 +7,6 @@ import AppLayout from '../components/layout/AppLayout'
 import VerifyModal from '../components/modal/verify/VerifyModal'
 import ProtectedRoute from './ProtectedRoute'
 import { routeConfig, ROUTES } from './routes.config'
-import { checkUnifiedAuthThunk } from '../features/authSlice'
 // 로딩 컴포넌트 (코드 스플리팅 폴백 - 보통 100ms 이하로 빠름)
 // 각 페이지가 자체 데이터 로딩을 처리하므로 최소화
 const PageLoader = () => null
