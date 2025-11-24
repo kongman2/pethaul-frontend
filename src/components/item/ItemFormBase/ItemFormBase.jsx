@@ -4,6 +4,8 @@ import { formatWithComma, stripComma } from '../../../utils/priceSet'
 import { Button, Input, Textarea, SectionCard, ImageUpload, Selector, AlertModal, RichTextEditor } from '../../common'
 import { useModalHelpers } from '../../../hooks/useModalHelpers'
 import { uploadContentImageApi } from '../../../api/contentApi'
+import { RECOMMENDATION_TAGS } from '../../../utils/recommendationUtils'
+import { MAIN_CATEGORY_OPTIONS } from '../../../constants/itemCategories'
 
 // initialData 유연 정규화
 function normalize(raw) {
@@ -30,23 +32,6 @@ const toAbs = (base, url) => {
   const right = u.replace(/^\/+/, '')
   return `${left}/${right}`
 }
-
-const POPULAR_CATEGORY_OPTIONS = [
-  { value: '강아지', label: '강아지' },
-  { value: '고양이', label: '고양이' },
-  { value: '햄스터/고슴도치', label: '햄스터/고슴도치' },
-  { value: '새', label: '새' },
-  { value: '물고기/기타동물', label: '물고기/기타동물' },
-  { value: '사료', label: '사료' },
-  { value: '간식', label: '간식' },
-  { value: '장난감', label: '장난감' },
-  { value: '산책용품', label: '산책용품' },
-  { value: '의류', label: '의류' },
-  { value: '위생용품', label: '위생용품' },
-  { value: '건강관리', label: '건강관리' },
-  { value: '미용용품', label: '미용용품' },
-  { value: '생활용품', label: '생활용품' },
-]
 
 const normalizeCategoryName = (name) => {
   if (!name) return ''
@@ -95,7 +80,7 @@ function ItemFormBase({
   const [itemSummary, setItemSummary] = useState(norm?.itemSummary ?? '')
   const [discountPercent, setDiscountPercent] = useState(String(norm?.discountPercent ?? '0'))
   const [selectedCategories, setSelectedCategories] = useState(initialSelectedCategories)
-  const [customCategoryInput, setCustomCategoryInput] = useState('')
+  const [selectedRecommendationTags, setSelectedRecommendationTags] = useState([])
 
   useEffect(() => {
     if (formMode !== 'edit' || !norm) return
@@ -109,7 +94,6 @@ function ItemFormBase({
     setItemSummary(norm.itemSummary ?? '')
     setDiscountPercent(String(norm.discountPercent ?? '0'))
     setSelectedCategories(initialSelectedCategories)
-    setCustomCategoryInput('')
   }, [formMode, norm, initialServerImgUrls, initialSelectedCategories])
 
   const prevUrlsRef = useRef([])
@@ -206,7 +190,10 @@ function ItemFormBase({
         fd.append('img', encoded)
       })
     }
-    fd.append('categories', JSON.stringify(normalizedSelectedCategories))
+    
+    // 카테고리와 추천 상품 태그를 합쳐서 전송
+    const allCategories = [...normalizedSelectedCategories, ...selectedRecommendationTags]
+    fd.append('categories', JSON.stringify(allCategories))
     return fd
   }
 
@@ -241,10 +228,10 @@ function ItemFormBase({
     []
   )
 
-  const selectedPopularValues = useMemo(
+  const selectedMainCategoryValues = useMemo(
     () =>
       selectedCategories.filter((cat) =>
-        POPULAR_CATEGORY_OPTIONS.some((opt) => opt.value === cat),
+        MAIN_CATEGORY_OPTIONS.some((opt) => opt.value === cat),
       ),
     [selectedCategories],
   )
@@ -254,26 +241,9 @@ function ItemFormBase({
     [selectedCategories],
   )
 
-  const handlePopularCategoryChange = (values = []) => {
+  const handleMainCategoryChange = (values = []) => {
     const normalized = Array.isArray(values) ? values.map(normalizeCategoryName).filter(Boolean) : []
-    setSelectedCategories((prev) => {
-      const custom = prev.filter((cat) => !POPULAR_CATEGORY_OPTIONS.some((opt) => opt.value === cat))
-      return Array.from(new Set([...normalized, ...custom]))
-    })
-  }
-
-  const handleAddCustomCategory = () => {
-    const normalized = normalizeCategoryName(customCategoryInput)
-    if (!normalized) return
-    setSelectedCategories((prev) => (prev.includes(normalized) ? prev : [...prev, normalized]))
-    setCustomCategoryInput('')
-  }
-
-  const handleCustomCategoryKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      handleAddCustomCategory()
-    }
+    setSelectedCategories(normalized)
   }
 
   const handleRemoveCategory = (category) => {
@@ -327,38 +297,40 @@ function ItemFormBase({
               />
             </div>
 
-            {/* 카테고리 */}
+            {/* 가격 */}
+            <div className="col-12 col-md-6">
+              <label htmlFor="item-price" className="form-label fw-semibold">
+                가격 <span className="text-danger">*</span>
+              </label>
+              <Input
+                id="item-price"
+                type="text"
+                inputMode="numeric"
+                placeholder="가격을 입력해주세요"
+                value={formatWithComma(price)}
+                onChange={handlePriceChange}
+                maxLength={15}
+                required
+              />
+            </div>
+
+            {/* 상품 카테고리 (아이템 서치 탭의 큰 카테고리) */}
             <div className="col-12 col-md-6">
               <label htmlFor="item-category" className="form-label fw-semibold">
-                상품 카테고리
+                상품 카테고리 <span className="text-danger">*</span>
               </label>
               <Selector
                 id="item-category"
                 name="item-category"
                 multiple
-                options={POPULAR_CATEGORY_OPTIONS}
-                value={selectedPopularValues}
-                onChange={handlePopularCategoryChange}
-                placeholder="자주 사용하는 카테고리를 선택하세요"
+                options={MAIN_CATEGORY_OPTIONS}
+                value={selectedMainCategoryValues}
+                onChange={handleMainCategoryChange}
+                placeholder="카테고리를 선택하세요 (여러 개 선택 가능)"
               />
-              <div className="category-actions d-flex gap-2 align-items-center mt-2">
-                <Input
-                  id="item-category-custom"
-                  type="text"
-                  placeholder="직접 태그 입력 (예: 하네스)"
-                  value={customCategoryInput}
-                  onChange={setCustomCategoryInput}
-                  onKeyDown={handleCustomCategoryKeyDown}
-                />
-                <Button type="button" variant="outline" size="sm" onClick={handleAddCustomCategory}>
-                  추가
-                </Button>
-              </div>
-              <small className="text-muted d-block mt-1">
-                원하는 카테고리를 선택하거나 직접 입력하여 태그를 추가하세요.
-              </small>
               {normalizedSelectedCategories.length > 0 && (
-                <div className="category-tag-list mt-2">
+                <div className="category-tag-list mt-3">
+                  <small className="text-muted d-block mb-2">선택된 카테고리:</small>
                   {normalizedSelectedCategories.map((category) => (
                     <span key={category} className="category-tag">
                       {category}
@@ -376,21 +348,38 @@ function ItemFormBase({
               )}
             </div>
 
-            {/* 가격 */}
-            <div className="col-12 col-md-4">
-              <label htmlFor="item-price" className="form-label fw-semibold">
-                가격 <span className="text-danger">*</span>
+            {/* 추천 상품 태그 */}
+            <div className="col-12 col-md-6">
+              <label htmlFor="item-recommendation-tags" className="form-label fw-semibold">
+                추천 상품 태그<span className="text-danger">*</span>
               </label>
-              <Input
-                id="item-price"
-                type="text"
-                inputMode="numeric"
-                placeholder="가격을 입력해주세요"
-                value={formatWithComma(price)}
-                onChange={handlePriceChange}
-                maxLength={15}
-                required
+              <Selector
+                id="item-recommendation-tags"
+                name="item-recommendation-tags"
+                multiple
+                options={RECOMMENDATION_TAGS.map(tag => ({ value: tag, label: tag }))}
+                value={selectedRecommendationTags}
+                onChange={setSelectedRecommendationTags}
+                placeholder="추천 상품 태그를 선택하세요"
               />
+
+              {selectedRecommendationTags.length > 0 && (
+                <div className="category-tag-list mt-2">
+                  {selectedRecommendationTags.map((tag) => (
+                    <span key={tag} className="category-tag">
+                      {tag}
+                      <button
+                        type="button"
+                        className="category-tag__remove"
+                        onClick={() => setSelectedRecommendationTags(prev => prev.filter(t => t !== tag))}
+                        aria-label={`${tag} 태그 삭제`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 재고/수량 */}

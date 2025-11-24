@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 
 import { createPet } from '../../api/petApi'
 import { useModalHelpers } from '../../hooks/useModalHelpers'
+import { extractRecommendationKeyword, extractRecommendationKeywords } from '../../utils/recommendationUtils'
 
 import { Button, AlertModal, ConfirmModal } from '../../components/common'
 
@@ -128,27 +129,59 @@ function PetSurveyResultPage() {
                         }
                      </p>
                   </div>
-
-                  <div className="result-type-description mb-4">
-                     <h3 className="mb-3">성격 분석</h3>
-                     <p className="type-description">{petTypeInfo.description}</p>
-                  </div>
-
                   <div className="result-tags mb-4">
                      {petCharacteristics.tags.map((tag, index) => (
                         <span key={index} className="pet-tag">#{tag}</span>
                      ))}
                   </div>
+                  <div className="result-type-description mb-4">
+                     <h3 className="mb-3">성격 분석</h3>
+                     <p className="type-description">{petTypeInfo.description}</p>
+                  </div>
+
+
 
                   <div className="result-recommendations mb-4">
                      <h3 className="mb-3">추천 제품</h3>
                      <div className="recommendation-list">
-                        {petTypeInfo.recommendations.map((item, index) => (
-                           <div key={index} className="recommendation-item">
-                              <span className="rec-icon">✓</span>
-                              <span>{item}</span>
-                           </div>
-                        ))}
+                        {petTypeInfo.recommendations.map((item, index) => {
+                           const keyword = extractRecommendationKeyword(item)
+                           return (
+                              <div 
+                                 key={index} 
+                                 className="recommendation-item recommendation-item--clickable"
+                                 onClick={() => navigate(`/item?searchTerm=${encodeURIComponent(keyword)}`)}
+                                 role="button"
+                                 tabIndex={0}
+                                 onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                       e.preventDefault()
+                                       navigate(`/item?searchTerm=${encodeURIComponent(keyword)}`)
+                                    }
+                                 }}
+                              >
+                                 <span className="rec-icon">✓</span>
+                                 <span>{item}</span>
+                              </div>
+                           )
+                        })}
+                     </div>
+                     <div className="recommendation-button-wrapper mt-3">
+                        <Button
+                           variant="primary"
+                           size="md"
+                           fullWidth
+                           onClick={() => {
+                              const keywords = extractRecommendationKeywords(petTypeInfo.recommendations)
+                              const searchParams = new URLSearchParams()
+                              keywords.forEach((keyword) => {
+                                 searchParams.append('searchTerm', keyword)
+                              })
+                              navigate(`/item?${searchParams.toString()}`)
+                           }}
+                        >
+                           추천 상품 모두 보기
+                        </Button>
                      </div>
                   </div>
 
