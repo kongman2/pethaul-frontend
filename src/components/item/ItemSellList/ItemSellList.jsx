@@ -50,6 +50,34 @@ export default function ItemSellList({
          })
    }, [derivedSellCategory])
 
+   // ====== 목록/카테고리 파생 ======
+   const sourceItems = itemsProp ?? items
+   const paginationData = paginationProp ?? pagination
+   const {
+      selectedCats,
+      setSelectedCats,
+      priceMin,
+      setPriceMin,
+      priceMax,
+      setPriceMax,
+      sellStatus,
+      setSellStatus,
+      inStockOnly,
+      setInStockOnly,
+      filteredList,
+      allCategories: categoryOptions,
+      activeFilterChips,
+      handleResetFilters,
+   } = useItemFilters(sourceItems, {
+      enableStockToggle: true,
+      inStockStatus: 'SELL',
+      statusLabels: {
+         SELL: '판매중',
+         SOLD_OUT: '품절',
+      },
+      initialCategories,
+   })
+
    // ====== 초기 로드 ======
    const shouldFetch = autoFetch && !itemsProp
 
@@ -127,34 +155,6 @@ export default function ItemSellList({
       if (Number.isNaN(n)) return null
       return new Intl.NumberFormat('ko-KR').format(n)
    }
-
-   // ====== 목록/카테고리 파생 ======
-   const sourceItems = itemsProp ?? items
-   const paginationData = paginationProp ?? pagination
-   const {
-      selectedCats,
-      setSelectedCats,
-      priceMin,
-      setPriceMin,
-      priceMax,
-      setPriceMax,
-      sellStatus,
-      setSellStatus,
-      inStockOnly,
-      setInStockOnly,
-      filteredList,
-      allCategories: categoryOptions,
-      activeFilterChips,
-      handleResetFilters,
-   } = useItemFilters(sourceItems, {
-      enableStockToggle: true,
-      inStockStatus: 'SELL',
-      statusLabels: {
-         SELL: '판매중',
-         SOLD_OUT: '품절',
-      },
-      initialCategories,
-   })
    const statusOptions = useMemo(
       () => [
          { value: 'all', label: '전체' },

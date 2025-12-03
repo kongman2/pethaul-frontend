@@ -338,7 +338,7 @@ function Navbar() {
                      </div>
                   )}
                   {/* icon: user-single-aim */}
-                  <div className="user-anchor" ref={userAnchorRef}>
+                  <div className="user-anchor d-none d-md-block" ref={userAnchorRef}>
                      <button type="button" className="btn btn-link p-0" onClick={openUserMenu} aria-expanded={userMenuOpen} aria-haspopup="dialog" aria-label="유저 메뉴">
                         <Icon icon="streamline-pixel:user-single-aim" width={24} height={24} />
                      </button>
