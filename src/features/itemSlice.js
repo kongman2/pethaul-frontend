@@ -131,8 +131,16 @@ const itemSlice = createSlice({
             state.loading = true
             state.error = null
          })
-         .addCase(deleteItemThunk.fulfilled, (state) => {
+         .addCase(deleteItemThunk.fulfilled, (state, action) => {
             state.loading = false
+            // 삭제된 아이템을 목록에서 제거
+            const deletedId = action.payload
+            state.list = state.list.filter((item) => item.id !== deletedId && item.itemId !== deletedId)
+            state.items = state.list // 호환성 유지
+            // 상세 페이지에서 삭제된 아이템이면 null로 설정
+            if (state.item && (state.item.id === deletedId || state.item.itemId === deletedId)) {
+               state.item = null
+            }
          })
          .addCase(deleteItemThunk.rejected, (state, action) => {
             state.loading = false
