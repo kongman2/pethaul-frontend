@@ -74,7 +74,6 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
       // 로그인 응답에 토큰이 포함되어 있으면 바로 사용
       if (response.data.token) {
          localStorage.setItem('token', response.data.token)
-         console.log('✅ 로그인 응답에서 JWT 토큰을 받아 저장했습니다.')
          return user
       }
       
@@ -95,7 +94,6 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
                tokenResult = await dispatch(getTokenThunk())
                if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
                   localStorage.setItem('token', tokenResult.payload)
-                  console.log('✅ JWT 토큰이 자동으로 발급되어 저장되었습니다.')
                   break
                }
                // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms)
@@ -106,16 +104,9 @@ export const loginUserThunk = createAsyncThunk('auth/loginUser', async (credenti
             }
             
             // 모든 시도 실패 시 조용히 처리 (토큰 없이도 세션 기반으로 작동 가능)
-            if (tokenResult?.type !== 'token/getToken/fulfilled') {
-               console.debug('토큰 자동 발급 실패 (세션 기반 인증으로 계속 사용 가능)')
-            }
-         } else {
-            // 세션이 없거나 user 객체가 없으면 토큰 발급 불가능
-            console.debug('세션 또는 사용자 정보가 없어 토큰 발급을 건너뜁니다.')
          }
       } catch (tokenError) {
          // 예외 발생 시에도 로그인은 성공으로 처리 (세션 기반 인증으로 작동 가능)
-         console.debug('토큰 자동 발급 중 예외 발생 (무시됨):', tokenError.message)
       }
       
       return user
@@ -237,7 +228,6 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
                      tokenResult = await dispatch(getTokenThunk())
                      if (tokenResult.type === 'token/getToken/fulfilled' && tokenResult.payload) {
                         localStorage.setItem('token', tokenResult.payload)
-                        console.log('✅ 인증 상태 확인 후 JWT 토큰이 자동으로 발급되었습니다.')
                         break
                      }
                      // 실패 시 점진적으로 대기 시간 증가 (300ms, 500ms, 700ms, 1000ms)
@@ -248,16 +238,9 @@ export const checkUnifiedAuthThunk = createAsyncThunk('auth/checkUnified', async
                   }
                   
                   // 모든 시도 실패 시 조용히 처리 (토큰 없이도 세션 기반으로 작동 가능)
-                  if (tokenResult?.type !== 'token/getToken/fulfilled') {
-                     console.debug('토큰 자동 발급 실패 (세션 기반 인증으로 계속 사용 가능)')
-                  }
-               } else {
-                  // user 객체가 없으면 토큰 발급 불가능
-                  console.debug('사용자 정보가 없어 토큰 발급을 건너뜁니다.')
                }
             } catch (tokenError) {
                // 예외 발생 시에도 조용히 처리 (세션 기반 인증으로 작동 가능)
-               console.debug('토큰 자동 발급 중 예외 발생 (무시됨):', tokenError.message)
             }
          }
          

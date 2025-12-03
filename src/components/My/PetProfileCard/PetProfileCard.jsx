@@ -106,7 +106,7 @@ const PetProfile = ({ pet = {} }) => {
                   onClick={handleViewSurveyResult}
                   className="petprofile-survey-btn"
                 >
-                  📊 설문결과 다시 보기
+                  설문결과 다시 보기
                 </Button>
               ) : (
                 <Button 

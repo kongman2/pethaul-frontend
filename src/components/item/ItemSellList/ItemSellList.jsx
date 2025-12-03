@@ -12,6 +12,7 @@ import ItemListEmpty from '../ItemListEmpty'
 import './ItemSellList.scss'
 import FilterForm from '../../common/FilterForm/FilterForm'
 import useItemFilters from '../../../hooks/useItemFilters'
+import { normalizeCategoryName } from '../../../utils/itemFilters'
 
 
 export default function ItemSellList({
@@ -32,6 +33,21 @@ export default function ItemSellList({
    const user = useSelector((state) => state.auth.user)
    const [page, setPage] = useState(1)
    const [filterOpen, setFilterOpen] = useState(false)
+
+   // URL 파라미터에서 카테고리 추출 및 정규화
+   const initialCategories = useMemo(() => {
+      if (!derivedSellCategory) return []
+      const categories = Array.isArray(derivedSellCategory) 
+         ? derivedSellCategory 
+         : [derivedSellCategory]
+      return categories
+         .filter(Boolean)
+         .map(cat => {
+            // "시즌"을 "SEASON"으로 변환 (정규화는 필터링 시 자동으로 처리됨)
+            // 여기서는 원본 값을 유지하되, 필터링 시 정규화된 값으로 비교됨
+            return String(cat).trim()
+         })
+   }, [derivedSellCategory])
 
    // ====== 초기 로드 ======
    const shouldFetch = autoFetch && !itemsProp
@@ -122,6 +138,7 @@ export default function ItemSellList({
          SELL: '판매중',
          SOLD_OUT: '품절',
       },
+      initialCategories,
    })
    const statusOptions = useMemo(
       () => [

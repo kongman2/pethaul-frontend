@@ -1,5 +1,6 @@
 import petHaulApi from './axiosApi'
 import qs from 'qs'
+import { normalizeCategoryName } from '../utils/itemFilters'
 
 // 상품 등록 (FormData 사용)
 export const createItem = async (formData) => {
@@ -32,12 +33,15 @@ export const getItems = async (data) => {
          ? [sellCategory] // ["강아지"]
          : []
 
+      // 카테고리 정규화 
+      const normalizedCategories = activeCategories.map(cat => normalizeCategoryName(cat))
+
       const response = await petHaulApi.get('item', {
          params: {
             page,
             limit,
             searchTerm,
-            sellCategory: activeCategories,
+            sellCategory: normalizedCategories,
          },
          paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
       })

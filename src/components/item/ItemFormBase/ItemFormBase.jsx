@@ -7,6 +7,12 @@ import { uploadContentImageApi } from '../../../api/contentApi'
 import { RECOMMENDATION_TAGS } from '../../../utils/recommendationUtils'
 import { MAIN_CATEGORY_OPTIONS } from '../../../constants/itemCategories'
 
+// 상품 카테고리와 추천 상품 태그를 합친 옵션
+const ALL_CATEGORY_OPTIONS = [
+  ...MAIN_CATEGORY_OPTIONS,
+  ...RECOMMENDATION_TAGS.map(tag => ({ value: tag, label: tag, group: '추천태그' }))
+]
+
 // initialData 유연 정규화
 function normalize(raw) {
   if (!raw) return null
@@ -80,7 +86,6 @@ function ItemFormBase({
   const [itemSummary, setItemSummary] = useState(norm?.itemSummary ?? '')
   const [discountPercent, setDiscountPercent] = useState(String(norm?.discountPercent ?? '0'))
   const [selectedCategories, setSelectedCategories] = useState(initialSelectedCategories)
-  const [selectedRecommendationTags, setSelectedRecommendationTags] = useState([])
 
   useEffect(() => {
     if (formMode !== 'edit' || !norm) return
@@ -191,9 +196,8 @@ function ItemFormBase({
       })
     }
     
-    // 카테고리와 추천 상품 태그를 합쳐서 전송
-    const allCategories = [...normalizedSelectedCategories, ...selectedRecommendationTags]
-    fd.append('categories', JSON.stringify(allCategories))
+    // 카테고리 및 태그 전송
+    fd.append('categories', JSON.stringify(normalizedSelectedCategories))
     return fd
   }
 
@@ -228,11 +232,8 @@ function ItemFormBase({
     []
   )
 
-  const selectedMainCategoryValues = useMemo(
-    () =>
-      selectedCategories.filter((cat) =>
-        MAIN_CATEGORY_OPTIONS.some((opt) => opt.value === cat),
-      ),
+  const selectedCategoryValues = useMemo(
+    () => selectedCategories.map(normalizeCategoryName).filter(Boolean),
     [selectedCategories],
   )
 
@@ -241,7 +242,7 @@ function ItemFormBase({
     [selectedCategories],
   )
 
-  const handleMainCategoryChange = (values = []) => {
+  const handleCategoryChange = (values = []) => {
     const normalized = Array.isArray(values) ? values.map(normalizeCategoryName).filter(Boolean) : []
     setSelectedCategories(normalized)
   }
@@ -314,23 +315,23 @@ function ItemFormBase({
               />
             </div>
 
-            {/* 상품 카테고리 (아이템 서치 탭의 큰 카테고리) */}
-            <div className="col-12 col-md-6">
+            {/* 상품 카테고리 및 추천 태그 (통합) */}
+            <div className="col-12">
               <label htmlFor="item-category" className="form-label fw-semibold">
-                상품 카테고리 <span className="text-danger">*</span>
+                상품 카테고리 및 태그 <span className="text-danger">*</span>
               </label>
               <Selector
                 id="item-category"
                 name="item-category"
                 multiple
-                options={MAIN_CATEGORY_OPTIONS}
-                value={selectedMainCategoryValues}
-                onChange={handleMainCategoryChange}
-                placeholder="카테고리를 선택하세요 (여러 개 선택 가능)"
+                options={ALL_CATEGORY_OPTIONS}
+                value={selectedCategoryValues}
+                onChange={handleCategoryChange}
+                placeholder="카테고리 및 태그를 선택하세요 (여러 개 선택 가능)"
               />
               {normalizedSelectedCategories.length > 0 && (
                 <div className="category-tag-list mt-3">
-                  <small className="text-muted d-block mb-2">선택된 카테고리:</small>
+                  <small className="text-muted d-block mb-2">선택된 카테고리 및 태그:</small>
                   {normalizedSelectedCategories.map((category) => (
                     <span key={category} className="category-tag">
                       {category}
@@ -339,40 +340,6 @@ function ItemFormBase({
                         className="category-tag__remove"
                         onClick={() => handleRemoveCategory(category)}
                         aria-label={`${category} 태그 삭제`}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 추천 상품 태그 */}
-            <div className="col-12 col-md-6">
-              <label htmlFor="item-recommendation-tags" className="form-label fw-semibold">
-                추천 상품 태그<span className="text-danger">*</span>
-              </label>
-              <Selector
-                id="item-recommendation-tags"
-                name="item-recommendation-tags"
-                multiple
-                options={RECOMMENDATION_TAGS.map(tag => ({ value: tag, label: tag }))}
-                value={selectedRecommendationTags}
-                onChange={setSelectedRecommendationTags}
-                placeholder="추천 상품 태그를 선택하세요"
-              />
-
-              {selectedRecommendationTags.length > 0 && (
-                <div className="category-tag-list mt-2">
-                  {selectedRecommendationTags.map((tag) => (
-                    <span key={tag} className="category-tag">
-                      {tag}
-                      <button
-                        type="button"
-                        className="category-tag__remove"
-                        onClick={() => setSelectedRecommendationTags(prev => prev.filter(t => t !== tag))}
-                        aria-label={`${tag} 태그 삭제`}
                       >
                         ×
                       </button>

@@ -59,7 +59,6 @@ export default function ContentDetailForm({ value, editable = true, onClose, onS
         setForm((f) => ({ ...f, coverUrl: url, thumbUrl: url }))
       })
       .catch((err) => {
-        console.error('이미지 업로드 실패:', err)
         alert('이미지 업로드 실패', '오류', 'danger')
       })
       .finally(() => setUploading((u) => ({ ...u, cover: false })))

@@ -11,6 +11,7 @@ export default function useItemFilters(items, options = {}) {
     enableStockToggle = true,
     inStockStatus = 'SELL',
     statusLabels = defaultStatusLabels,
+    initialCategories = [],
   } = options
 
   const safeItems = useMemo(
@@ -18,7 +19,7 @@ export default function useItemFilters(items, options = {}) {
     [items]
   )
 
-  const [selectedCats, setSelectedCats] = useState([])
+  const [selectedCats, setSelectedCats] = useState(initialCategories)
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
   const [sellStatus, setSellStatus] = useState('all')

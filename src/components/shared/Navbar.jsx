@@ -1,6 +1,6 @@
 // src/components/shared/Navbar.jsx
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { NavLink, useNavigate, useLocation } from 'react-router-dom' // ✅ location 추가
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
 import AppBar from '@mui/material/AppBar'
@@ -15,7 +15,7 @@ import '../css/shared/Navbar_v-ysy.css'
 function Navbar() {
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const location = useLocation() // ✅ 라우트 변경 감지용
+   const location = useLocation()
    const { isAuthenticated, user } = useSelector((s) => s.auth)
    const items = useSelector((s) => s.item.list ?? s.item.items ?? [], shallowEqual)
    const isGoogleUser = user?.provider === 'google'
@@ -159,7 +159,7 @@ function Navbar() {
       }
    }, [BREAKPOINT, searchOpen, menuOpen, menuOwner, updateSearchArrow, updateMenuArrow, closeSearch, closeMenu])
 
-   // ✅ 라우트가 바뀌면 자동으로 모두 닫기 (Link 클릭 후에도 깔끔하게 닫힘)
+   // 라우트가 바뀌면 자동으로 모두 닫기 (Link 클릭 후에도 깔끔하게 닫힘)
    useEffect(() => {
       closeMenu()
       closeSearch()
@@ -229,7 +229,7 @@ function Navbar() {
                               if (e.key === 'Escape') closeMenu()
                            }}
                         >
-                           {/* ✅ 클릭 시 닫히게 onClose=closeMenu 전달 */}
+                           {/* 클릭 시 닫히게 onClose=closeMenu 전달 */}
                            <ItemSearchTap items={items} onClose={closeMenu} />
                         </div>
                      )}
@@ -370,7 +370,7 @@ function Navbar() {
                            </button>
                         </div>
 
-                        {/* ✅ 모바일도 클릭 시 닫히게 onClose=closeMenu 전달 */}
+                        {/* 모바일도 클릭 시 닫히게 onClose=closeMenu 전달 */}
                         <ItemSearchTap items={items} onClose={closeMenu} />
                      </div>
                   )}

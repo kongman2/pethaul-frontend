@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import ItemSellList from '../../components/item/ItemSellList'
 import { fetchSortDataThunk } from '../../features/itemSlice'
+import { normalizeCategoryName } from '../../utils/itemFilters'
 
 import useAppBackground from '../../hooks/useAppBackground'
 
@@ -13,7 +14,11 @@ function ItemSellListPage() {
    const dispatch = useDispatch()
    const { loading, error, pagination, main } = useSelector((state) => state.item)
 
-   const sellCategory = useMemo(() => searchParams.getAll('filter').filter(Boolean), [searchParams])
+   const sellCategory = useMemo(() => {
+      const filters = searchParams.getAll('filter').filter(Boolean)
+      // 카테고리 정규화 
+      return filters.map(filter => normalizeCategoryName(filter))
+   }, [searchParams])
    const keywordParams = useMemo(() => {
       const combined = [
          ...searchParams.getAll('keyword'),
