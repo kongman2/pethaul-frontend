@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { fetchItemsThunk } from '../../../features/itemSlice'
@@ -86,6 +86,32 @@ export default function ItemSellList({
       setPage(1)
    }, [derivedSellCategory, searchTerm])
 
+   // derivedSellCategory 변경 추적
+   const prevDerivedSellCategoryRef = useRef(derivedSellCategory)
+   const userFilteredRef = useRef(false)
+
+   // derivedSellCategory가 변경되면 사용자 필터링 상태 리셋
+   useEffect(() => {
+      const prev = prevDerivedSellCategoryRef.current
+      const current = derivedSellCategory
+      const prevStr = Array.isArray(prev) ? JSON.stringify([...prev].sort()) : String(prev || '')
+      const currentStr = Array.isArray(current) ? JSON.stringify([...current].sort()) : String(current || '')
+      
+      if (prevStr !== currentStr) {
+         userFilteredRef.current = false
+         prevDerivedSellCategoryRef.current = current
+      }
+   }, [derivedSellCategory])
+
+   // selectedCats 변경 감지
+   useEffect(() => {
+      const currentSorted = [...selectedCats].sort().join(',')
+      const initialSorted = [...initialCategories].sort().join(',')
+      if (currentSorted !== initialSorted) {
+         userFilteredRef.current = true
+      }
+   }, [selectedCats, initialCategories])
+
    useEffect(() => {
       if (shouldFetch) {
          const payload = { page, limit: 10 }
@@ -93,20 +119,31 @@ export default function ItemSellList({
             payload.searchTerm = Array.isArray(searchTerm) ? searchTerm[0] : searchTerm
          }
 
-         // selectedCats가 있으면 우선 사용 (사용자가 필터에서 선택한 카테고리)
-         // 없으면 derivedSellCategory 사용 (URL이나 props에서 전달된 카테고리)
-         const categoriesToUse = selectedCats && selectedCats.length > 0 
-            ? selectedCats 
-            : derivedSellCategory
+         let categoriesToUse = null
+         
+         // 사용자가 필터를 조작했는지 확인
+         if (userFilteredRef.current) {
+            // 사용자가 필터를 조작한 경우 selectedCats 사용
+            if (selectedCats && selectedCats.length > 0) {
+               categoriesToUse = selectedCats
+            }
+            // selectedCats가 빈 배열이면 categoriesToUse는 null (전체 상품)
+         } else {
+            // 사용자가 필터를 조작하지 않은 경우 derivedSellCategory 사용 (URL 파라미터 등)
+            categoriesToUse = derivedSellCategory
+         }
 
          if (categoriesToUse) {
             if (typeof categoriesToUse === 'object' && !Array.isArray(categoriesToUse)) {
                Object.assign(payload, categoriesToUse)
             } else {
                // 배열인 경우 그대로 전달 (여러 카테고리 지원)
-               payload.sellCategory = Array.isArray(categoriesToUse) 
+               const filtered = Array.isArray(categoriesToUse) 
                   ? categoriesToUse.filter(Boolean)
                   : categoriesToUse
+               if (filtered && (Array.isArray(filtered) ? filtered.length > 0 : filtered)) {
+                  payload.sellCategory = filtered
+               }
             }
          }
 

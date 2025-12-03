@@ -94,7 +94,7 @@ function MainPage() {
             ])
             
             // 시즌 상품 별도 로드
-            dispatch(fetchItemsThunk({ sellCategory: ['시즌'], page: 1, limit: 4 }))
+            dispatch(fetchItemsThunk({ sellCategory: ['SEASON'], page: 1, limit: 4 }))
                .unwrap()
                .then((result) => {
                   const items = Array.isArray(result) ? result : result?.items ?? []

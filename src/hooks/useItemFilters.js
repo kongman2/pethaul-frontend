@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { filterItems } from '../utils/itemFilters'
 
 const defaultStatusLabels = {
@@ -20,6 +20,15 @@ export default function useItemFilters(items, options = {}) {
   )
 
   const [selectedCats, setSelectedCats] = useState(initialCategories)
+
+  // initialCategories가 변경되면 selectedCats도 업데이트
+  useEffect(() => {
+    const currentSorted = [...selectedCats].sort().join(',')
+    const initialSorted = [...initialCategories].sort().join(',')
+    if (currentSorted !== initialSorted) {
+      setSelectedCats(initialCategories)
+    }
+  }, [initialCategories])
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
   const [sellStatus, setSellStatus] = useState('all')

@@ -20,6 +20,21 @@ function AppRouter() {
   const isVerifyRoute = location.pathname === ROUTES.VERIFY
   const shouldShowVerifyModal = Boolean(backgroundLocation) && isVerifyRoute
 
+  // 페이지 전환 시 스크롤을 맨 위로 이동
+  useEffect(() => {
+    // backgroundLocation이 있으면 모달이므로 스크롤 이동하지 않음
+    if (!backgroundLocation) {
+      window.scrollTo(0, 0)
+    }
+  }, [location.pathname, location.search, backgroundLocation])
+
+  // 브라우저 뒤로가기/앞으로가기 시에도 스크롤 복원 방지
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
   // Verify 모달 라우팅 처리
   useEffect(() => {
     if (isVerifyRoute && !backgroundLocation) {
