@@ -30,6 +30,7 @@ export const PRODUCT_CATEGORY_OPTIONS = [
 export const SPECIAL_CATEGORY_OPTIONS = [
   { value: '무료배송', label: '무료배송', group: '카테고리', aliases: ['freeshipping', 'free shipping', 'free', '무료'] },
   { value: '빠른배송', label: '빠른배송', group: '카테고리', aliases: ['fastshipping', 'fast shipping', 'fast', '빠른'] },
+  { value: '이벤트', label: '이벤트', group: '추천', aliases: ['event', 'events'] },
   { value: 'SEASON', label: 'SEASON', group: '카테고리', aliases: ['season', 'seasons', '시즌'] },
   { value: '신상품', label: '신상품', group: '카테고리', aliases: ['new', 'newitem', 'new item', '신상'] },
   { value: '이월상품', label: '이월상품', group: '카테고리', aliases: ['clearance', 'sale', '이월'] },
