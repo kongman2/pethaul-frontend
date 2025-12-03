@@ -24,7 +24,7 @@ function BannerSection() {
             <br />
             SEASON OFF SALE
          </div>
-         <button className="bannerbtn" onClick={() => navigate('/items/search?filter=이벤트&filter=세일&filter=시즌오프')}>시즌 오프 특가 보러가기</button>
+         <button className="bannerbtn" onClick={() => navigate('/items/search?filter=이벤트&filter=세일&filter=이월상품')}>시즌 오프 특가 보러가기</button>
          <img className="img1" src={복냥이} alt="bannerimg" />
          <img className="img2" src={img7} alt="bannerimg" />
          <img className="img3" src={img3} alt="bannerimg" />
