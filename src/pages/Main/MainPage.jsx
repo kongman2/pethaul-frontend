@@ -35,16 +35,16 @@ function MainPage() {
    const [error, setError] = useState(null)
    const [keywords, setKeywords] = useState([])
    const [seasonItems, setSeasonItems] = useState([])
+   const [newItems, setNewItems] = useState([])
 
    //  메인 데이터만 구독 (list/검색 상태, 전역 loading 변화에 영향 안 받음)
    // shallowEqual로 불필요한 리렌더링 방지
    const mainData = useSelector((s) => s.item.main, shallowEqual)
 
-   const { topSales, topToday, newItems } = useMemo(
+   const { topSales, topToday } = useMemo(
       () => ({
          topSales: mainData?.topSales ?? [],
          topToday: mainData?.topToday ?? [],
-         newItems: mainData?.newItems ?? [],
       }),
       [mainData]
    )
@@ -102,6 +102,17 @@ function MainPage() {
                })
                .catch(() => {
                   setSeasonItems([])
+               })
+            
+            // 신상품 별도 로드
+            dispatch(fetchItemsThunk({ sellCategory: ['신상품'], page: 1, limit: 4 }))
+               .unwrap()
+               .then((result) => {
+                  const items = Array.isArray(result) ? result : result?.items ?? []
+                  setNewItems(items.slice(0, 4))
+               })
+               .catch(() => {
+                  setNewItems([])
                })
             
             // 핵심 데이터 로드 완료 후 즉시 UI 표시
@@ -176,7 +187,7 @@ function MainPage() {
 
    // 3) 요청은 끝났지만 비어 있음 (빈 상태 UI)
    // 데이터가 없어도 페이지는 보여주되, 빈 섹션만 표시
-   const total = topSales.length + topToday.length + newItems.length
+   const total = topSales.length + topToday.length
    const hasNoMainData = !mainData || total === 0
 
    return (
