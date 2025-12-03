@@ -42,7 +42,7 @@ export default function AdminContentForm({ mode = 'create', contentId, onCancel,
 
   const [form, setForm] = useState(defaults)
   const [errors, setErrors] = useState({})
-  const [uploading, setUploading] = useState({ cover: false, thumb: false })
+  const [uploading, setUploading] = useState({ cover: false })
 
   // 수정 모드일 때 데이터 fetch
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function AdminContentForm({ mode = 'create', contentId, onCancel,
       body: form.body,
       tag: form.tag || null,
       coverUrl: form.coverUrl,
-      thumbUrl: form.thumbUrl || form.coverUrl, // 썸네일 없으면 Cover 사용
+      thumbUrl: form.coverUrl, // 대표 이미지와 동일하게 사용
       isFeatured: !!form.isFeatured,
       status: form.status,
     }
@@ -110,18 +110,21 @@ export default function AdminContentForm({ mode = 'create', contentId, onCancel,
       .catch(() => alert('저장에 실패했습니다.', '오류', 'danger'))
   }
 
-  const handleUpload = (files, field) => {
+  const handleUpload = (files) => {
     const file = files?.[0]
     if (!file) return
-    setUploading((u) => ({ ...u, [field]: true }))
+    setUploading((u) => ({ ...u, cover: true }))
     dispatch(uploadContentImageThunk(file))
       .unwrap()
       .then(({ url }) => {
-        const key = field === 'cover' ? 'coverUrl' : 'thumbUrl'
-        setForm((f) => ({ ...f, [key]: url }))
+        // 대표 이미지와 썸네일을 동일하게 설정
+        setForm((f) => ({ ...f, coverUrl: url, thumbUrl: url }))
       })
-      .catch(() => alert('이미지 업로드 실패', '오류', 'danger'))
-      .finally(() => setUploading((u) => ({ ...u, [field]: false })))
+      .catch((err) => {
+        console.error('이미지 업로드 실패:', err)
+        alert('이미지 업로드 실패', '오류', 'danger')
+      })
+      .finally(() => setUploading((u) => ({ ...u, cover: false })))
   }
 
   // 로딩 상태
@@ -163,33 +166,18 @@ export default function AdminContentForm({ mode = 'create', contentId, onCancel,
         </div>
 
         {/* 이미지 업로드 */}
-        <div className="col-12 col-md-6">
+        <div className="col-12">
           <ImageUpload
-            label="대표 이미지 (Cover)"
+            label="대표 이미지"
             required
             previewUrls={form.coverUrl ? [form.coverUrl] : []}
-            onChange={(files) => handleUpload(files, 'cover')}
+            onChange={handleUpload}
             uploading={uploading.cover || globalUploading}
             uploadingText="업로드 중..."
             error={errors.coverUrl}
-            hint="콘텐츠의 메인 이미지입니다."
+            hint="콘텐츠의 메인 이미지입니다. 썸네일로도 동일하게 사용됩니다."
             id="cover-image"
             disabled={uploading.cover || globalUploading}
-          />
-        </div>
-
-        <div className="col-12 col-md-6">
-          <ImageUpload
-            label="썸네일 (Thumbnail - 선택사항)"
-            required={false}
-            previewUrls={form.thumbUrl ? [form.thumbUrl] : []}
-            onChange={(files) => handleUpload(files, 'thumb')}
-            uploading={uploading.thumb || globalUploading}
-            uploadingText="업로드 중..."
-            error={errors.thumbUrl}
-            hint="비워두면 대표 이미지가 사용됩니다."
-            id="thumb-image"
-            disabled={uploading.thumb || globalUploading}
           />
         </div>
 

@@ -37,7 +37,7 @@ export default function ContentDetailForm({ value, editable = true, onClose, onS
   const [form, setForm] = useState({ ...defaults, ...(value || {}) })
   const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState(false)
-  const [uploading, setUploading] = useState({ cover: false, thumb: false })
+  const [uploading, setUploading] = useState({ cover: false })
 
   useEffect(() => {
     setForm({ ...defaults, ...(value || {}) })
@@ -48,18 +48,21 @@ export default function ContentDetailForm({ value, editable = true, onClose, onS
     setForm((f) => ({ ...f, [name]: type === 'checkbox' ? checked : value }))
   }
 
-  const handleUpload = (e, field) => {
+  const handleUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setUploading((u) => ({ ...u, [field]: true }))
+    setUploading((u) => ({ ...u, cover: true }))
     dispatch(uploadContentImageThunk(file))
       .unwrap()
       .then(({ url }) => {
-        const key = field === 'cover' ? 'coverUrl' : 'thumbUrl'
-        setForm((f) => ({ ...f, [key]: url }))
+        // 대표 이미지와 썸네일을 동일하게 설정
+        setForm((f) => ({ ...f, coverUrl: url, thumbUrl: url }))
       })
-      .catch(() => alert('이미지 업로드 실패', '오류', 'danger'))
-      .finally(() => setUploading((u) => ({ ...u, [field]: false })))
+      .catch((err) => {
+        console.error('이미지 업로드 실패:', err)
+        alert('이미지 업로드 실패', '오류', 'danger')
+      })
+      .finally(() => setUploading((u) => ({ ...u, cover: false })))
   }
 
   const onSave = () => {
@@ -72,7 +75,7 @@ export default function ContentDetailForm({ value, editable = true, onClose, onS
       tag: form.tag || null,
       author: form.author || null,
       coverUrl: form.coverUrl,
-      thumbUrl: form.thumbUrl,
+      thumbUrl: form.coverUrl, // 대표 이미지와 동일하게 사용
       isFeatured: !!form.isFeatured,
       status: form.status,
       publishedAt: form.publishedAt || undefined,
@@ -153,23 +156,13 @@ export default function ContentDetailForm({ value, editable = true, onClose, onS
         <textarea id="body" name="body" rows={8} value={form.body || ''} onChange={onChange} disabled={!editing} />
       </div>
 
-      <div className="grid-2">
-        <div className="form-row">
-          <label>대표 이미지 (cover)</label>
-          <div className="upload-row">
-            <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'cover')} disabled={!editing} />
-            {(uploading.cover || globalUploading) && <span className="uploading">업로드 중…</span>}
-          </div>
-          {form.coverUrl && <img className="preview" src={form.coverUrl} alt="cover" />}
+      <div className="form-row">
+        <label>대표 이미지</label>
+        <div className="upload-row">
+          <input type="file" accept="image/*" onChange={handleUpload} disabled={!editing || uploading.cover || globalUploading} />
+          {(uploading.cover || globalUploading) && <span className="uploading">업로드 중…</span>}
         </div>
-        <div className="form-row">
-          <label>썸네일 (thumb)</label>
-          <div className="upload-row">
-            <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'thumb')} disabled={!editing} />
-            {(uploading.thumb || globalUploading) && <span className="uploading">업로드 중…</span>}
-          </div>
-          {form.thumbUrl && <img className="preview" src={form.thumbUrl} alt="thumb" />}
-        </div>
+        {form.coverUrl && <img className="preview" src={form.coverUrl} alt="cover" />}
       </div>
 
       <div className="grid-3">
