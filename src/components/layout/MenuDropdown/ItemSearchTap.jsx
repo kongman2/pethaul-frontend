@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { Button } from '../../common'
-import { PET_CATEGORY_OPTIONS, PRODUCT_CATEGORY_OPTIONS } from '../../../constants/itemCategories'
+import { PET_CATEGORY_OPTIONS, PRODUCT_CATEGORY_OPTIONS, RECOMMENDED_CATEGORY_OPTIONS } from '../../../constants/itemCategories'
 import './ItemSearchTap.scss'
 
 function ItemSearchTap({ onClose = () => {} }) {
@@ -63,29 +63,27 @@ function ItemSearchTap({ onClose = () => {} }) {
       <div className="filter-group mb-4">
         <h3 className="h6 mb-3">추천</h3>
         <div className="d-flex flex-wrap gap-2">
-          <div className="d-flex justify-content-center">
-            <FilterButton
-              value="무료배송"
-              icon={<Icon icon="mdi:truck-delivery-outline" width="20" height="20" />}
-            />
-          </div>
-          <div className="d-flex justify-content-center">
-            <FilterButton value="이벤트" icon={<Icon icon="mdi:party-popper" width="20" height="20" />} />
-          </div>
-          <div className="d-flex justify-content-center">
-            <FilterButton value="SEASON" icon={<Icon icon="mdi:weather-snowy-rainy" width="20" height="20" />} />
-          </div>
-          <div className="d-flex justify-content-center">
-            <FilterButton value="빠른배송" icon={<Icon icon="mdi:lightning-bolt" width="20" height="20" />} />
-          </div>
-          <div className="d-flex justify-content-center">
-            <FilterButton value="기획전" icon={<Icon icon="mdi:star-box-multiple" width="20" height="20" />} />
-          </div>
-          <div className="d-flex justify-content-center">
-            <FilterButton value="이월상품" icon={<Icon icon="mdi:tag-multiple-outline" width="20" height="20" />} />
-          </div>
-            </div>
-         </div>
+          {RECOMMENDED_CATEGORY_OPTIONS.map((option) => {
+            // 아이콘 매핑
+            const iconMap = {
+              '무료배송': <Icon icon="mdi:truck-delivery-outline" width="20" height="20" />,
+              '이벤트': <Icon icon="mdi:party-popper" width="20" height="20" />,
+              'SEASON': <Icon icon="mdi:weather-snowy-rainy" width="20" height="20" />,
+              '빠른배송': <Icon icon="mdi:lightning-bolt" width="20" height="20" />,
+              '신상품': <Icon icon="mdi:star-box-multiple" width="20" height="20" />,
+              '이월상품': <Icon icon="mdi:tag-multiple-outline" width="20" height="20" />,
+            }
+            return (
+              <div key={option.value} className="d-flex justify-content-center">
+                <FilterButton
+                  value={option.value}
+                  icon={iconMap[option.value]}
+                />
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       <div className="filter-group mb-4">
         <h3 className="h6 mb-3">카테고리</h3>

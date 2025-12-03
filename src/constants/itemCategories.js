@@ -41,6 +41,18 @@ export const PRODUCT_CATEGORY_OPTIONS = MAIN_CATEGORY_OPTIONS.filter(
 )
 
 /**
+ * 추천 카테고리 옵션
+ */
+export const RECOMMENDED_CATEGORY_OPTIONS = [
+  { value: '무료배송', label: '무료배송', group: '추천' },
+  { value: '이벤트', label: '이벤트', group: '추천' },
+  { value: 'SEASON', label: 'SEASON', group: '추천' },
+  { value: '빠른배송', label: '빠른배송', group: '추천' },
+  { value: '신상품', label: '신상품', group: '추천' },
+  { value: '이월상품', label: '이월상품', group: '추천' },
+]
+
+/**
  * 카테고리 값만 추출 (value 배열)
  */
 export const MAIN_CATEGORY_VALUES = MAIN_CATEGORY_OPTIONS.map((option) => option.value)
