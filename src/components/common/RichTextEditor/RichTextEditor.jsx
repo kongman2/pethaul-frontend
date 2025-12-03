@@ -40,7 +40,10 @@ const RichTextEditor = ({
   const { alert, alertModal } = useModalHelpers()
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // StarterKit에 포함된 Link 확장 제외 (중복 방지)
+        link: false,
+      }),
       Image.configure({
         HTMLAttributes: {
           class: 'editor-image',
