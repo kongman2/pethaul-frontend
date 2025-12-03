@@ -3,6 +3,39 @@ import profileImg from '../assets/profile.png'
 import petProfileImg from '../assets/petprofile.png'
 
 /**
+ * API Base URL 가져오기 (axiosApi.js와 동일한 로직)
+ */
+const getApiBaseUrl = () => {
+  // 런타임 환경 변수 우선 확인 (server.js에서 주입)
+  if (typeof window !== 'undefined' && window.__ENV__?.VITE_APP_API_URL) {
+    const runtimeUrl = window.__ENV__.VITE_APP_API_URL
+    if (runtimeUrl && 
+        runtimeUrl !== 'undefined' && 
+        typeof runtimeUrl === 'string' &&
+        runtimeUrl.trim() !== '' &&
+        runtimeUrl.startsWith('http')) {
+      return runtimeUrl.replace(/\/$/, '')
+    }
+  }
+  
+  // 빌드 타임 환경 변수
+  const buildTimeUrl = import.meta.env.VITE_APP_API_URL
+  
+  // undefined 문자열 체크 (빌드 타임에 undefined가 문자열로 주입되는 경우)
+  if (buildTimeUrl && 
+      buildTimeUrl !== 'undefined' && 
+      buildTimeUrl !== undefined &&
+      typeof buildTimeUrl === 'string' &&
+      buildTimeUrl.trim() !== '' &&
+      buildTimeUrl.startsWith('http')) {
+    return buildTimeUrl.replace(/\/$/, '')
+  }
+  
+  // 기본값
+  return 'https://pethaul-api.onrender.com'
+}
+
+/**
  * API 이미지 URL을 절대 경로로 변환
  * - 이미 http/https로 시작하면 그대로 반환
  * - 상대 경로인 경우 API_BASE_URL을 붙여서 반환
@@ -15,7 +48,7 @@ import petProfileImg from '../assets/petprofile.png'
 export const buildImageUrl = (url) => {
   if (!url) return ''
   
-  const API = (`${import.meta.env.VITE_APP_API_URL}` || '').replace(/\/$/, '')
+  const API = getApiBaseUrl()
   
   // 이미 절대 URL인 경우
   if (url.startsWith('http://') || url.startsWith('https://')) {

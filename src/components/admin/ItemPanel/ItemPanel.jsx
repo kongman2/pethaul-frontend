@@ -27,7 +27,13 @@ function ItemPanel({ searchTerm, sellCategory }) {
    const [filterOpen, setFilterOpen] = useState(false)
 
    useEffect(() => {
-      dispatch(fetchItemsThunk({ searchTerm, sellCategory }))
+      // 어드민 페이지에서는 모든 상품을 가져오기 위해 큰 limit 사용
+      dispatch(fetchItemsThunk({ 
+         searchTerm, 
+         sellCategory,
+         page: 1,
+         limit: 1000, // 충분히 큰 값으로 모든 상품 가져오기
+      }))
    }, [dispatch, searchTerm, sellCategory])
 
    const baseURL = import.meta.env.VITE_APP_API_URL || ''
@@ -107,7 +113,12 @@ function ItemPanel({ searchTerm, sellCategory }) {
                      message: '상품이 삭제되었습니다!',
                      variant: 'success',
                   })
-                  dispatch(fetchItemsThunk({ searchTerm, sellCategory }))
+                  dispatch(fetchItemsThunk({ 
+                     searchTerm, 
+                     sellCategory,
+                     page: 1,
+                     limit: 1000,
+                  }))
                })
                .catch(() => {
                   alertModal.open({
