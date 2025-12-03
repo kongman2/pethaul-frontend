@@ -8,7 +8,7 @@ function NewItemsSection({ items = [], buildImg }) {
          id="ss-new"
          title="2025 S/S 신상템"
          icon="streamline-pixel:interface-essential-crown"
-         moreHref="/items/sorted?sort=newItems"
+         moreHref="/items/sorted?sort=newItems&filter=신상"
          items={items}
          buildImg={buildImg}
          getHref={(_, itemId) => (itemId != null ? `/items/detail/${itemId}` : undefined)}

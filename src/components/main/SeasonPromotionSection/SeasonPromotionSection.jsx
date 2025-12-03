@@ -13,7 +13,7 @@ function SeasonPromotionSection({ items = [], buildImg }) {
         id="season-promotion"
         title="따끈한 냥이 한마리 몰고 가세요~"
         icon="streamline-pixel:health-drugs-cannabis"
-        moreHref="/items/search?filter=시즌/키링"
+        moreHref="/items/search?filter=시즌"
         moreLabel="More"
         items={items}
         buildImg={buildImg}

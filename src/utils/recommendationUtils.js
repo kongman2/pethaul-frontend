@@ -79,5 +79,7 @@ export const RECOMMENDATION_TAGS = [
   '키링',
   '이벤트',
   '세일',
+  '신상품',
+  '이월상품',
 ]
 

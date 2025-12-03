@@ -18,6 +18,12 @@ export const MAIN_CATEGORY_OPTIONS = [
   { value: '장난감', label: '장난감', group: '카테고리' },
   { value: '배변용품', label: '배변용품', group: '카테고리' },
   { value: '기타용품', label: '기타용품', group: '카테고리' },
+  // 특별 카테고리
+  { value: '무료배송', label: '무료배송', group: '카테고리' },
+  { value: '빠른배송', label: '빠른배송', group: '카테고리' },
+  { value: 'SEASON', label: 'SEASON', group: '카테고리' },
+  { value: '신상품', label: '신상품', group: '카테고리' },
+  { value: '이월상품', label: '이월상품', group: '카테고리' },
 ]
 
 /**
