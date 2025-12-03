@@ -44,8 +44,8 @@ export default function ItemSellList({
       return categories
          .filter(Boolean)
          .map(cat => {
-            // "시즌"을 "SEASON"으로 변환 (정규화는 필터링 시 자동으로 처리됨)
-            // 여기서는 원본 값을 유지하되, 필터링 시 정규화된 값으로 비교됨
+            // 정규화된 값이 이미 전달되므로 그대로 사용
+            // 필터링 시 normalizeCategoryName으로 다시 정규화되어 비교됨
             return String(cat).trim()
          })
    }, [derivedSellCategory])

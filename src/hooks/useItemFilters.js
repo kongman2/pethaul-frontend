@@ -26,8 +26,9 @@ export default function useItemFilters(items, options = {}) {
     const currentSorted = [...selectedCats].sort().join(',')
     const initialSorted = [...initialCategories].sort().join(',')
     if (currentSorted !== initialSorted) {
-      setSelectedCats(initialCategories)
+      setSelectedCats([...initialCategories]) // 새 배열로 설정하여 참조 변경
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCategories])
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
