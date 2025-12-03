@@ -167,6 +167,75 @@
   justify-content: center;
 }
 
+.item-detail__panel-text {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: $dark-color;
+  word-wrap: break-word;
+  text-align: center;
+  
+  // HTML 태그 스타일 (컨텐츠 페이지와 동일)
+  p {
+    margin-bottom: $spacing-3;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  h2, h3, h4 {
+    margin-top: $spacing-4;
+    margin-bottom: $spacing-2;
+    font-weight: 700;
+  }
+  
+  ul, ol {
+    margin-bottom: $spacing-3;
+    padding-left: $spacing-4;
+  }
+  
+  blockquote {
+    border-left: 4px solid $primary-color;
+    padding-left: $spacing-2;
+    margin: $spacing-3 0;
+    color: $text-color-muted;
+    font-style: italic;
+  }
+  
+  code {
+    background: $light-color;
+    padding: 0.2rem 0.4rem;
+    border-radius: $border-radius-sm;
+    font-size: 0.9em;
+  }
+  
+  pre {
+    background: $light-color;
+    padding: $spacing-2;
+    border-radius: $border-radius-sm;
+    overflow-x: auto;
+    margin: $spacing-3 0;
+
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+  
+  // 상품 설명 영역의 editor-image 크기 제한
+  img.editor-image {
+    max-width: 100%;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: $border-radius-sm;
+    margin: $spacing-3 auto;
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
 @media (max-width: 768px) {
   .item-detail__thumbs {
     flex-direction: row !important;

@@ -4,17 +4,19 @@ import { normalizeCategoryName } from '../utils/itemFilters'
 
 // 상품 등록 (FormData 사용)
 export const createItem = async (formData) => {
-      const response = await petHaulApi.post('/item', formData, {
-         headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      // FormData를 사용할 때는 Content-Type을 명시하지 않음
+      // axios가 자동으로 multipart/form-data와 boundary를 설정하고,
+      // 요청 인터셉터에서 설정한 Authorization 헤더가 유지됨
+      const response = await petHaulApi.post('/item', formData)
       return response
 }
 
 // 상품 수정 (FormData 사용)
 export const updateItem = async (id, formData) => {
-      const response = await petHaulApi.put(`/item/${id}`, formData, {
-         headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      // FormData를 사용할 때는 Content-Type을 명시하지 않음
+      // axios가 자동으로 multipart/form-data와 boundary를 설정하고,
+      // 요청 인터셉터에서 설정한 Authorization 헤더가 유지됨
+      const response = await petHaulApi.put(`/item/${id}`, formData)
       return response
 }
 

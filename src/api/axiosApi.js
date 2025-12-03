@@ -49,6 +49,11 @@ petHaulApi.interceptors.request.use(
          return config
       }
 
+      // FormData를 보낼 때는 Content-Type을 제거 (axios가 자동으로 multipart/form-data 설정)
+      if (config.data instanceof FormData) {
+         delete config.headers['Content-Type']
+      }
+
       const token = localStorage.getItem('token')
       
       // JWT 토큰이 있으면 사용

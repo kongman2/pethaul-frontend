@@ -18,6 +18,7 @@ function SeasonPromotionSection({ items = [], buildImg }) {
         items={items}
         maxItems={4}
         buildImg={buildImg}
+        getHref={(_, itemId) => (itemId != null ? `/items/detail/${itemId}` : undefined)}
         emptyMessage={emptyMessage}
       />
     </div>

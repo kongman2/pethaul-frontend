@@ -8,7 +8,7 @@ import { addToCartThunk } from '../../features/cartSlice'
 import { createQnaThunk } from '../../features/qnaSlice'
 import { useModalHelpers } from '../../hooks/useModalHelpers'
 import useAppBackground from '../../hooks/useAppBackground'
-import { getPlaceholderImage } from '../../utils/imageUtils'
+import { getPlaceholderImage, buildImageUrl } from '../../utils/imageUtils'
 
 import ItemReviewList from '../../components/review/ItemReviewList'
 import { Button, Input, SectionCard, QuantityControl, AlertModal } from '../../components/common'
@@ -38,14 +38,15 @@ function ItemDetailPage() {
 
   const repImg = useMemo(() => (Array.isArray(item?.ItemImages) ? item.ItemImages.find((img) => img.repImgYn === 'Y') : null), [item?.ItemImages])
   const subImgs = useMemo(() => (Array.isArray(item?.ItemImages) ? item.ItemImages.filter((img) => img.repImgYn === 'N') : []), [item?.ItemImages])
-  const apiBase = import.meta.env.VITE_APP_API_URL || ''
 
   const thumbSrcs = useMemo(() => {
     const list = []
-    if (repImg?.imgUrl) list.push(`${apiBase}${repImg.imgUrl}`)
-    for (const img of subImgs) list.push(`${apiBase}${img.imgUrl}`)
+    if (repImg?.imgUrl) list.push(buildImageUrl(repImg.imgUrl))
+    for (const img of subImgs) {
+      if (img?.imgUrl) list.push(buildImageUrl(img.imgUrl))
+    }
     return Array.from(new Set(list))
-  }, [repImg, subImgs, apiBase])
+  }, [repImg, subImgs])
 
   const [mainSrc, setMainSrc] = useState(thumbSrcs[0] || getPlaceholderImage())
 

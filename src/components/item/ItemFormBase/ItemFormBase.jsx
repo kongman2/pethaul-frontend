@@ -7,11 +7,18 @@ import { uploadContentImageApi } from '../../../api/contentApi'
 import { RECOMMENDATION_TAGS } from '../../../utils/recommendationUtils'
 import { MAIN_CATEGORY_OPTIONS } from '../../../constants/itemCategories'
 
-// 상품 카테고리와 추천 상품 태그를 합친 옵션
-const ALL_CATEGORY_OPTIONS = [
-  ...MAIN_CATEGORY_OPTIONS,
-  ...RECOMMENDATION_TAGS.map(tag => ({ value: tag, label: tag, group: '추천태그' }))
-]
+// 상품 카테고리와 추천 상품 태그를 합친 옵션 
+const ALL_CATEGORY_OPTIONS = (() => {
+  const mainValues = new Set(MAIN_CATEGORY_OPTIONS.map(opt => opt.value))
+  const recommendationOptions = RECOMMENDATION_TAGS
+    .filter(tag => !mainValues.has(tag)) // 이미 MAIN_CATEGORY_OPTIONS에 있는 값은 제외
+    .map(tag => ({ value: tag, label: tag, group: '추천태그' }))
+  
+  return [
+    ...MAIN_CATEGORY_OPTIONS,
+    ...recommendationOptions
+  ]
+})()
 
 // initialData 유연 정규화
 function normalize(raw) {
