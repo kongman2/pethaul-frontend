@@ -156,13 +156,13 @@ export default function ContentDetailForm({ value, editable = true, onClose, onS
         <textarea id="body" name="body" rows={8} value={form.body || ''} onChange={onChange} disabled={!editing} />
       </div>
 
-      <div className="form-row">
+        <div className="form-row">
         <label>대표 이미지</label>
-        <div className="upload-row">
+          <div className="upload-row">
           <input type="file" accept="image/*" onChange={handleUpload} disabled={!editing || uploading.cover || globalUploading} />
-          {(uploading.cover || globalUploading) && <span className="uploading">업로드 중…</span>}
-        </div>
-        {form.coverUrl && <img className="preview" src={form.coverUrl} alt="cover" />}
+            {(uploading.cover || globalUploading) && <span className="uploading">업로드 중…</span>}
+          </div>
+          {form.coverUrl && <img className="preview" src={form.coverUrl} alt="cover" />}
       </div>
 
       <div className="grid-3">

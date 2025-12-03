@@ -75,5 +75,9 @@ export const RECOMMENDATION_TAGS = [
   '리드줄',
   '캐리어',
   '이동장',
+  '시즌',
+  '키링',
+  '이벤트',
+  '세일',
 ]
 
