@@ -7,17 +7,35 @@ import petProfileImg from '../assets/petprofile.png'
  * - 이미 http/https로 시작하면 그대로 반환
  * - 상대 경로인 경우 API_BASE_URL을 붙여서 반환
  * - 레거시 이미지 URL (/filename.jpg)을 /uploads/filename.jpg로 변환
+ * - 개발 환경 URL (http://localhost:8000)을 프로덕션 API URL로 변환
  * 
  * @param {string} url - 이미지 URL (절대 경로 또는 상대 경로)
  * @returns {string} 완전한 이미지 URL
  */
 export const buildImageUrl = (url) => {
   if (!url) return ''
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
-  }
   
   const API = (`${import.meta.env.VITE_APP_API_URL}` || '').replace(/\/$/, '')
+  
+  // 이미 절대 URL인 경우
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    // 개발 환경 URL (localhost:8000)을 프로덕션 API URL로 변환
+    // Mixed Content 경고 방지: HTTPS 페이지에서 HTTP 리소스 요청 방지
+    if (url.startsWith('http://localhost:8000') || url.startsWith('http://127.0.0.1:8000')) {
+      // localhost URL에서 경로 부분만 추출
+      try {
+        const urlObj = new URL(url)
+        const path = urlObj.pathname + urlObj.search + urlObj.hash
+        // 프로덕션 API URL로 교체
+        return `${API}${path}`
+      } catch (e) {
+        // URL 파싱 실패 시 문자열 치환으로 처리
+        const path = url.replace(/^https?:\/\/localhost:8000/, '').replace(/^https?:\/\/127\.0\.0\.1:8000/, '')
+        return `${API}${path}`
+      }
+    }
+    return url
+  }
   
   // 레거시 이미지 URL 처리: /filename.jpg -> /uploads/filename.jpg
   // 단, 이미 /uploads/로 시작하거나 /api/, /static/ 등 다른 경로는 그대로 유지
