@@ -1,10 +1,8 @@
 import './OrderState.scss'
 import React, { useMemo } from 'react'
-import { getPlaceholderImage } from '../../../utils/imageUtils'
+import { getPlaceholderImage, buildImageUrl } from '../../../utils/imageUtils'
 
 function OrderState({ order }) {
-  const baseURL = import.meta.env.VITE_APP_API_URL || ''
-
   const summary = useMemo(() => {
     if (!order) return null
 
@@ -13,11 +11,9 @@ function OrderState({ order }) {
 
     const firstItem = items[0]
 
-    const resolvedImg = firstItem?.ItemImages?.[0]?.imgUrl
-      ? /^https?:\/\//i.test(firstItem.ItemImages[0].imgUrl)
-        ? firstItem.ItemImages[0].imgUrl
-        : `${baseURL}${firstItem.ItemImages[0].imgUrl}`
-      : getPlaceholderImage()
+    // 통일된 이미지 처리: buildImageUrl 사용
+    const imgUrl = firstItem?.ItemImages?.[0]?.imgUrl
+    const resolvedImg = imgUrl ? buildImageUrl(imgUrl) : getPlaceholderImage()
 
     return {
       itemName: firstItem?.itemNm ?? '상품 정보 없음',
@@ -26,7 +22,7 @@ function OrderState({ order }) {
       orderStatus: order?.orderStatus ?? null,
       imgUrl: resolvedImg,
     }
-  }, [order, baseURL])
+  }, [order])
 
   if (!summary) {
     return <p className="order-state__empty text-center text-muted mb-0">최근 주문이 없습니다.</p>

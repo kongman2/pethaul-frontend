@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import FilterForm from '../../common/FilterForm/FilterForm'
 import { Button, ItemCard, SectionCard, Spinner, AlertModal, ConfirmModal } from '../../common'
 import { useModalHelpers } from '../../../hooks/useModalHelpers'
-import { getPlaceholderImage } from '../../../utils/imageUtils'
+import { getPlaceholderImage, buildImageUrl } from '../../../utils/imageUtils'
 import './ItemPanel.scss'
 import AdminPanelLayout from '../AdminPanelLayout/AdminPanelLayout'
 import { filterItems } from '../../../utils/itemFilters'
@@ -35,8 +35,6 @@ function ItemPanel({ searchTerm, sellCategory }) {
          limit: 1000, // 충분히 큰 값으로 모든 상품 가져오기
       }))
    }, [dispatch, searchTerm, sellCategory])
-
-   const baseURL = import.meta.env.VITE_APP_API_URL || ''
 
    const list = useMemo(() => (Array.isArray(items) ? items.filter(Boolean) : []), [items])
 
@@ -76,11 +74,24 @@ function ItemPanel({ searchTerm, sellCategory }) {
    if (error) return <p>에러가 발생했습니다.: {String(error)}</p>
 
    // ---- Helpers ----
+   // 통일된 이미지 처리: buildImageUrl 사용 (컨텐츠 페이지와 동일한 구조)
    const resolveImage = (item) => {
-      const rep = item?.ItemImages?.find((img) => img?.repImgYn === 'Y') ?? item?.ItemImages?.[0]
-      const url = rep?.imgUrl
-      if (!url) return getPlaceholderImage()
-      return /^https?:\/\//i.test(url) ? url : `${baseURL}${url}`
+      // ItemImages가 배열인 경우
+      if (Array.isArray(item?.ItemImages) && item.ItemImages.length > 0) {
+         // repImgYn이 'Y'인 이미지를 우선 찾기
+         const repImg = item.ItemImages.find(img => img?.repImgYn === 'Y')
+         if (repImg?.imgUrl) return buildImageUrl(repImg.imgUrl)
+         // 없으면 첫 번째 이미지
+         if (item.ItemImages[0]?.imgUrl) return buildImageUrl(item.ItemImages[0].imgUrl)
+      }
+      // ItemImages가 단일 객체인 경우
+      if (item?.ItemImages?.imgUrl) return buildImageUrl(item.ItemImages.imgUrl)
+      // ItemImage (단수) 필드 확인
+      if (item?.ItemImage?.imgUrl) return buildImageUrl(item.ItemImage.imgUrl)
+      // 다른 필드들 확인
+      if (item?.imageUrl) return buildImageUrl(item.imageUrl)
+      // 이미지가 없으면 placeholder 반환
+      return getPlaceholderImage()
    }
 
    const formatPrice = (v) => {

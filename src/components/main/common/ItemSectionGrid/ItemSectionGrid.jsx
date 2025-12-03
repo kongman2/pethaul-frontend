@@ -11,7 +11,22 @@ import { fetchMyLikeIdsThunk, toggleLikeThunk } from '../../../../features/likeS
 import './ItemSectionGrid.scss'
 
 const defaultGetItemId = (item) => item?.itemId ?? item?.id ?? item?.ItemId ?? item?.Item?.id
-const defaultGetImage = (item) => item?.ItemImages?.[0]?.imgUrl ?? item?.imageUrl ?? item?.thumbnail
+const defaultGetImage = (item) => {
+  // ItemImages가 배열인 경우
+  if (Array.isArray(item?.ItemImages) && item.ItemImages.length > 0) {
+    // repImgYn이 'Y'인 이미지를 우선 찾기
+    const repImg = item.ItemImages.find(img => img?.repImgYn === 'Y')
+    if (repImg?.imgUrl) return repImg.imgUrl
+    // 없으면 첫 번째 이미지
+    if (item.ItemImages[0]?.imgUrl) return item.ItemImages[0].imgUrl
+  }
+  // ItemImages가 단일 객체인 경우 (separate: true, limit: 1일 때)
+  if (item?.ItemImages?.imgUrl) return item.ItemImages.imgUrl
+  // ItemImage (단수) 필드 확인
+  if (item?.ItemImage?.imgUrl) return item.ItemImage.imgUrl
+  // 다른 필드들 확인
+  return item?.imageUrl ?? item?.thumbnail ?? item?.imgUrl
+}
 const defaultGetTitle = (item) => item?.itemNm ?? item?.title ?? item?.name ?? ''
 const defaultGetPriceLabel = (item) => {
    const rawPrice = item?.price ?? item?.Price?.amount ?? item?.amount

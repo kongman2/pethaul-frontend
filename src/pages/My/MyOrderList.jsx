@@ -7,7 +7,7 @@ import { createExchangeReturnThunk } from '../../features/exchangeReturnSlice'
 
 import { SectionCard, Button, Spinner, PageHeader, Pagination, Tabs, Modal, AlertModal, ConfirmModal } from '../../components/common'
 import { useModalHelpers } from '../../hooks/useModalHelpers'
-import { getPlaceholderImage } from '../../utils/imageUtils'
+import { getPlaceholderImage, buildImageUrl } from '../../utils/imageUtils'
 import useAppBackground from '../../hooks/useAppBackground'
 import './MyOrderList.scss'
 
@@ -95,8 +95,6 @@ function MyOrderList() {
       }
    }
 
-   const apiBase = import.meta.env.VITE_APP_API_URL || ''
-
    const getOrderStatusLabel = (status) => {
       const statusMap = {
          ORDER: '판매자확인',
@@ -160,7 +158,9 @@ function MyOrderList() {
                            {/* 주문 상품 목록 */}
                            <div className="row g-3">
                               {order.Items?.map((item) => {
-                                 const imgSrc = apiBase + (item?.ItemImages?.[0]?.imgUrl || '')
+                                 // 통일된 이미지 처리: buildImageUrl 사용
+                                 const imgUrl = item?.ItemImages?.[0]?.imgUrl
+                                 const imgSrc = imgUrl ? buildImageUrl(imgUrl) : getPlaceholderImage()
                                  return (
                                     <div key={item.id} className="col-12">
                                           <div className="row g-2 g-md-3 mb-3">

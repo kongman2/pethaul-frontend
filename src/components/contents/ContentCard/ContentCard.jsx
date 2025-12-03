@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { getContentImageUrl } from '../../../utils/imageUtils'
 
 import './ContentCard.scss'
 
@@ -13,11 +14,13 @@ export default function ContentCard({ post, onClick }) {
     }
   }
 
+  const imageUrl = getContentImageUrl(post.coverUrl, post.thumbUrl || post.thumb)
+
   return (
     <article className="content-card" onClick={handleClick}>
       
       <div className="card-media">
-        <img src={post.thumbUrl || post.thumb} alt={post.title} />
+        <img src={imageUrl} alt={post.title} />
       </div>
       <div className="card-body">
         {post.tag && <span className="card-tag">{post.tag}</span>}

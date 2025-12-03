@@ -6,6 +6,7 @@ import { useModalHelpers } from '../../../hooks/useModalHelpers'
 import { uploadContentImageApi } from '../../../api/contentApi'
 import { RECOMMENDATION_TAGS } from '../../../utils/recommendationUtils'
 import { MAIN_CATEGORY_OPTIONS } from '../../../constants/itemCategories'
+import { buildImageUrl } from '../../../utils/imageUtils'
 
 // 상품 카테고리와 추천 상품 태그를 합친 옵션 
 const ALL_CATEGORY_OPTIONS = (() => {
@@ -37,13 +38,10 @@ function normalize(raw) {
   }
 }
 
+// 통일된 이미지 처리: buildImageUrl 사용
 const toAbs = (base, url) => {
   if (!url) return ''
-  const u = String(url).trim()
-  if (/^https?:\/\//i.test(u)) return u
-  const left = (base || '').replace(/\/+$/, '')
-  const right = u.replace(/^\/+/, '')
-  return `${left}/${right}`
+  return buildImageUrl(url)
 }
 
 const normalizeCategoryName = (name) => {
@@ -56,7 +54,6 @@ function ItemFormBase({
   initialData = null,
   onSubmit,
 }) {
-  const apiBase = import.meta.env.VITE_APP_API_URL
   const { alert, alertModal } = useModalHelpers()
 
   const formMode = initialData ? 'edit' : String(mode || 'create').trim().toLowerCase()
@@ -71,8 +68,8 @@ function ItemFormBase({
     return (norm.ItemImages || [])
       .map((img) => (typeof img === 'string' ? img : img?.imgUrl))
       .filter(Boolean)
-      .map((u) => toAbs(apiBase, u))
-  }, [norm, apiBase])
+      .map((u) => toAbs(null, u)) // base 파라미터는 더 이상 사용하지 않음 (buildImageUrl이 내부에서 처리)
+  }, [norm])
 
   const initialSelectedCategories = useMemo(() => {
     if (!norm) return []
