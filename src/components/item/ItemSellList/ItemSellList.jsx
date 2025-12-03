@@ -26,6 +26,7 @@ export default function ItemSellList({
    autoFetch = true,
 }) {
    const location = useLocation()
+   // props로 전달된 sellCategory를 우선 사용
    const derivedSellCategory = sellCategoryProp ?? (location?.state ?? '')
    const dispatch = useDispatch()
    const { items = [], loading, error, pagination } = useSelector((s) => s.item)
@@ -52,18 +53,32 @@ export default function ItemSellList({
    // ====== 초기 로드 ======
    const shouldFetch = autoFetch && !itemsProp
 
+   // 필터나 검색어가 변경될 때 페이지를 1로 리셋
+   useEffect(() => {
+      setPage(1)
+   }, [derivedSellCategory, searchTerm])
+
    useEffect(() => {
       if (shouldFetch) {
          const payload = { page, limit: 10 }
          if (searchTerm && searchTerm.length > 0) {
-            payload.searchTerm = searchTerm
+            payload.searchTerm = Array.isArray(searchTerm) ? searchTerm[0] : searchTerm
          }
 
-         if (derivedSellCategory) {
-            if (typeof derivedSellCategory === 'object' && !Array.isArray(derivedSellCategory)) {
-               Object.assign(payload, derivedSellCategory)
+         // selectedCats가 있으면 우선 사용 (사용자가 필터에서 선택한 카테고리)
+         // 없으면 derivedSellCategory 사용 (URL이나 props에서 전달된 카테고리)
+         const categoriesToUse = selectedCats && selectedCats.length > 0 
+            ? selectedCats 
+            : derivedSellCategory
+
+         if (categoriesToUse) {
+            if (typeof categoriesToUse === 'object' && !Array.isArray(categoriesToUse)) {
+               Object.assign(payload, categoriesToUse)
             } else {
-               payload.sellCategory = derivedSellCategory
+               // 배열인 경우 그대로 전달 (여러 카테고리 지원)
+               payload.sellCategory = Array.isArray(categoriesToUse) 
+                  ? categoriesToUse.filter(Boolean)
+                  : categoriesToUse
             }
          }
 
@@ -73,7 +88,7 @@ export default function ItemSellList({
       if (user) {
          dispatch(fetchMyLikeIdsThunk())
       }
-   }, [dispatch, user, derivedSellCategory, searchTerm, page, shouldFetch])
+   }, [dispatch, user, derivedSellCategory, searchTerm, page, shouldFetch, selectedCats])
 
    // 페이지 변경
    const handlePageChange = (e, value) => {

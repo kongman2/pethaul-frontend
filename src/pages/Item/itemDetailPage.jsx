@@ -274,7 +274,14 @@ function ItemDetailPage() {
           }
         >
           {openSections.detail ? (
-            item.itemDetail ? <p className="item-detail__panel-text mb-0">{item.itemDetail}</p> : <p className="item-detail__panel-text mb-0">상세 설명이 없습니다.</p>
+            item.itemDetail ? (
+              <div 
+                className="item-detail__panel-text mb-0" 
+                dangerouslySetInnerHTML={{ __html: item.itemDetail }}
+              />
+            ) : (
+              <p className="item-detail__panel-text mb-0">상세 설명이 없습니다.</p>
+            )
           ) : null}
         </SectionCard>
 

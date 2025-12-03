@@ -16,6 +16,7 @@ function SeasonPromotionSection({ items = [], buildImg }) {
         moreHref="/items/search?filter=시즌"
         moreLabel="More"
         items={items}
+        maxItems={4}
         buildImg={buildImg}
         emptyMessage={emptyMessage}
       />

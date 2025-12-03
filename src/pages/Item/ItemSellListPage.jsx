@@ -46,8 +46,13 @@ function ItemSellListPage() {
    const listItems = sortKey ? main?.[sortKey] ?? [] : undefined
    const listPagination = sortKey ? null : pagination
 
+   // URL 파라미터 변경 시 컴포넌트 리렌더링을 위한 키
+   const filterKey = useMemo(() => {
+      return JSON.stringify({ sellCategory, keywordParams, sortKey })
+   }, [sellCategory, keywordParams, sortKey])
+
    return (
-      <div className="container">
+      <div className="container" key={filterKey}>
          <ItemSellList
             title={headerTitle}
             searchTerm={keywordParams}

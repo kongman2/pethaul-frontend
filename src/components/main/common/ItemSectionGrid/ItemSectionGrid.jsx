@@ -80,6 +80,7 @@ function ItemSectionGrid({
    moreHref,
    moreLabel = 'More',
    items = [],
+   maxItems,
    buildImg = (url) => url,
    getItemId = defaultGetItemId,
    getImage = defaultGetImage,
@@ -90,14 +91,15 @@ function ItemSectionGrid({
    renderItem,
    containerClassName = 'container py-5',
    rowClassName = 'row g-4',
-   colClassName = 'col-6 col-md-4 col-lg-3 d-flex',
+   colClassName = 'col-6 col-md-3 d-flex',
    cardWrapperClassName = 'flex-grow-1 h-100',
    emptyMessage,
    children,
    likeEnabled = true,
 }) {
    const sectionClassName = [containerClassName, 'item-section-grid'].filter(Boolean).join(' ')
-   const hasItems = items.length > 0
+   const displayedItems = maxItems ? items.slice(0, maxItems) : items
+   const hasItems = displayedItems.length > 0
 
    const dispatch = useDispatch()
    const likesMap = useSelector((state) => state.like.idsMap) || {}
@@ -145,7 +147,7 @@ function ItemSectionGrid({
 
          {hasItems ? (
             <div className={rowClassName}>
-               {items.map((item) => {
+               {displayedItems.map((item) => {
                   const itemId = getItemId(item)
                   const rawImage = getImage(item)
                   const imageUrl = rawImage ? buildImg(rawImage) : undefined
@@ -216,6 +218,7 @@ ItemSectionGrid.propTypes = {
    moreHref: PropTypes.string,
    moreLabel: PropTypes.string,
    items: PropTypes.arrayOf(PropTypes.object),
+   maxItems: PropTypes.number,
    buildImg: PropTypes.func,
    getItemId: PropTypes.func,
    getImage: PropTypes.func,

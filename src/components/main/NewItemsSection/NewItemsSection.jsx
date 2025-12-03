@@ -10,6 +10,7 @@ function NewItemsSection({ items = [], buildImg }) {
          icon="streamline-pixel:interface-essential-crown"
          moreHref="/items/sorted?sort=newItems&filter=신상"
          items={items}
+         maxItems={4}
          buildImg={buildImg}
          getHref={(_, itemId) => (itemId != null ? `/items/detail/${itemId}` : undefined)}
       />

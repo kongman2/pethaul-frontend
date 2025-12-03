@@ -8,6 +8,7 @@ function BestProductsSection({ items = [], buildImg, titleOverride, iconOverride
          icon={iconOverride || 'streamline-pixel:entertainment-events-hobbies-reward-winner-talent'}
          moreHref="/items/sorted?sort=topToday"
          items={items}
+         maxItems={4}
          buildImg={buildImg}
          getHref={(_, itemId) => (itemId != null ? `/items/detail/${itemId}` : undefined)}
       />
