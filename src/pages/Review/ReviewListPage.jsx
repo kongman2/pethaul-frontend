@@ -162,22 +162,21 @@ export default function ReviewListPage() {
                   actions={
                     type === 'my' ? (
                       <>
-                        <Link 
-                          to={`/review/edit/${r.id}`} 
-                          state={{ 
-                            review: r,
-                            from: type === 'my' ? '/myreviewlist' : '/reviews'
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(`/review/edit/${r.id}`, {
+                              state: {
+                                review: r,
+                                from: type === 'my' ? '/myreviewlist' : '/reviews'
+                              }
+                            })
                           }}
-                          onClick={(e) => e.stopPropagation()}
                         >
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            수정
-                          </Button>
-                        </Link>
+                          수정
+                        </Button>
                         <Button
                           variant="danger"
                           size="sm"
