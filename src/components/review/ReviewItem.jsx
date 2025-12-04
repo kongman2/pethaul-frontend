@@ -228,7 +228,12 @@ export default function ReviewItem({
           </div>
 
           {showActions && actions && (
-            <div className="d-flex gap-2 mt-3 pt-3 border-top">{actions}</div>
+            <div 
+              className="d-flex gap-2 mt-3 pt-3 border-top"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {actions}
+            </div>
           )}
         </div>
       </div>

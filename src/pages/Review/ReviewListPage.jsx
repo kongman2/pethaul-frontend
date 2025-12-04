@@ -39,8 +39,10 @@ export default function ReviewListPage() {
 
   const reviewList = useMemo(() => {
     if (type === 'my') {
+      // 마이페이지 리뷰: reviewState.reviews만 사용
       return Array.isArray(reviewState.reviews) ? reviewState.reviews : []
     } else {
+      // 전체 리뷰: reviewState.list만 사용
       return Array.isArray(reviewState.list) ? reviewState.list : []
     }
   }, [type, reviewState.reviews, reviewState.list])
@@ -148,16 +150,41 @@ export default function ReviewListPage() {
                   review={r}
                   variant="card"
                   showActions={type === 'my'}
+                  onClick={() => {
+                    const fromPath = type === 'my' ? '/myreviewlist' : '/reviews'
+                    navigate(`/reviews/${r.id}`, { 
+                      state: { 
+                        review: r,
+                        from: fromPath
+                      } 
+                    })
+                  }}
                   actions={
                     type === 'my' ? (
                       <>
-                        <Link to={`/review/edit/${r.id}`} state={{ review: r }}>
-                          <Button variant="outline" size="sm">수정</Button>
+                        <Link 
+                          to={`/review/edit/${r.id}`} 
+                          state={{ 
+                            review: r,
+                            from: type === 'my' ? '/myreviewlist' : '/reviews'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            수정
+                          </Button>
                         </Link>
                         <Button
                           variant="danger"
                           size="sm"
-                          onClick={() => handleReviewDelete(r.id)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleReviewDelete(r.id)
+                          }}
                         >
                           삭제
                         </Button>

@@ -15,6 +15,18 @@ function ReviewFormPage() {
   const isEdit = Boolean(id)
   const item = state?.item
   const review = state?.review
+  const fromPath = state?.from || null
+  
+  // 수정 완료 후 돌아갈 경로 결정
+  const getSuccessPath = () => {
+    if (isEdit) {
+      // 수정 모드: 마이페이지 리뷰 목록으로
+      return fromPath || '/myreviewlist'
+    } else {
+      // 생성 모드: 마이페이지 리뷰 목록으로
+      return '/myreviewlist'
+    }
+  }
 
   // 수정 모드인데 review 데이터가 없는 경우
   if (isEdit && !review) {
@@ -88,7 +100,7 @@ function ReviewFormPage() {
       review={review}
       reviewId={id}
       existingImgs={existingImgs}
-      onSuccess={isEdit ? '/' : '/myreviewlist'}
+      onSuccess={getSuccessPath()}
     />
   )
 }

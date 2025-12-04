@@ -144,7 +144,7 @@ function PetSurveyResultPage() {
                   <div className="result-recommendations mb-4">
                      <h3 className="mb-3">추천 제품</h3>
                      <div className="recommendation-list">
-                        {petTypeInfo.recommendations.map((item, index) => {
+                        {Array.from(new Set(petTypeInfo.recommendations)).map((item, index) => {
                            const keyword = extractRecommendationKeyword(item)
                            return (
                               <div 

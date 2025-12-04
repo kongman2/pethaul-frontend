@@ -31,8 +31,8 @@ export default function ReviewForm({
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const itemName = isEdit ? review?.Item?.itemNm : item?.itemNm
-  const itemId = isEdit ? review?.Item?.id : item?.id
+  const itemName = isEdit ? (review?.Item?.itemNm || review?.itemNm || '상품') : item?.itemNm
+  const itemId = isEdit ? (review?.Item?.id || review?.itemId) : item?.id
   const initialRating = isEdit ? Number(review?.rating ?? 0) : 0
   const initialContent = isEdit ? (review?.reviewContent ?? '') : ''
 

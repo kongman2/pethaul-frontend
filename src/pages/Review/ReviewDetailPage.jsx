@@ -15,12 +15,22 @@ export default function ReviewDetailPage() {
   const location = useLocation()
   const dispatch = useDispatch()
   
-  // location.state에서 review 데이터 가져오기
+  // location.state에서 review 데이터 및 이전 경로 가져오기
   const reviewFromState = location.state?.review
+  const fromPath = location.state?.from || null
   const [review, setReview] = useState(reviewFromState)
   const [loading, setLoading] = useState(!reviewFromState)
   const [error, setError] = useState(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  
+  // 목록으로 돌아갈 경로 결정 (마이페이지에서 온 경우 마이페이지로, 아니면 베스트리뷰로)
+  const getBackPath = () => {
+    if (fromPath) {
+      return fromPath
+    }
+    // 기본값: 베스트리뷰 페이지
+    return '/reviews'
+  }
 
   const apiBase = import.meta.env.VITE_APP_API_URL || ''
 
@@ -205,7 +215,7 @@ export default function ReviewDetailPage() {
             <div className="d-flex gap-2 pt-3 border-top">
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/reviews')}
+                onClick={() => navigate(getBackPath())}
                 icon={<Icon icon="bi:arrow-left" width="16" height="16" />}
               >
                 목록으로
