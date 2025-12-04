@@ -21,10 +21,19 @@ function ReviewFormPage() {
   const getSuccessPath = () => {
     if (isEdit) {
       // 수정 모드: 마이페이지 리뷰 목록으로
-      return fromPath || '/myreviewlist'
+      // fromPath가 있으면 그 경로로, 없으면 마이페이지 리뷰 목록으로
+      if (fromPath) {
+        // fromPath가 /myreviewlist인 경우 실제 경로로 변환
+        if (fromPath === '/myreviewlist') {
+          return '/reviews?type=my'
+        }
+        return fromPath
+      }
+      // 기본값: 마이페이지 리뷰 목록
+      return '/reviews?type=my'
     } else {
       // 생성 모드: 마이페이지 리뷰 목록으로
-      return '/myreviewlist'
+      return '/reviews?type=my'
     }
   }
 
